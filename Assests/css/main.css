@@ -11,71 +11,95 @@ html, body {
     flex-direction: column;
     min-height: 100dvh;
     scroll-behavior: smooth;
-
-    --w-accent: #4096e1;
-    --w-accent-hover: #1d4c74;
-    --w-bg-light: #ccd8ce;
-    --w-box-shadow: none;
-    --bs-body-color: #29546e;
-    --bs-body-bg: #ccd8ce;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 h1, h2, h3, h4, h5 ,h6{
     font-family: 'Cal Sans';    
 }
 
-.herosec {
-    position: relative;
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
     overflow: hidden;
 }
 
 .video-bg {
-    position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      object-fit: cover;
-      z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.info {
-    position: relative;
-    z-index: 1;
-    color: white;
+.hero{    
+    overflow: hidden;
+    display: grid;
+    align-items: end;
+    transition: .3s;
+    min-height: 600px;
+    height: 100vh;
 }
 
+.hero .info{
+    padding: 100px 50px 60px;;
+    background: linear-gradient(to bottom, #0000, #00000040);
+    color: #fff;
 
-p{
-    font-family: 'Noto Sans Thai';
-    color: #475569;
-    margin: 0;
 }
 
-.body, .herosec, .info, .bg-info, .wi-s, .info-container,.latext, ul.social, ul.social li a,.st-l, .past, .rowpicinfo, .frame-video, .gap-video, .box-img, .text, .hd-li, .rv, .social-head, .botton, .fan-sigh svg, .fan-sigh {
-    display: flex; 
+.info .h2{
+    font-size: 5em;
+    font-weight: 800;
+    color: rgb(255, 255, 255);
+    line-height: 1em;
+    text-transform: uppercase;
 }
 
-.bg-info, .info-container, .rowpicinfo, .wi-dis, .head-embed, .collum-social, .all-botton, .collum-social{
-    max-width: 1280px;
+.info .h3{
+    font-size: 4em;
+    font-weight: 700;
+    color: rgb(255, 255, 255);
+    line-height: 1em;
+    text-transform: uppercase;
 }
 
-.herosec {
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
-    align-items: flex-end; /* ขยับลง */
-    text-align: center;
-    padding: 0 50px 80px; /* padding-bottom 80px */
-    color: white;
-    position: relative;
+.fa-icon{
+    gap: 25px;
+    padding-left: 8px;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-content: flex-start
 }
 
-.herosec::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%);
-    z-index: 0;
+.fa-icon li {
+    list-style: none;
+}
+
+.fa-icon li a{
+    align-items: center;
+    justify-content: center;
+    width: 3em;
+    height: 3em;
+    border-radius: 50%;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.fa-icon li i {
+    font-size: 3.5em;  /* ปรับขนาดใหญ่ขึ้นได้ตามต้องการ */
+    color: #ffffff;
+    transition: color 0.3s;
+}
+
+.fa-icon li a:hover i {
+    transform: scale(1.1);
 }
