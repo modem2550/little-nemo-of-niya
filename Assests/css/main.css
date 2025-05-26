@@ -1,0 +1,873 @@
+@import url('https://fonts.googleapis.com/css2?family=Cal+Sans&family=Noto+Sans+Thai:wght@100..900&display=swap');
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    font-family: 'Cal Sans', 'Noto Sans Thai', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    flex-direction: column;
+    min-height: 100dvh;
+    scroll-behavior: smooth;
+
+    --w-accent: #4096e1;
+    --w-accent-hover: #1d4c74;
+    --w-bg-light: #ccd8ce;
+    --w-box-shadow: none;
+    --bs-body-color: #29546e;
+    --bs-body-bg: #ccd8ce;
+}
+
+
+h1, h2, h3, h4, h5 ,h6{
+    font-family: 'Cal Sans';    
+}
+
+.herosec {
+    position: relative;
+    overflow: hidden;
+}
+
+.bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.info {
+    position: relative;
+    z-index: 1;
+    color: white;
+}
+
+
+p{
+    font-family: 'Noto Sans Thai';
+    color: #475569;
+    margin: 0;
+}
+
+.body, .herosec, .info, .bg-info, .wi-s, .info-container,.latext, ul.social, ul.social li a,.st-l, .past, .rowpicinfo, .frame-video, .gap-video, .box-img, .text, .hd-li, .rv, .social-head, .botton, .fan-sigh svg, .fan-sigh {
+    display: flex; 
+}
+
+.bg-info, .info-container, .rowpicinfo, .wi-dis, .head-embed, .collum-social, .all-botton, .collum-social{
+    max-width: 1280px;
+}
+
+.herosec {
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    align-items: flex-end; /* ขยับลง */
+    text-align: center;
+    padding: 0 50px 80px; /* padding-bottom 80px */
+    color: white;
+    position: relative;
+}
+
+.herosec::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%);
+    z-index: 0;
+}
+
+.info {
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+    flex-direction: column
+}
+
+.heroname {
+    font-size: calc(1.75rem + 5vw);
+    margin: 0;
+    font-weight: 700;
+}
+
+.infosection, .discovery{
+    background: #f2f4f7;
+}
+
+.bg-info{
+    background: #fff;
+    padding: 30px;
+    width: 100%;
+    flex-direction: column;
+    margin: auto;
+    border-radius: 12px;
+}
+
+.tread-x {
+    background-color: transparent; /* โปร่งใส */
+    color: #ffffff; /* สีฟ้า Twitter */
+    border: 2px solid #ffffff; /* ขอบทึบ */
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 9999px; /* pill shape */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+}
+
+.tread-x:hover {
+    background-color: #1d9bf0; /* ข้างในทึบตอน hover */
+    border-color: #1d9bf0; /* เปลี่ยนสีขอบด้วย */
+    color: #fff; /* ตัวหนังสือเป็นขาว */
+    transform: scale(1.05); /* ขยายเบา ๆ */
+}
+
+.tread-x:active {
+    transform: scale(0.95); /* กดแล้วย่อเล็กน้อย */
+}
+    
+a{
+    text-decoration: none;
+}
+  
+.info-container {
+    margin: auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+    justify-content: center;
+  }
+  
+  .info-image img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 100%;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+
+.wi-s{
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+  }
+
+  .s-1{
+    margin-top: 30px;
+  }
+  
+  
+  .info-text {
+    flex: 1;
+    margin: 0;
+    max-width: 417.500px;
+  }
+  
+  .info-text h2 {
+    margin-top: 0;
+    font-size: 28px;
+    color: #334155;
+    margin: 0;
+  }
+  
+  .info-text p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #475569;
+    margin-bottom: 0;
+    margin: 0;
+  }
+  
+ul.social {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 2em;
+    justify-content: center; /* ตรงกลาง */
+    align-items: center;
+    padding: 0 20px 0;
+}
+
+ul.social li a {
+    align-items: center;
+    justify-content: center;
+    width: 3em;
+    height: 3em;
+    border-radius: 50%;
+    transition: background 0.3s, transform 0.1s;
+}
+
+ul.social li a:hover {
+    transform: scale(1.2); /* เปลี่ยนสีตอน hover */
+}
+
+ul.social li svg {
+    width: 3em;
+    width: 3em;
+    fill: #ffffff; /* สีไอคอน */
+    transition: fill 0.3s;
+}
+
+ul.social li a:hover svg {
+    fill: #ffffff;
+}
+
+.past{
+    margin-top: 30px;
+    justify-content: center;
+}
+
+sup {
+    top: -.5em;
+}
+
+sub, sup {
+    position: relative;
+    font-size: .75em;
+    line-height: 0;
+    vertical-align: baseline;
+}
+
+.rowpicinfo {
+    gap: 50px;
+    justify-content: space-between;
+    margin-top: 45px;
+}
+
+.rowpicinfo div {
+    text-align: center;
+}
+
+.picinfo {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 12px;
+    display: block;
+    margin-bottom: 8px; /* เว้นระยะระหว่างรูปกับข้อความ */
+}
+
+.rowpicinfo p {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #334155; /* สีเทาน้ำเงินนิด ๆ */
+    margin: 0;
+}
+
+.frame-video {
+    gap: 1rem;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.video {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.thumnail-text {
+    padding: 1.5rem!important;
+}
+
+.thumnail-video {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+}
+
+.thumnail-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 0 0 12px 12px; /* มนเฉพาะขอบล่าง */
+}
+
+.ratio {
+    --bs-aspect-ratio: 56.25%;
+}
+
+.t-700 {
+    font-weight: 700 !important;
+}
+
+.t-800 {
+    font-weight: 800 !important;
+    font-size: calc(1rem + 0.7vw); /* ขนาดปรับตามจอ */
+    margin: 0;
+}
+
+/* เพิ่ม: สำหรับจอใหญ่ ให้เป็น 2 คอลัมน์ */
+@media (min-width: 768px) {
+    .frame-video {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .thumnail-text, .thumnail-video {
+        flex: 1;
+    }
+
+    .thumnail-text {
+        text-align: left;
+    }
+}
+
+.tht{
+    font-family: 'Noto Sans Thai';
+}
+
+.gap-video {
+    max-width: 1280px;
+    gap: 50px;
+    width: 100%; /* เต็มกว้าง */
+}
+  
+.frame-video {
+    flex: 1; /* ขยายตัวเองเต็มพื้นที่ว่าง */
+    width: 100%; /* เต็มกว้างภายในช่องตัวเอง */
+    box-sizing: border-box; /* ป้องกัน padding/border ทำให้เกินขอบ */
+}
+  
+.photo-img {
+    box-sizing: content-box;
+    color: white;
+    position: relative;
+    background-color: white;
+    overflow: hidden;
+    border-radius: 12px;
+    flex: 1 1 300px; /* รูปแต่ละรูปกว้างขั้นต่ำ 300px และขยายได้ */
+    max-width: 100%;
+}
+
+.photo-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.box-img {
+    gap: 50px; /* ช่องว่างระหว่างรูป */
+    justify-content: center; /* ตรงกลาง */
+    margin-top: 20px;
+}
+
+.box-img img {
+    height: 100%;
+    width: 100%;
+    transform: scale(1.05);
+    transition: transform 0.4s ease;
+}
+
+.text-top {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: background-color 0.3s ease;
+}
+
+.text {
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: 0;
+    opacity: 0.0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    color: #ffffff;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+
+.photo-img:hover img { 
+    transform: scale(1.1);
+  }
+  
+  .photo-img:hover .text-top {
+    background-color:rgba(0, 0, 0, 0.5);
+  }
+  
+  .photo-img:hover .text {
+    transform: translateY(-20px);
+    opacity: 1.0;
+  }
+  
+  .photo-img:hover {
+    cursor: pointer;
+    border-radius: 12px;
+  }
+  
+  .text > p:nth-child(2) {
+    font-size: 0.8em;
+  }
+  
+  .opacity-low {
+    opacity: 0.5;
+  }   
+  
+  .text:hover{
+    opacity: 2.0;
+  }
+  
+  @keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+.text p{ 
+    color: #ffffff;
+}
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5rem 2.4rem;
+    box-sizing: border-box;
+  }
+
+.hd-li{
+    text-align: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: var(--bs-body-color) !important;
+    margin: 0;
+}
+
+.wi-dis{
+    margin: auto;
+}
+
+.stage{
+    margin-top: 50px;
+}
+
+.rv{
+    margin: auto;
+    justify-content: center;
+}
+
+.iframe {
+    width:50%; 
+    margin-bottom: 20px;
+}
+
+.iframe-instagram, .iframe-tiktok {
+    width: 100%; 
+}
+
+.social-head{
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.instagram-media{
+    background-color: white; 
+    border-radius: 6px; 
+    border: 1px solid rgb(227, 227, 228); 
+    box-shadow: none; 
+    display: block; 
+    padding: 0px; 
+    height: 473px;
+    margin: 18px auto;
+}
+
+.st-l{
+    justify-content: center
+}
+
+.latext{
+    gap: 20px;
+    align-items: center;
+}
+
+
+
+.head-embed {
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 0;
+    gap: 15px;
+}
+
+.iframe {
+    width:50%; 
+    margin-bottom: 20px;
+}
+
+.iframe-instagram, .iframe-tiktok {
+    width: 100%; 
+}
+
+.instagram-media{
+    background-color: white; 
+    border-radius: 6px; 
+    border: 1px solid rgb(227, 227, 228); 
+    box-shadow: none; 
+    display: block; 
+    margin: 18px auto;
+    width: 100%; 
+    padding: 0px; 
+    height: 473px;
+}
+
+/* Fan button */
+.all-botton {
+    width: 60%;
+    height: 559px;
+    margin: auto;
+    gap: 20px;
+    flex-direction:column;
+    padding: 33px 0 53px 0;
+}
+
+.botton {
+    flex: 1;  
+    justify-content: center;  
+}
+
+.fan-sigh svg {
+    padding: 21px;
+    height: 100%;
+}
+
+.fan-sigh{
+    align-items: center;
+    text-decoration: none;
+    width: 100%;
+    height: 78.59px;
+}
+
+.text-social{
+    font-weight: 700;
+    font-size: 1.5rem;
+    
+}
+
+.collum-social .botton{
+    width: 100%;
+    gap: 10px;
+}
+
+.img-qr{
+    margin: 6%;
+    width: 90%;
+}
+
+.ig-social,.fb-social,.x-social,.line-social,.discord-social,.collum-social ,.ig-social::after, .gallery-page{
+    display: flex;
+    width: 100%; 
+    border-radius: 10px; 
+    transition: background-color 0.3s ease;
+}
+
+.gallery-page{
+    background-color: #fff;
+}
+
+.gallery-page svg {
+    fill: var(--w-accent-hover);
+    transition: fill 0.3s ease;
+}
+
+.gallery-page .gl-text {
+    color: var(--bs-body-color);
+    transition: color 0.3s ease;
+}
+
+.gallery-page:hover {
+    background-color: var(--bs-body-color);
+}
+
+.gallery-page:hover svg {
+    fill: #ffffff;
+}
+
+.gallery-page:hover .gl-text {
+    color: #ffffff;
+}
+
+/*Facebook*/
+.fb-social {
+    background-color: #d2e4fc;
+
+    svg{
+        fill: rgb(25, 118, 241);
+    }
+
+    .fb-text{
+        color: rgb(25, 118, 241);
+    }
+}
+
+.fb-social:hover {
+    background-color: #1877F2;
+
+    svg{
+        fill: rgb(255, 255, 255);
+    }
+
+    .fb-text{
+        color: rgb(255, 255, 255);
+    }
+}
+
+/*Instargram*/
+.ig-social {
+    position: relative;
+    background-color: #f8d0d6;
+    overflow: hidden;
+
+    svg{
+        fill: rgb(220, 39, 67);
+    }
+
+    .ig-text{
+        color: rgb(220, 39, 67);
+    }
+}
+
+.ig-social::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(45deg,#f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.ig-social:hover{
+    svg{
+        fill: #ffffff;
+    }
+
+    .ig-text{
+        color: #ffffff;
+    }
+}
+
+.ig-social:hover::after {
+    opacity: 1;
+}
+
+.ig-social > * {
+    position: relative;
+    z-index: 2;
+}
+
+/*X*/
+.x-social {
+    background-color:#ebebeb;
+
+    svg{
+        fill: rgb(0, 0, 0);
+    }
+
+    .x-text{
+        color: rgb(0, 0, 0);
+    }
+}
+
+.x-social:hover{
+    background-color: #000000;
+
+    svg{
+        fill: rgb(255, 255, 255);
+    }
+
+    .x-text{
+        color: rgb(255, 255, 255);
+    }
+}   
+
+.collum-social{
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/*line*/
+.line-social {
+    background-color:#bbfdd6;
+
+    .line-text{
+        color: rgb(6, 199, 85);
+    }
+}
+
+.line-social:hover{
+    background-color: #06c755;
+
+    .line-text{
+        color: rgb(255, 255, 255);
+    }
+}
+
+.cls-1{
+    fill:#06c755;
+}
+
+.cls-2{
+    fill:#fff;
+}
+
+/*discord*/
+.discord-social {
+    background-color:#d7dafc;
+
+    transition: background-color 0.3s ease;
+
+    .discord-text{
+        color: #5865f2;
+    }
+}
+
+.discord-social:hover{
+    background-color: #5865f2;
+
+    .discord-text{
+        color: rgb(255, 255, 255);
+    } 
+}  
+
+.discord-social .fan-sigh svg{
+    fill: #5865F2;
+}
+
+.discord-social:hover svg {
+    fill: rgb(255, 255, 255); 
+}
+
+/* Media Queries */
+@media (max-width: 940px) {
+.info-container,
+    .rowpicinfo,
+    .box-img,
+    .gap-video,
+    .frame-video {
+      flex-direction: column !important;
+    }
+  
+    .info-image img,
+    .photo-img,
+    .thumnail-text,
+    .thumnail-video {
+        max-width: 100% !important;
+    }
+  
+    .picinfo {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 3 / 2;
+    }
+
+    .bg-info {
+        position: relative;
+    }
+
+    .info-image {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+
+    .info-image img {
+        max-width: none !important;
+    }
+
+    .info-text {
+        text-align: center;
+        margin-top: 60px; /* เว้นที่เพิ่มเพื่อไม่ให้ทับรูป */
+    }
+
+    .photo-img{
+        flex: none;
+    }
+
+    .rowpicinfo div {
+        width: 100%;
+        height: 100%;
+        gap: 50px;
+    }
+
+    .rowpicinfo{
+        gap: 90px;
+    }
+
+    ul.social{
+        padding: 0;
+    }
+
+    .herosec{
+        justify-content: center;
+    }
+
+    .tread-x{
+        width: 100%;
+    }
+
+    .rv, .wi-dis, .bg-info{
+        max-width: 600px;
+    }
+
+    .collum-social{
+        max-width: 600px;
+    }
+
+    .info {
+        max-width: 560px;
+    }
+
+    .head-embed {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .social-embed,.botton,.iframe {
+        width: 100%; 
+        max-width: 600px; 
+    }
+    
+    .all-botton {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .instagram-media{
+        width: 100%;
+    }
+
+    .all-botton {
+        width: 100%;
+    }
+}
+
+.li-bt{
+    display: flex;
+    height: 50px;
+}
+
+.gl-top{
+    width: 33.33%;
+}
