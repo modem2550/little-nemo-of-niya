@@ -1,44 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" rel="stylesheet">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" rel="stylesheet">
 
-    <title>Niya BNK48 - Fan Website little nemo of niya</title>
 
-    <link rel="stylesheet" href="/support/css/main.css">
-</head>
+        <title>Niya BNK48 - Fan Website little nemo of niya</title>
+
+        <link rel="stylesheet" href="/support/css/main.css">
+        <link rel="stylesheet" href="/support/css/header.css">
+
+        <script src="/support/js/script.js"></script>
+    </head>
 <body>
-    <header></header>
+    <header class="site-header">
+            <div class="n-header">
+                <a class="n-branding" href="/">
+                    <img src="/support/logo/white.png" class="logo-header-nav" id="logo-header">
+                </a>
+
+                <div class="n-backdrop"></div>
+                <nav class="n-manu">
+                    <ul class="n-manu-ul">
+                        <li><a class="nav-text" href="/">Home</a></li>
+                        <li><a class="nav-text" href="/#info">About</a></li>
+                        <li><a class="nav-text" href="/#social">Social</a></li>
+                        <li><a class="nav-text" href="/#library">Library</a></li>
+                        <hr class="d-lg-none">  
+                        <li><a class="nav-text" href="/gallery.html">
+                            <svg class="svgicon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier"> 
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 7.28595 22 4.92893 20.5355 3.46447C19.0711 2 16.714 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447ZM16 10C17.1046 10 18 9.10457 18 8C18 6.89543 17.1046 6 16 6C14.8954 6 14 6.89543 14 8C14 9.10457 14.8954 10 16 10ZM6.32092 13.1038C6.94501 12.5241 7.91991 12.5566 8.50397 13.1766L11.1515 15.9869C11.9509 16.8356 13.2596 16.9499 14.1941 16.2527C14.8073 15.7953 15.661 15.8473 16.2141 16.3757L18.4819 18.5423C18.7814 18.8284 19.2562 18.8176 19.5423 18.5181C19.8284 18.2186 19.8176 17.7438 19.5181 17.4577L17.2503 15.2911C16.1679 14.257 14.4971 14.1553 13.2972 15.0504C12.9735 15.2919 12.5202 15.2523 12.2433 14.9584L9.59579 12.1481C8.44651 10.9281 6.52816 10.8641 5.3001 12.0047L4.4896 12.7575C4.1861 13.0394 4.16858 13.5139 4.45047 13.8174C4.73236 14.1209 5.20691 14.1385 5.51041 13.8566L6.32092 13.1038Z" fill="#ffffff"></path> 
+                                </g>
+                            </svg>
+                            Gallery
+                        </a></li>
+                    </ul>
+                </nav>
+                <nav class="n-action">
+                    <button class="n-toggle">
+                        <b></b>
+                    </button>
+                </nav>
+            </div> 
+        </header>
 
     <main>
+        <h1 style="display: none;">Niya BNK48</h1>
         <section class="hero">
             <div class="border-text">
                 <div class="hero-video">
-                    <video class="video-bg" autoplay muted loop playsinline>
-                        <source src="/support/video/BG-video.mp4" type="video/mp4" />
-                    </video>
+                    <iframe 
+                        class="video-bg"
+                        src="https://www.youtube.com/embed/um6hO6uZ-Ww?autoplay=1&mute=1&loop=1&playlist=um6hO6uZ-Ww&controls=0&showinfo=0&modestbranding=1"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen>
+                    </iframe>
                 </div>
-                    <div class="info"> 
-                        <div class="h2">NIYA BNK48</div>
-                        <div class="h3">SUVIPHA LAITHOMYA</div> 
-                        <div class="hero-cta" id="hero_cta" style="margin: -10px"> 
-                            <ul class="fa-icon">
-                                <li><a href=""><i class="fa-brands fa-facebook"></i></a></li>
-                                <li><a href=""><i class="fa-brands fa-instagram"></i></a></li>
-                                <li><a href=""><i class="fa-brands fa-tiktok"></i></a></li>
-                            </ul>
-                        </div>
+                <div class="info"> 
+                    <div class="h2">NIYA</div>
+                    <div class="h3">SUVIPHA LAITHOMYA</div> 
+                    <div class="hero-cta" id="hero_cta" style="margin: -10px"> 
+                        <ul class="fa-icon">
+                            <li><a href=""><i class="fa-brands fa-facebook"></i></a></li>
+                            <li><a href=""><i class="fa-brands fa-instagram"></i></a></li>
+                            <li><a href=""><i class="fa-brands fa-tiktok"></i></a></li>
+                        </ul>
                     </div>
+                </div>
             </div>
-        </section>
+        </section class="niya-info">
+            <div class="info">
+                <img src="" alt="">
+                <div class="br-i">
 
+                </div>
+            </div>
         <section>
-            sdsdsd
-            <br>
-            <br>
+            
         </section>
     </main>
 </body>
