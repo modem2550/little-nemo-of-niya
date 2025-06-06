@@ -121,12 +121,6 @@ img, picture, video, canvas {
     transition: .3s;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 hr {
     margin: 1rem 0;
     color: white;
@@ -223,7 +217,6 @@ hr.scrolled{
         flex-direction: column;
         align-items: flex-start;
         padding: 80px 16px 16px;
-        gap: 8px;
         transition: right 0.3s ease;
         border-radius: 0;
         box-shadow: -4px 0 16px rgba(0,0,0,0.1);
@@ -268,4 +261,23 @@ hr.scrolled{
 
 #info, #social, #library{
     scroll-margin-top: 70px; 
+}
+
+.n-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4); /* สีดำใส */
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* เมื่อเมนูเปิดให้แสดง backdrop */
+.site-header.menu-open .n-backdrop {
+    opacity: 1;
+    pointer-events: auto;
 }
