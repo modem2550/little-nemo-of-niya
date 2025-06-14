@@ -1,8 +1,8 @@
 /* Default: ขาว */
 .site-header {
     --w-header-bg: rgba(255, 255, 255, 1);
-    --w-header-color: #eb0090;
-    --bs-body-color: #f847b4;
+    --w-header-color: #fc567b;
+    --bs-body-color: #334155;
     position: fixed;
     top: 0;
     left: 0;
@@ -25,7 +25,7 @@
 .site-header.scrolled {
     background-color: white;
     --w-header-bg: none;
-    box-shadow: 0 0 12px 0px #d1d9e6 ;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);;
 }
 
 .site-header.scrolled .n-toggle b{
@@ -259,7 +259,7 @@ hr.scrolled{
     border-top: 2px solid #29546e; /* ให้ขาวเวลาหัวข้อเป็นสีขาว */
 }
 
-#info, #social, #library{
+#event, #info, #social, #library{
     scroll-margin-top: 70px; 
 }
 
