@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Cal+Sans&family=Noto+Sans+Thai:wght@100..900&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
 
 html, body {
     margin: 0;
@@ -13,7 +14,7 @@ html, body {
     scroll-behavior: smooth;
     --text-color--:#334155;
     --w-header-color: #fc567b;
-    --bs-body-color: #f847b4;
+    --bs-body-color: #f177c2;
 }
 
 *,
@@ -71,7 +72,7 @@ h1, h2, h3, h4, h5 ,h6{
 }
 
 .name .h3{
-    font-size: 3.12em;
+    font-size: 2.65rem;
     font-weight: 700;
     color: rgb(255, 255, 255);
     line-height: 1em;
@@ -126,6 +127,13 @@ h1, h2, h3, h4, h5 ,h6{
     height: 100%;
 }
 
+#event{
+    height: calc(100vh- 70px);
+    display: flex;
+    justify-content: center;
+    background-color: #ffffff;
+}
+
 #info {
     height: calc(100vh - 70px);
     display: flex;
@@ -161,7 +169,7 @@ h1, h2, h3, h4, h5 ,h6{
 }
 
 .br-i ul li a{
-    color: #f847b4;
+    color: #f177c2;
     text-decoration: none;
 }
 
@@ -219,14 +227,17 @@ h1, h2, h3, h4, h5 ,h6{
     width: 100%;
 }
 
+.embed-ig iframe{
+    min-width: 0 !important;
+}
+
 .h-sec{
     margin: 0;
     display: flex;
     justify-content: center;
     font-weight: 800 !important;
     font-size: 3rem;
-    padding-bottom: 80px;
-    color: #f847b4;
+    color: #f177c2;
 }
 
 .social .container p{
@@ -239,6 +250,7 @@ h1, h2, h3, h4, h5 ,h6{
     color: var(--bs-body-color);
     display: flex;
     justify-content: center;
+    text-align: center;
     margin: 0;
 }
 
@@ -427,11 +439,16 @@ h1, h2, h3, h4, h5 ,h6{
     flex-direction: column;
 }
 
+.library .h-sec{
+    padding-bottom: 80px;
+}
+
 .library .container h2{
     color: var(--bs-body-color);
     display: flex;
     justify-content: center;
     margin: 0;
+    padding-bottom: 80px;
 }
 
 @media (max-width: 1108px) {
@@ -506,24 +523,63 @@ h1, h2, h3, h4, h5 ,h6{
     .sc-box{
         max-width: 650px;
     }
+
+    .fc-1{
+        max-width: 650px !important;
+        padding: 0 !important;
+    }
+
+    .fc-row{
+        flex-direction: column;
+        max-width: 650px !important;
+        padding: 50px 0 !important;
+    }
+
+    .pc-row{
+        max-width: 650px !important;
+        padding: 0 !important;
+    }
+
+    .img-row{
+        flex-direction: column;
+    }
+
+    .img-box{
+        width: 100% !important;
+    }
 }
 
-  .fc-1 {
+@media (max-width:690px) {
+    .fc-1, .pc-row{
+        padding: 0 24px !important;
+    }
+    
+    .fc-row{
+        padding: 50px 24px !important;
+    }
+}
+
+.fc-1 {
     width: 100%;
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 24px;
     box-sizing: border-box;
-  }
+}
+
+.fc-2 {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
 
   .un-div {
     background: #ffffff;
     border-radius: 12px;
     overflow: hidden;
     width: 100%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
+}
 
 .tc-1{
     padding: 1.5rem !important;
@@ -533,7 +589,7 @@ h1, h2, h3, h4, h5 ,h6{
     font-size: 1.25rem;
     color: #cb96c2;
     margin: 0;
-  }
+}
 
 .w-800{
     margin: 0;
@@ -550,7 +606,7 @@ h1, h2, h3, h4, h5 ,h6{
 }
 
 .tc-3 a {
-    color: #f847b4;
+    color: #f177c2;
     text-decoration: none;
 }
 
@@ -574,5 +630,269 @@ h1, h2, h3, h4, h5 ,h6{
     width: 100%;
     height: 100%;
     border: 0;
-    border-radius: 0 0 12px 12px;
-  }
+}
+
+.fc-row{
+    display: flex;
+    margin: auto;
+    padding: 50px 24px;
+    max-width: 1280px;
+    gap: 50px;
+    width: 100%;
+}
+
+.pc-row {
+    margin: auto;
+    max-width: 1280px;
+    padding: 0 24px;
+    box-sizing: border-box; /* เพิ่มบรรทัดนี้ เพื่อให้ padding รวมในความกว้าง */
+    overflow-x: hidden; /* ป้องกันล้นขอบ */
+}
+
+.img-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 25px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    justify-content: flex-start; /* เปลี่ยนจาก space-evenly เพื่อไม่ให้บีบ */
+}
+
+.img-box {
+    max-height: 400px;
+    width: 25%;
+    overflow: hidden;
+    position: relative;
+    color: white;
+    background-color: white;
+    animation: fadeEffect 1s;
+    border-radius: 12px;
+}
+  
+.img-box img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+  
+.caption {
+    position: absolute;
+    bottom: 5px;
+    left: 25px;
+    opacity: 0.0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    color: #ffffff;
+}
+
+.caption p {
+  font-weight: 500;
+  color: #fff;
+  margin: 0;
+}
+  
+.transparent-box {
+  height: 100%;
+  width: 100%;
+  background-color:rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: background-color 0.3s ease;
+}
+  
+.img-box:hover img { 
+  transform: scale(1.1);
+}
+  
+.img-box:hover .transparent-box {
+  background-color:rgba(0, 0, 0, 0.5);
+}
+  
+.img-box:hover .caption {
+  transform: translateY(-20px);
+  opacity: 1.0;
+}
+  
+.img-box:hover {
+  cursor: pointer;
+  border-radius: 12px;
+}
+  
+.caption > p:nth-child(2) {
+  font-size: 0.8em;
+}
+  
+.opacity-low {
+  opacity: 0.5;
+}   
+  
+  
+@keyframes fadeEffect {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+  
+.tab {
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  overflow-x: auto;
+  white-space: nowrap;
+  justify-content: space-evenly;
+}
+  
+.tab button {
+  color: black;
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  transition: 0.3s;
+  font-size: 17px;
+  border-radius: 12px;
+}
+  
+.tab button:hover {
+  background-color: #ddd;
+  border-radius: 12px;
+}
+
+.event .h-sec{
+    padding-bottom: 80px;
+}
+
+.nimo-fc{
+    padding: 80px 24px;
+    background-color: #ffffff;
+    max-width: 1280px;
+    width: 100%;
+    margin: auto;
+}
+
+.da-pt{
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    max-width: 301.25px;
+    transition: 0.3s;
+}
+
+.da-pt:hover{
+    transform: scale(1.05);
+    transition: 0.3s;
+}
+
+.da-pt a{
+    text-decoration: none;
+}
+
+.da-tx{
+    padding: 1rem;
+}
+
+.da-pt img{
+    border-radius: 12px 12px 0 0;
+    max-width: 301.25px;
+}
+
+.da-col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+}
+
+.da-sp{
+    display: flex;
+    flex-direction: column
+}
+
+.da-sp h3{
+    margin-top: 0;
+    color: var(--text-color--);
+}
+
+.ct-da svg{
+    fill: var(--text-color--);
+    width: 1.1rem;
+}
+
+.ct-da p {
+    color: var(--text-color--);
+    font-size: 0.95rem;
+    font-weight: 100;
+    margin: 0;
+}
+
+.ct-da div {
+    gap: 5px;
+}
+
+.li-c{
+    display: flex;
+    justify-content: center;
+    margin: 25px;
+}
+
+.button-17 {
+  align-items: center;
+  appearance: none;
+  background-color: #fff;
+  border-radius: 24px;
+  border-style: none;
+  color: var(--text-color--);
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 500;
+  height: 48px;
+  justify-content: center;
+  text-decoration: none;
+  max-width: 100%;
+  overflow: visible;
+  padding: 2px 24px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  touch-action: manipulation;
+  will-change: transform,opacity;
+}
+
+.button-17:hover {
+  background: #f177c2;
+  color: #ffffff;
+  transition: 0.3s;
+}
+
+.button-17:active {
+  box-shadow: 0 4px 4px 0 rgb(60 64 67 / 30%), 0 8px 12px 6px rgb(60 64 67 / 15%);
+  outline: none;
+}
+
+.button-17:focus {
+  outline: none;
+  border: 2px solid #4285f4;
+}
+
+.button-17:not(:disabled) {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
+
+.button-17:not(:disabled):hover {
+  box-shadow: rgba(60, 64, 67, .3) 0 2px 3px 0, rgba(60, 64, 67, .15) 0 6px 10px 4px;
+}
+
+.button-17:not(:disabled):focus {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
+
+.button-17:not(:disabled):active {
+  box-shadow: rgba(60, 64, 67, .3) 0 4px 4px 0, rgba(60, 64, 67, .15) 0 8px 12px 6px;
+}
+
+.button-17:disabled {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
