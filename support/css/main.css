@@ -337,21 +337,21 @@ h1, h2, h3, h4, h5 ,h6{
     fill: var(--text-hover);
 }
 
-.mb-t{
+.mb-x, .mb-t{
     width: 100%;
     border-radius: 12px;
     background-color: #eeeeee;
 }
 
-.mb-t a{
+.mb-x a, .mb-t a{
     color: #000000;
 }
 
-.mb-t svg{
+.mb-x svg, .mb-t svg{
     fill: #000000;
 }
 
-.mb-t {
+.mb-x, .mb-t {
     width: 100%;
     border-radius: 12px;
     background: #ebebeb;
@@ -359,6 +359,8 @@ h1, h2, h3, h4, h5 ,h6{
     transition: background 0.3s, color 0.3s, fill 0.3s;
 }
 
+.mb-x a,
+.mb-x svg
 .mb-t a,
 .mb-t svg {
     color: #000000;
@@ -366,16 +368,72 @@ h1, h2, h3, h4, h5 ,h6{
     transition: color 0.3s, fill 0.3s;
 }
 
-.mb-t:hover {
+.mb-x:hover, .mb-t:hover {
     background: #000000;
     color: var(--text-hover);
 }
 
-.mb-t:hover a {
+.mb-x:hover a, .mb-t:hover a {
     color: var(--text-hover);
 }
 
-.mb-t:hover svg {
+.mb-x:hover svg, .mb-t:hover svg {
+    fill: var(--text-hover);
+}
+
+.mb-y {
+    width: 100%;
+    border-radius: 12px;
+    background: #fde4e4;
+    color: #cd201f;
+    transition: background 0.3s, color 0.3s, fill 0.3s;
+}
+
+.mb-y a,
+.mb-y svg {
+    color: #cd201f;
+    fill: #cd201f;
+    transition: color 0.3s, fill 0.3s;
+}
+
+.mb-y:hover {
+    background: #cd201f;
+    color: var(--text-hover);
+}
+
+.mb-y:hover a {
+    color: var(--text-hover);
+}
+
+.mb-y:hover svg {
+    fill: var(--text-hover);
+}
+
+.mb-l {
+    width: 100%;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(17, 208, 201, 0.15), rgba(17, 215, 123, 0.15), rgba(6, 199, 85, 0.15)); 
+    color: #06c755;
+    transition: background 0.3s, color 0.3s, fill 0.3s;
+}
+
+.mb-l a,
+.mb-l svg {
+    color: #06c755;
+    fill: #06c755;
+    transition: color 0.3s, fill 0.3s;
+}
+
+.mb-l:hover {
+    background: linear-gradient(135deg, #11d0c9, #11d77b, #06c755); 
+    color: var(--text-hover);
+}
+
+.mb-l:hover a {
+    color: var(--text-hover);
+}
+
+.mb-l:hover svg {
     fill: var(--text-hover);
 }
 
@@ -547,6 +605,16 @@ h1, h2, h3, h4, h5 ,h6{
     .img-box{
         width: 100% !important;
     }
+
+    .fc-ct{
+        max-width: 650px !important;
+        grid-template-columns: none !important;
+    }
+
+    .fc-btn.fc-btn.primary, .fc-btn.ghost{
+        width: 100%;
+        text-align: center;
+    }
 }
 
 @media (max-width:690px) {
@@ -659,8 +727,8 @@ h1, h2, h3, h4, h5 ,h6{
 }
 
 .img-box {
-    max-height: 400px;
-    width: 25%;
+    aspect-ratio: 4/3;
+    width: 33.33%;
     overflow: hidden;
     position: relative;
     color: white;
@@ -814,6 +882,11 @@ h1, h2, h3, h4, h5 ,h6{
     color: var(--text-color--);
 }
 
+.ct-da{
+    display: grid;
+    grid-template-columns: 24px auto;
+}
+
 .ct-da svg{
     fill: var(--text-color--);
     width: 1.1rem;
@@ -895,4 +968,108 @@ h1, h2, h3, h4, h5 ,h6{
 
 .button-17:disabled {
   box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
+
+.fc-ct {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .fc-tt {
+      text-align: left;
+      justify-content: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .fc-sb {
+      font-size: 24px;
+      font-weight: 400;
+      color: #555;
+      margin-bottom: 24px;
+    }
+
+    .fc-d {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #333;
+      margin-bottom: 40px;
+      max-width: 500px;
+    }
+
+    .fc-ac {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .fc-btn {
+      font-size: 16px;
+      padding: 14px 32px;
+      border-radius: 40px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .fc-btn.primary {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .fc-btn.primary:hover {
+      background-color: #333;
+    }
+
+    .fc-btn.ghost {
+      background-color: transparent;
+      color: #000;
+      border: 2px solid #000;
+    }
+
+    .fc-btn.ghost:hover {
+      background-color: #f2f2f2;
+    }
+
+    .fc-image img {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 40px 60px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Overlay สำหรับแสดงรายละเอียด */
+    #fandom-extra {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      padding: 40px;
+      box-sizing: border-box;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .if {
+      max-width: 650px;
+      margin: auto;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+    }
+
+.if .h-sec{
+    font-family: 'Noto Sans Thai';
+}
+
+.fandom-links {
+    display: flex;
+    gap: 24px;
+    flex-direction: column;
 }
