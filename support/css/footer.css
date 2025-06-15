@@ -1,0 +1,35 @@
+.collaboration {
+    text-align: center;
+    padding: 12px 24px;
+    font-size: 12px;
+    background-color: #f8fafc;
+    color: #94a3b8;
+}
+
+.footer-bottom {
+    padding: 15px 0;
+    background-color: #ffe4e6;
+    color: #665b5c;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.container, .container-fluid {
+    --bs-gutter-x: 3rem;
+}
+
+.ft-license {
+    font-size: 10px;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+p {
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+    margin: 0;
+}
