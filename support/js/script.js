@@ -55,3 +55,33 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+function toggleFandom() {
+  const overlay = document.getElementById('fandom-extra');
+  const btn = document.getElementById('toggle-btn');
+
+  const isOpen = !overlay.classList.contains('nm-hidden');
+  overlay.classList.toggle('nm-hidden');
+
+  btn.textContent = isOpen ? 'ดูรายละเอียด' : 'ปิดรายละเอียด';
+}
+
+// ปิดเมื่อกด ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('fandom-extra');
+    if (!overlay.classList.contains('nm-hidden')) {
+      toggleFandom();
+    }
+  }
+});
+
+function toggleFandom() {
+      const fandomExtra = document.getElementById('fandom-extra');
+      const btn = document.getElementById('toggle-btn');
+      const isVisible = fandomExtra.style.display === 'flex';
+
+      fandomExtra.style.display = isVisible ? 'none' : 'flex';
+      if (btn) {
+        btn.textContent = isVisible ? 'ดูรายละเอียด' : 'ปิดรายละเอียด';
+      }
+    }
