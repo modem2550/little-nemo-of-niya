@@ -128,7 +128,6 @@ h1, h2, h3, h4, h5 ,h6{
 }
 
 #event{
-    height: calc(100vh- 70px);
     display: flex;
     justify-content: center;
     background-color: #ffffff;
@@ -238,7 +237,7 @@ h1, h2, h3, h4, h5 ,h6{
     font-weight: 800 !important;
     font-size: 3rem;
     color: #f177c2;
-    justify-content: center;
+    text-align: center;
 }
 
 .social .container p{
