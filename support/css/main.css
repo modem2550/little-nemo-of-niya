@@ -156,7 +156,7 @@ h1, h2, h3, h4, h5 ,h6{
     flex-direction: column;
     font-size: 1.16rem;
     font-family: Noto Sans Thai;
-    padding: 90px 50px 50px;
+    padding: 50px;
     margin-top: 75px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     border-radius: 24px;
@@ -509,7 +509,7 @@ h1, h2, h3, h4, h5 ,h6{
     padding-bottom: 80px;
 }
 
-@media (max-width: 1108px) {
+@media (max-width: 1086px) {
     #info{
         height:100%;
     }
@@ -528,6 +528,10 @@ h1, h2, h3, h4, h5 ,h6{
         padding: 80px 20px;
         border-radius: 12px;
         text-align: center;
+    }
+
+    .br-i{
+        padding: 90px 50px 50px;
     }
 
     .br-i h2 {
