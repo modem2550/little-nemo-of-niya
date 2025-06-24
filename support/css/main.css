@@ -841,14 +841,14 @@ h1, h2, h3, h4, h5 ,h6{
 }
 
 .da-pt{
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     max-width: 289.25px;
     transition: 0.3s;
 }
 
 .da-pt:hover{
-    transform: scale(1.05);
+    transform: scale(1.02);
     transition: 0.3s;
 }
 
