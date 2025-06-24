@@ -509,7 +509,7 @@ h1, h2, h3, h4, h5 ,h6{
     padding-bottom: 80px;
 }
 
-@media (max-width: 1086px) {
+@media (max-width: 1073px) {
     #info{
         height:100%;
     }
