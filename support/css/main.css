@@ -843,7 +843,7 @@ h1, h2, h3, h4, h5 ,h6{
 .da-pt{
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
-    max-width: 301.25px;
+    max-width: 289.25px;
     transition: 0.3s;
 }
 
@@ -862,17 +862,18 @@ h1, h2, h3, h4, h5 ,h6{
 
 .da-pt img{
     border-radius: 12px 12px 0 0;
-    max-width: 301.25px;
+    max-width: 289.25px;
 }
 
 .da-col {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(289.25px, 1fr));
+    grid-template-rows: auto auto;
+    justify-items: center;
+    gap: 24px;
     justify-content: center;
     min-height: 454.84px;
     color: var(--text-color--);
-    align-items: center;
 }
 
 .da-sp{
@@ -882,6 +883,7 @@ h1, h2, h3, h4, h5 ,h6{
 
 .da-sp h3{
     margin-top: 0;
+    margin-bottom: 8px;
     color: var(--text-color--);
 }
 
