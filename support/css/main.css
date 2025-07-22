@@ -867,7 +867,7 @@ h1, h2, h3, h4, h5 ,h6{
 .da-pt img{
     border-radius: 12px 12px 0 0;
     max-width: 289.25px;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
 }
 
