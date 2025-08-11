@@ -57,8 +57,7 @@ h1, h2, h3, h4, h5 ,h6{
 }
 
 .hero .name{
-    padding: 100px 50px 60px;;
-    background: linear-gradient(to bottom, #0000, #00000040);
+    padding: 100px 50px 60px;
     color: #fff;
 
 }
@@ -1103,3 +1102,4 @@ h1, h2, h3, h4, h5 ,h6{
     color: #fff; /* ตัวหนังสือเป็นขาว */
     transform: scale(1.05); /* ขยายเบา ๆ */
 }
+
