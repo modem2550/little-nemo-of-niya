@@ -161,7 +161,7 @@ a {
         display: grid;
         background-color: var(--c-light);
         border-radius: var(--r-base);
-        grid-template-columns: 100px auto;
+        grid-template-columns: 80px auto;
         transition: all .4s cubic-bezier(.175, .885, 0, 1);
         box-shadow: 0 13px 10px -7px rgb(0 0 0 / 0)
 }
@@ -173,12 +173,12 @@ a {
 
 .card__img,
 .card__img--hover {
-    aspect-ratio: 5/4;
+    aspect-ratio: 1/1;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    width: 92.8px;
-    height: 116px;
+    height: 80px;
+    border-radius: 5px;
 }
 
 .card_link{
@@ -208,6 +208,10 @@ a {
     font-size: .95rem;
     color: var(--c-content);
     font-weight: 800
+}
+
+.da-sp {
+    padding: 0 1rem;
 }
 
 }
