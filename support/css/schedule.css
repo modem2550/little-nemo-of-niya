@@ -30,6 +30,7 @@ body {
     flex-direction: column;
     min-height: 100dvh;
     scroll-behavior: smooth;
+    background-color: #fdf2f6;
 }
 
 a {
@@ -137,11 +138,6 @@ a {
     color: #665b5c
 }
 
-.container,
-.container-fluid {
-    --bs-gutter-x: 3rem
-}
-
 .ft-license {
     font-size: 10px
 }
@@ -156,106 +152,104 @@ a {
 }
 /* สไตล์ Event Card หลัก (สำหรับ Upcoming/Ongoing - ใช้ main.css) */
 
-.evnet-past{
-    .carded {
-        display: grid;
-        background-color: var(--c-light);
-        border-radius: var(--r-base);
-        grid-template-columns: 80px auto;
-        transition: all .4s cubic-bezier(.175, .885, 0, 1);
-        box-shadow: 0 13px 10px -7px rgb(0 0 0 / 0)
+.event-past .carded {
+    display: grid;
+    background-color: var(--c-light);
+    border-radius: var(--r-base);
+    grid-template-columns: 80px auto;
+    transition: all .4s cubic-bezier(.175, .885, 0, 1);
+    box-shadow: 0 13px 10px -7px rgb(0 0 0 / 0);
 }
 
-.carded:hover{
+.event-past .carded:hover {
     text-decoration: underline;
     color: var(--c-primary);
 }
 
-.card__img,
-.card__img--hover {
+.event-past .card__img,
+.event-past .card__img--hover {
     aspect-ratio: 1/1;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-position: top;
     height: 80px;
     border-radius: 5px;
 }
 
-.card_link{
+.event-past .card_link {
     display: none;
 }
 
-.card__info .card_link{
+.event-past .card__info .card_link {
     display: block;
 }
 
-.card__img {
+.event-past .card__img {
     visibility: unset;
 }
 
-.carded:hover .card__info {
-    background: #fff0;
-    position: relative
-}
-
-.ct-da p {
-    margin: 0;
-    font-size: .75rem;
-    color: var(--c-content)
-}
-
-.da-sp .h5 {
-    font-size: .95rem;
-    color: var(--c-content);
-    font-weight: 800
-}
-
-.da-sp {
+.event-past .da-sp {
     padding: 0 1rem;
 }
 
+.event-past .ct-da p {
+    margin: 0;
+    font-size: .75rem;
+    color: var(--c-content);
+}
+
+.event-past .da-sp .h5 {
+    font-size: .95rem;
+    color: var(--c-content);
+    font-weight: 800;
+}
+
+
+main.page-main {
+    padding: 24px;
+    margin-top: 108px;
 }
 
 .carded {
-    width: 289.25px;
+    width: 100%;
     background: #fff;
     border-radius: var(--r-base);
     overflow: hidden;
     position: relative;
     transition: all .4s cubic-bezier(.175, .885, 0, 1);
-    box-shadow: 0 13px 10px -7px rgb(0 0 0 / .1)
+    
 }
 
 .card__img,
 .card__img--hover {
     background-size: cover;
-    background-position: center;
+    background-position: top;
     background-repeat: no-repeat;
+    aspect-ratio: 1/1;
     width: 100%;
-    height: 289.25px;
-    border-radius: var(--r-base) var(--r-base) 0 0
+    border-radius: var(--r-base) var(--r-base) 0 0;
+    transition: 0.2s all ease-out;
 }
 
 .card__img {
-    visibility: hidden
+    visibility: hidden;
+    transition: 0.2s all ease-out;
 }
 
 .card__img--hover {
     position: absolute;
     top: 0;
-    transition: 0.2s all ease-out
+    transition: transform .4s cubic-bezier(.175, .885, .32, 1), opacity .3s;
 }
 
 .carded:hover .card__img--hover {
-    height: 101%;
+    height: 100%;
     opacity: .3;
     background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent), inset 1.8px 3px 0 -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), inset -2px -2px 0 -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), inset -.3px -1px 4px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 0 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0 1px 5px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0 6px 16px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent)
 }
 
 .carded:hover .card__info {
     background: #fff0;
-    position: relative
+    position: relative;
+    transition: 0.2s all ease-out;
 }
 
 .da-col {
@@ -291,6 +285,7 @@ a {
 }
 
 .da-sp .h5 {
+    font-size: 1.05rem;
     color: var(--c-content);
     font-weight: 800
 }
@@ -341,4 +336,42 @@ a {
 
 .br-i ul li {
     text-align: start
+}
+
+.event-past div article{
+    width: 100%;
+    max-width: 100%;
+}
+
+.event-past .carded:hover {
+    text-decoration: underline;
+    color: var(--c-primary);
+}
+
+.btn {
+    --bs-btn-border-radius: var(--r-round) !important; /* ใช้ตัวแปร */
+}
+
+.btn-primary,
+a {
+    --bs-btn-color: #fff !important;
+    --bs-btn-bg: var(--c-primary) !important; /* ใช้ตัวแปร */
+    --bs-btn-border-color: var(--c-primary) !important; /* ใช้ตัวแปร */
+    --bs-btn-hover-color: #fff !important;
+    --bs-btn-hover-bg: var(--c-primary-hover) !important; /* ใช้ตัวแปร */
+    --bs-btn-hover-border-color: #fa3164 !important;
+    --bs-btn-focus-shadow-rgb: 252, 128, 159 !important;
+    --bs-btn-active-color: #fff !important;
+    --bs-btn-active-bg: #fa3164 !important;
+    --bs-btn-active-border-color: #f91c53 !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: #fff !important;
+    --bs-btn-disabled-bg: var(--c-primary) !important; /* ใช้ตัวแปร */
+    --bs-btn-disabled-border-color: var(--c-primary) !important; /* ใช้ตัวแปร */
+}
+
+.arrow-svg {
+    transform: rotate(-45deg);
+    height: 1em;
+    vertical-align: -.125em
 }
