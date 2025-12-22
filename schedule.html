@@ -62,6 +62,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/tiktok/falcon/embed/embed_lib_v1.0.13.css" id="ttEmbedLibCSS">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     </head>
     <body>
         <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">     
@@ -133,19 +134,20 @@
             </fieldset>
         </header>
 
-        <main style="padding: 24px; margin-top: 108px">
-            <div class="container">
-                <div class="container"><h1 class="text-center fw-800 mb-1 h-sec"><strong>Niya BNK48's Schedule</strong></h1><p class="text-center fw-600 mb-0" style="font-size:18px">ตารางงานและกิจกรรมของนีญ่า</p></div>
-                <div id="upcoming-events-container" class="da-col mb-5">
-                    </div>
-                
+        <main class="page-main">
+            <div>
+                <div><h1 class="text-center fw-800 mb-1 h-sec"><strong>Niya BNK48's Schedule</strong></h1><p class="text-center fw-600 mb-0" style="font-size:18px">ตารางงานและกิจกรรมของนีญ่า</p></div>
+                <div id="upcoming-events-container" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4"></div>
+                <div class="text-center mt-5">
+                    <a class="btn btn-primary btn-rounded fw-600 px-4" href=""> 
+                        <div><strong>Back Home</strong><svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"><use href="#icon-arrow-right"></use></svg></div>
+                    </a>
+                </div>
                 <hr class="my-5">
 
                 <h2 class="h-sec text-center mb-4">Event past</h2>
                 <p class="text-center">กิจกรรมที่ผ่านมา</p>
-                <div id="past-events-container" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 evnet-past">
-                    </div>
-
+                <div id="past-events-container" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 event-past"></div>
             </div>
 
             <script src="/support/js/event.js"></script>
@@ -173,5 +175,6 @@
                 </div>
             </section>
         </footer>
+        
     </body>
 </html>
