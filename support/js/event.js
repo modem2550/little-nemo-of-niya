@@ -215,76 +215,73 @@ async function fetchAndRenderSplitEvents() {
 
 function renderSplitEvents(eventData, containerId, type) {
     const container = document.getElementById(containerId);
-    if (!container) return; 
+    if (!container) return;
 
-    container.innerHTML = ''; 
+    container.innerHTML = '';
+
+    const isBootstrapRow = container.classList.contains('row');
     let finalHtml = '';
-    
-    // กำหนด Class พิเศษตาม Type
-    const specialClass = (type === 'past') ? 'event-past' : ''; 
 
     eventData.forEach(event => {
-        const formattedDate = formatDate(event.date, event.end_date); 
-        
-        // สำหรับ Past Event: ใส่คลาส evnet-past
-        const cardClass = (type === 'past') ? `carded ${specialClass}` : 'carded';
-        
-        const imageStyle = event.image_url 
-                            ? `style="background-image: url('${event.image_url}');"` 
-                            : ''; 
-        
-        // 1. Logic สำหรับ Location (icon-pin)
-        let locationInfoHtml = '';
-        if (event.location && String(event.location).trim() !== '') {
-            locationInfoHtml = `
-                <div class=ct-da>
-                    <svg class="icon" width="32" height="17.59"> <use href="#icon-pin"></use> </svg>
+        const formattedDate = formatDate(event.date, event.end_date);
+
+        const imageStyle = event.image_url
+            ? `style="background-image: url('${event.image_url}');"`
+            : '';
+
+        // Location
+        const locationHtml = event.location && event.location.trim()
+            ? `
+                <div class="ct-da">
+                    <svg class="icon" width="32" height="17.59">
+                        <use href="#icon-pin"></use>
+                    </svg>
                     <p>${event.location}</p>
                 </div>
-            `;
-        }
+            `
+            : '';
 
-        // 2. Logic สำหรับ Live Status
-        let liveInfoHtml = '';
-        if (event.live && String(event.live).trim() !== '') {
-            const platformText = String(event.live).toUpperCase(); // เช่น YOUTUBE
-            liveInfoHtml = `
-                <div class=ct-da>
-                    <svg class="icon" width="16" height="16"> <use href="#icon-live"></use> </svg>
-                    <p>LIVE: ${platformText}</p>
+        // Live
+        const liveHtml = event.live && event.live.trim()
+            ? `
+                <div class="ct-da">
+                    <svg class="icon" width="16" height="16">
+                        <use href="#icon-live"></use>
+                    </svg>
+                    <p>LIVE: ${event.live.toUpperCase()}</p>
                 </div>
-            `;
-        }
-        
-        finalHtml += `
-            <article class="slide-right show ${cardClass}">
-                <div class=card__img ${imageStyle}></div>
-                <a href="${event.link}" class=card_link> 
-                    <div class=card__img--hover ${imageStyle}></div> 
+            `
+            : '';
+
+        const articleHtml = `
+            <article class="slide-right show carded ${type === 'past' ? 'event-past' : ''}">
+                <div class="card__img" ${imageStyle}></div>
+                <a href="${event.link}" class="card_link">
+                    <div class="card__img--hover" ${imageStyle}></div>
                 </a>
-                <div class=card__info>
-                    <a href="${event.link}" class=card_link>
-                        <div class=da-sp>
-                            
-                            <div class=h5>
-                                ${event.title}
-                            </div>
-
-                            ${locationInfoHtml}
-
-                            <div class=ct-da>
-                                <svg class="icon" width="16" height="16"> <use href="#icon-calendar"></use> </svg>
+                <div class="card__info">
+                    <a href="${event.link}" class="card_link">
+                        <div class="da-sp">
+                            <div class="h5">${event.title}</div>
+                            ${locationHtml}
+                            <div class="ct-da">
+                                <svg class="icon" width="16" height="16">
+                                    <use href="#icon-calendar"></use>
+                                </svg>
                                 <p>${formattedDate}</p>
                             </div>
-
-                            ${liveInfoHtml}
-
+                            ${liveHtml}
                         </div>
                     </a>
                 </div>
             </article>
         `;
+
+        // 🔥 ตัดสินใจตาม container
+        finalHtml += isBootstrapRow
+            ? `<div class="col d-flex justify-content-center">${articleHtml}</div>`
+            : articleHtml;
     });
-    
+
     container.insertAdjacentHTML('beforeend', finalHtml);
 }
