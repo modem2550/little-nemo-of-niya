@@ -1,19 +1,46 @@
-[
-    
+[   
     {
-        "date": "2026-02-01",
+        "date": "2026-03-07",
+        "title": "BNK48 & AKB48 Team SH Special Single Handshake Event",
+        "location": "TBC",
+        "link": "https://www.facebook.com/share/p/16wzVCQyjK/",
+        "image_url": "https://pbs.twimg.com/media/G9VlciGa0AEztsx?format=jpg&name=900x900"
+    },
+    {
+        "date": "2026-02-15",
         "title": "BNK48 & CGM48 Sports Day 2026 WAR OF GODDESS",
-        "location": "More information soon",
+        "location": "Island Hall, Paradise Park",
         "link": "https://app.bnk48.com/performance",
         "image_url": "https://img5.pic.in.th/file/secure-sv1/S__47161346.jpg"
     },
     {
+        "date": "2026-02-08",
+        "title": "JAPAN EXPO THAILAND 2026",
+        "location": "centralwOrld",
+        "link": "https://app.bnk48.com/performance",
+        "image_url": "https://pbs.twimg.com/media/G86xFdLagAU0rD8?format=jpg&name=small"
+    },
+    {
+        "date": "2026-01-24",
+        "title": "BNK48 & AKB48 Team SH Special Single First Performance & Special Event",
+        "location": "MBK Center, Avenue A G Floor",
+        "link": "https://www.facebook.com/share/p/16wzVCQyjK/",
+        "image_url": "https://pbs.twimg.com/media/G9VlciGa0AEztsx?format=jpg&name=900x900"
+    },
+    {
+        "date": "2026-01-17",
+        "title": "Busking & Random Play Dance",
+        "location": "Paradise Park",
+        "link": "",
+        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ7lxLUAwQpye0Q41naV0P9IJZ3ZrGz84eiA&s"
+    },
+    {
         "date": "2026-01-10",
         "end_date":"2026-01-11",
-        "title": "BNK48 & CGM48 Sports Day 2026: WAR OF GODDESS – CHILDREN’S DAY",
+        "title": "BNK48 & CGM48 Sports Day 2026: WAR OF GODDESS – Guardians of Goddess",
         "location": "MBK Center, Avenue A G Floor",
-        "link": "https://www.facebook.com/bnk48official/posts/-bnk48cgm48childrensday2026-announced-at-12gatsunokangarooth_1stperf-bnk48-cgm48/1436900224461286/",
-        "image_url": "https://pbs.twimg.com/media/G8lmkVZaYAA62ie?format=jpg&name=medium"
+        "link": "https://www.facebook.com/share/p/1AXhPnF3J5/",
+        "image_url": "https://pbs.twimg.com/media/G9UNQ2nbcAAn1uL?format=jpg&name=small"
     },
     {
         "date": "2025-12-28",
