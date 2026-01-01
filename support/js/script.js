@@ -1,21 +1,152 @@
-document.querySelectorAll(".switcher").forEach(e=>{let t=Array.from(e.querySelectorAll(".switcher__option")),r=t.map(e=>e.querySelector('input[type="radio"]')),i=e.querySelector(".switcher__indicator"),l=Math.max(0,r.findIndex(e=>e&&e.checked)),s=l,a=null;function n(r,l=!0){let a=t[r];if(!a)return;let n=a.getBoundingClientRect(),o=e.getBoundingClientRect();i.style.transition=l?"transform 420ms cubic-bezier(1, 0.0, 0.4, 1)":"none",i.style.width="78px",i.style.height="60px",i.style.transform=`translateX(${n.left-o.left-12}px)`,i.classList.remove("pulse-left","pulse-right"),l&&i.classList.add(r>s?"pulse-right":"pulse-left"),s=r}n(l,!1),t.forEach((e,t)=>{let i=r[t];e.addEventListener("click",t=>{t.preventDefault(),i&&!i.checked&&(i.checked=!0,i.dispatchEvent(new Event("change",{bubbles:!0})));let r=e.getAttribute("data-href");if(r&&r.startsWith("#")){let l=document.querySelector(r);l&&l.scrollIntoView({behavior:"smooth",block:"start"})}}),i&&i.addEventListener("change",()=>{i.checked&&n(l=t,!0)})}),window.addEventListener("resize",()=>{cancelAnimationFrame(a),a=requestAnimationFrame(()=>n(l,!1))})});const observer=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&e.target.classList.add("show")})},{threshold:.2});function openPopup(){document.getElementById("popup-overlay").style.display="flex"}function closePopup(){document.getElementById("popup-overlay").style.display="none"}function toSlug(e){return"string"!=typeof e?"":e.toLowerCase().replace(/\s+/g,"-")}function renderSocialLinks(e){let t=document.getElementById("social-links-container");if(!t)return;let r="";e.forEach(e=>{let t=toSlug(e.platform),i=` 
-            <svg viewBox="0 0 512 512" class="svg-inline--fa fa-${t}" data-icon="${t}" data-prefix="fab" role="img" aria-hidden="true" data-fa-i2svg=""> 
-                <use href="#${e.iconId}"></use> 
+// ==================== SWITCHER ====================
+document.querySelectorAll(".switcher").forEach((switcher) => {
+    const options = Array.from(switcher.querySelectorAll(".switcher__option"));
+    const radios = options.map(opt => opt.querySelector('input[type="radio"]'));
+    const indicator = switcher.querySelector(".switcher__indicator");
+    let currentIndex = Math.max(0, radios.findIndex(r => r && r.checked));
+    let previousIndex = currentIndex;
+    let resizeFrame = null;
+
+    // เลื่อน indicator
+    function moveIndicator(index, animate = true) {
+        const opt = options[index];
+        if (!opt) return;
+        const optRect = opt.getBoundingClientRect();
+        const switcherRect = switcher.getBoundingClientRect();
+        indicator.style.transition = animate ? "transform 420ms cubic-bezier(1, 0.0, 0.4, 1)" : "none";
+        indicator.style.width = "78px";
+        indicator.style.height = "60px";
+        indicator.style.transform = `translateX(${optRect.left - switcherRect.left - 12}px)`;
+        indicator.classList.remove("pulse-left", "pulse-right");
+        if (animate) indicator.classList.add(index > previousIndex ? "pulse-right" : "pulse-left");
+        previousIndex = index;
+    }
+
+    moveIndicator(currentIndex, false);
+
+    // event click / change ของแต่ละ option
+    options.forEach((opt, idx) => {
+        const radio = radios[idx];
+
+        opt.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (radio && !radio.checked) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+
+            const href = opt.getAttribute("data-href");
+            if (href && href.startsWith("#")) {
+                const target = document.querySelector(href);
+                if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        });
+
+        if (radio) {
+            radio.addEventListener("change", () => {
+                if (radio.checked) {
+                    currentIndex = idx;
+                    moveIndicator(currentIndex, true);
+                }
+            });
+        }
+    });
+
+    // ปรับตำแหน่ง indicator เวลาขยาย/ย่อหน้าต่าง
+    window.addEventListener("resize", () => {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(() => moveIndicator(currentIndex, false));
+    });
+});
+
+// ==================== INTERSECTION OBSERVER ====================
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("show");
+    });
+}, { threshold: 0.2 });
+
+// สังเกต element ที่ต้องการ animation
+document.querySelectorAll(".slide-right, .fade-in").forEach(el => observer.observe(el));
+
+// ==================== POPUP ====================
+function openPopup() {
+    document.getElementById("popup-overlay").style.display = "flex";
+}
+function closePopup() {
+    document.getElementById("popup-overlay").style.display = "none";
+}
+
+function toSlug(text) {
+    if (typeof text !== 'string') {
+        // จัดการกรณีที่ input ไม่ใช่ string (เผื่อข้อมูล JSON มีปัญหา)
+        return ''; 
+    }
+    // แปลงเป็นตัวพิมพ์เล็ก และแทนที่ช่องว่างด้วยขีดกลาง
+    return text.toLowerCase().replace(/\s+/g, '-');
+}
+
+function renderSocialLinks(socialLinks) {
+    const container = document.getElementById('social-links-container');
+    if (!container) return; 
+
+    let htmlContent = ''; 
+
+    socialLinks.forEach(item => {
+        // ใช้ toSlug เพื่อสร้างชื่อคลาสจาก platform
+        const slug = toSlug(item.platform); 
+        
+        // 🔸 โครงสร้าง SVG Icon ถูกปรับให้มีคลาสตามตัวอย่างของคุณ
+        const socialIconSvg = ` 
+            <svg viewBox="0 0 512 512" class="svg-inline--fa fa-${slug}" data-icon="${slug}" data-prefix="fab" role="img" aria-hidden="true" data-fa-i2svg=""> 
+                <use href="#${item.iconId}"></use> 
             </svg> 
-        `,l=` 
+        `; 
+        
+        // SVG Arrow (ใช้ icon-arrow-right เดิม) 
+        const arrowSvg = ` 
             <svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"> 
                 <use href="#icon-arrow-right"></use> 
             </svg> 
-        `,s=` 
+        `; 
+        
+        // 🔸 โครงสร้าง HTML ที่ใช้คลาส CSS เดิมทั้งหมด และใช้ tag <a> โดยตรง
+        const linkHtml = ` 
             <div class="d-grid"> 
-                <a href="${e.url}" class="social-box -${t}" target="_blank" title="${e.platform}">
-                    ${i} 
+                <a href="${item.url}" class="social-box -${slug}" target="_blank" title="${item.platform}">
+                    ${socialIconSvg} 
                     <div> 
                         <div class="fw-bold social-margin h6"> 
-                            ${e.platform}${l} 
+                            ${item.platform}${arrowSvg} 
                         </div> 
-                        <div class="fw-bold social-margin h3">${e.username}</div> 
+                        <div class="fw-bold social-margin h4">${item.username}</div> 
                     </div> 
                 </a> 
             </div> 
-        `;r+=s}),t.innerHTML=r}document.querySelectorAll(".slide-right, .fade-in").forEach(e=>observer.observe(e));
+        `; 
+        htmlContent += linkHtml; 
+    }); 
+    container.innerHTML = htmlContent; 
+}
+
+const modal = document.getElementById("adModal");
+    const closeBtn = document.querySelector(".close-btn");
+
+    // แสดง Pop-up หลังจากผ่านไป 2 วินาที (2000ms)
+    window.onload = function() {
+        setTimeout(function() {
+            modal.classList.add("show");
+        }, 200);
+    }
+
+    // เมื่อคลิกปุ่มกากบาท ให้ปิด Pop-up
+    closeBtn.onclick = function() {
+        modal.classList.remove("show");
+    }
+
+    // เมื่อคลิกพื้นที่ว่างข้างนอก Pop-up ให้ปิดด้วย
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.classList.remove("show");
+        }
+    }
