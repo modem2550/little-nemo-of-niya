@@ -80,7 +80,7 @@ function closePopup() {
 function toSlug(text) {
     if (typeof text !== 'string') {
         // จัดการกรณีที่ input ไม่ใช่ string (เผื่อข้อมูล JSON มีปัญหา)
-        return ''; 
+        return '';
     }
     // แปลงเป็นตัวพิมพ์เล็ก และแทนที่ช่องว่างด้วยขีดกลาง
     return text.toLowerCase().replace(/\s+/g, '-');
@@ -88,28 +88,28 @@ function toSlug(text) {
 
 function renderSocialLinks(socialLinks) {
     const container = document.getElementById('social-links-container');
-    if (!container) return; 
+    if (!container) return;
 
-    let htmlContent = ''; 
+    let htmlContent = '';
 
     socialLinks.forEach(item => {
         // ใช้ toSlug เพื่อสร้างชื่อคลาสจาก platform
-        const slug = toSlug(item.platform); 
-        
+        const slug = toSlug(item.platform);
+
         // 🔸 โครงสร้าง SVG Icon ถูกปรับให้มีคลาสตามตัวอย่างของคุณ
         const socialIconSvg = ` 
             <svg viewBox="0 0 512 512" class="svg-inline--fa fa-${slug}" data-icon="${slug}" data-prefix="fab" role="img" aria-hidden="true" data-fa-i2svg=""> 
                 <use href="#${item.iconId}"></use> 
             </svg> 
-        `; 
-        
+        `;
+
         // SVG Arrow (ใช้ icon-arrow-right เดิม) 
         const arrowSvg = ` 
             <svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"> 
                 <use href="#icon-arrow-right"></use> 
             </svg> 
-        `; 
-        
+        `;
+
         // 🔸 โครงสร้าง HTML ที่ใช้คลาส CSS เดิมทั้งหมด และใช้ tag <a> โดยตรง
         const linkHtml = ` 
             <div class="d-grid"> 
@@ -123,30 +123,30 @@ function renderSocialLinks(socialLinks) {
                     </div> 
                 </a> 
             </div> 
-        `; 
-        htmlContent += linkHtml; 
-    }); 
-    container.innerHTML = htmlContent; 
+        `;
+        htmlContent += linkHtml;
+    });
+    container.innerHTML = htmlContent;
 }
 
 const modal = document.getElementById("adModal");
-    const closeBtn = document.querySelector(".close-btn");
+const closeBtn = document.getElementById("closeBtn");
 
-    // แสดง Pop-up หลังจากผ่านไป 2 วินาที (2000ms)
-    window.onload = function() {
-        setTimeout(function() {
-            modal.classList.add("show");
-        }, 200);
-    }
+// 1. สั่งให้แสดงหลังจากโหลดเสร็จ 2 วินาที
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        modal.style.display = "flex";
+    }, 200);
+});
 
-    // เมื่อคลิกปุ่มกากบาท ให้ปิด Pop-up
-    closeBtn.onclick = function() {
-        modal.classList.remove("show");
-    }
+// 2. ปิดเมื่อคลิกที่กากบาท
+closeBtn.onclick = function () {
+    modal.style.display = "none";
+}
 
-    // เมื่อคลิกพื้นที่ว่างข้างนอก Pop-up ให้ปิดด้วย
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.classList.remove("show");
-        }
+// 3. ปิดเมื่อคลิกพื้นที่ข้างนอกกล่อง
+window.onclick = function (event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
     }
+}
