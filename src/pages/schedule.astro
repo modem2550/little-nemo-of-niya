@@ -1,0 +1,70 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import EventCard from '../components/EventCard.astro';
+// ดึงข้อมูลจาก JSON โดยตรง
+import eventData from '../data/event.json';
+
+// --- Logic การจัดการข้อมูล (แทนที่ event.js เดิม) ---
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+// เรียงลำดับวันที่ (ใหม่ไปเก่า)
+const sortedEvents = [...eventData].sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+});
+
+// แยกประเภทงาน
+const upcomingEvents = sortedEvents.filter(event => new Date(event.date) >= today).reverse(); // งานที่จะถึงเอาเก่าขึ้นก่อน
+const pastEvents = sortedEvents.filter(event => new Date(event.date) < today);
+---
+
+<MainLayout title="ตารางงาน - Niya BNK48">
+    <script src="/support/event.js" defer></script>
+    <main class="page-main">
+        <header class="mb-5">
+            <h1 class="text-center fw-800 mb-1 h-sec"><strong>Niya BNK48's Schedule</strong></h1>
+            <p class="text-center fw-600 mb-0" style="font-size:18px">ตารางงานและกิจกรรมของนีญ่า</p>
+        </header>
+
+        <section id="upcoming-events-section">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+                {upcomingEvents.length > 0 ? (
+                    upcomingEvents.map(event => (
+                        <div class="col d-flex justify-content-center">
+                            <EventCard event={event} />
+                        </div>
+                    ))
+                ) : (
+                    <div class="w-100 text-center py-5">
+                        <p class="text-muted italic">ยังไม่มีกิจกรรมประกาศในขณะนี้</p>
+                    </div>
+                )}
+            </div>
+        </section>
+
+        <div class="text-center mt-5">
+            <a class="btn btn-primary btn-rounded fw-600 px-4" href="/"> 
+                <div class="d-flex align-items-center">
+                    <strong>Back Home</strong>
+                    <svg class="icon arrow-svg ms-2" width="24" height="24" style="height:1em;width:1em">
+                        <use href="#icon-arrow-right"></use>
+                    </svg>
+                </div>
+            </a>
+        </div>
+
+        <hr class="my-5">
+
+        <section id="past-events-section">
+            <h2 class="h-sec text-center mb-4">Event past</h2>
+            <p class="text-center mb-4 text-muted">กิจกรรมที่ผ่านมา</p>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 event-past">
+                {pastEvents.map(event => (
+                    <div class="col d-flex justify-content-center">
+                        <EventCard event={event} isPast={true} />
+                    </div>
+                ))}
+            </div>
+        </section>
+    </main>
+</MainLayout>

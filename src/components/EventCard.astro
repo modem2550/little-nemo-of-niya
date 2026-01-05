@@ -1,0 +1,33 @@
+---
+// src/components/EventCard.astro
+const { event, isPast = false } = Astro.props;
+
+// ฟังก์ชันแปลงวันที่ (Logic เดิมจาก event.js)
+const formatDate = (dateString) => {
+    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    const date = new Date(dateString.replace(/-/g, '/'));
+    return `${date.getDate().toString().padStart(2, '0')} ${months[date.getMonth()]} ${date.getFullYear()}`;
+};
+---
+
+<article class={`slide-right show carded ${isPast ? 'event-past' : ''}`}>
+    <div class="card__img" style={`background-image: url(${event.image_url});`}></div>
+    <a href={event.link} class="card_link" target="_blank">
+        <div class="card__img--hover" style={`background-image: url(${event.image_url});`}></div>
+    </a>
+    <div class="card__info">
+        <a href={event.link} class="card_link" target="_blank">
+            <div class="da-sp">
+                <div class="h5">{event.title}</div>
+                <div class="ct-lo">
+                    <svg class="icon" width="16" height="16"><use href="#icon-location"></use></svg>
+                    <p>{event.location}</p>
+                </div>
+                <div class="ct-da">
+                    <svg class="icon" width="16" height="16"><use href="#icon-calendar"></use></svg>
+                    <p>{formatDate(event.date)}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</article>
