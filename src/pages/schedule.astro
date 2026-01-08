@@ -1,32 +1,41 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import EventCard from '../components/EventCard.astro';
-// ดึงข้อมูลจาก JSON โดยตรง
-import eventData from '../data/event.json';
+import { supabase } from '../lib/supabase';
 
-// --- Logic การจัดการข้อมูล (แทนที่ event.js เดิม) ---
+// ดึงข้อมูลจาก Supabase
+const { data: events, error } = await supabase
+  .from('event_data')
+  .select('*')
+  // ดึงมาทั้งหมดก่อน แล้วค่อยมา Filter ด้วย Logic ที่ซับซ้อนขึ้นด้านล่าง
+  .order('date', { ascending: false });
+
+if (error) {
+  console.error('Error fetching events:', error);
+}
+
+// ตั้งค่าวันที่ปัจจุบัน (เซ็ตเวลาเป็น 00:00:00 เพื่อให้เปรียบเทียบแค่วันที่)
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// เรียงลำดับวันที่ (ใหม่ไปเก่า)
-const sortedEvents = [...eventData].sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-});
+// แยกประเภทงานจากข้อมูลที่ได้มา (events)
+const upcomingEvents = events 
+  ? events.filter(event => new Date(event.date.replace(/-/g, '/')) >= today).reverse() 
+  : [];
 
-// แยกประเภทงาน
-const upcomingEvents = sortedEvents.filter(event => new Date(event.date) >= today).reverse(); // งานที่จะถึงเอาเก่าขึ้นก่อน
-const pastEvents = sortedEvents.filter(event => new Date(event.date) < today);
+const pastEvents = events 
+  ? events.filter(event => new Date(event.date.replace(/-/g, '/')) < today) 
+  : [];
 ---
 
-<MainLayout title="ตารางงาน - Niya BNK48">
-    <script src="/support/event.js" defer></script>
+<MainLayout title="Schedule - Niya BNK48's">
     <main class="page-main">
         <header class="mb-5">
             <h1 class="text-center fw-800 mb-1 h-sec"><strong>Niya BNK48's Schedule</strong></h1>
             <p class="text-center fw-600 mb-0" style="font-size:18px">ตารางงานและกิจกรรมของนีญ่า</p>
         </header>
 
-        <section id="upcoming-events-section">
+        <section id="upcoming-events-section" style="padding: 0; background: none;">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
                 {upcomingEvents.length > 0 ? (
                     upcomingEvents.map(event => (
@@ -55,7 +64,7 @@ const pastEvents = sortedEvents.filter(event => new Date(event.date) < today);
 
         <hr class="my-5">
 
-        <section id="past-events-section">
+        <section id="past-events-section" style="padding: 0; background: none;">
             <h2 class="h-sec text-center mb-4">Event past</h2>
             <p class="text-center mb-4 text-muted">กิจกรรมที่ผ่านมา</p>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 event-past">

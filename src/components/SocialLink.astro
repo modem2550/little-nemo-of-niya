@@ -1,22 +1,30 @@
 ---
-// src/components/SocialBox.astro
-const { item } = Astro.props;
-const slug = item.platform.toLowerCase().replace(/ /g, '-').replace(/[()]/g, '');
+import socialData from "../data/social.json";
 ---
 
-<div class="d-grid">
-    <a href={item.url} class={`social-box -${slug}`} target="_blank" title={item.platform}>
-        <svg class="icon social-icon" width="32" height="32">
-            <use href={`#${item.iconId}`}></use>
-        </svg>
-        <div>
-            <div class="fw-bold social-margin h6">
-                {item.platform}
-                <svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em">
-                    <use href="#icon-arrow-right"></use>
-                </svg>
+<div id="social-links-container">
+  <div class="row g-3">
+    {socialData.map((social) => (
+      <div class="col-6 col-md-4">
+        <a
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-decoration-none"
+          title={social.platform}
+        >
+          <div class="social-box p-3 border rounded text-center h-100 shadow-sm">
+            <div class="fw-bold text-dark">
+              {social.platform}
             </div>
-            <div class="fw-bold social-margin h4">{item.username}</div>
-        </div>
-    </a>
+
+            {/* ถ้าอยากแสดง username */}
+            <div class="text-muted small">
+              {social.username}
+            </div>
+          </div>
+        </a>
+      </div>
+    ))}
+  </div>
 </div>

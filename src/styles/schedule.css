@@ -241,7 +241,7 @@ main.page-main {
 }
 
 .carded:hover .card__img--hover {
-    height: 100%;
+    height: 101%;
     opacity: .3;
     background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
 }
@@ -269,7 +269,8 @@ main.page-main {
 
 .ct-da {
     display: grid;
-    grid-template-columns: var(--r-large) auto
+    grid-template-columns: var(--r-large) auto;
+    align-items: center;
 }
 
 .ct-da svg {
@@ -374,4 +375,8 @@ a {
     transform: rotate(-45deg);
     height: 1em;
     vertical-align: -.125em
+}
+
+#upcoming-events-container {
+    padding: 0 !important;
 }

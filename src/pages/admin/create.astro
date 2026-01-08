@@ -1,0 +1,46 @@
+---
+export const prerender = false;
+
+import { supabaseAdmin } from "../../lib/supabaseAdmin";
+import "../../styles/main.css";
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+
+  const payload = {
+    title: form.get("title"),
+    date: form.get("date"),
+    end_date: form.get("end_date") || null,
+    location: form.get("location"),
+    link: form.get("link"),
+    image_url: form.get("image_url"),
+    live: form.get("live") || null, // text
+  };
+
+  const { error } = await supabaseAdmin
+    .from("event_data")
+    .insert(payload);
+
+  if (error) {
+    return new Response(error.message, { status: 500 });
+  }
+
+  return Astro.redirect("/admin");
+}
+---
+
+<meta charset="UTF-8" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<h1>เพิ่ม Event ใหม่</h1>
+
+<form method="POST">
+    <label>ชื่อกิจกรรม <input name="title" required /></label>
+    <label>วันที่ <input type="date" name="date" required /></label>
+    <label>ถึงวันที่ <input type="date" name="end_date" /></label>
+    <label>สถานที่ <input name="location" /></label>
+    <label>ลิงก์ <input name="link" /></label>
+    <label>รูปภาพ (URL) <input name="image_url" /></label>
+    <label>Live <input name="live" /></label>
+
+    <button type="submit">บันทึก</button>
+</form>
