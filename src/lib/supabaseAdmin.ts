@@ -1,16 +1,22 @@
-// lib/supabaseAdmin.ts
+/// <reference types="vite/client" />
 import { createClient } from "@supabase/supabase-js";
 
-// อ่าน Environment Variables จาก server (Vercel / local)
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const adminToken = import.meta.env.ADMIN_TOKEN;
 
-// เช็คก่อนว่ามีค่า
-if (!supabaseUrl || !supabaseServiceRoleKey) {
+if (!supabaseUrl || !adminToken) {
   throw new Error(
-    "Environment Variables ของ Supabase Admin ไม่ถูกตั้งค่า! โปรดตรวจสอบ SUPABASE_URL และ SUPABASE_SERVICE_ROLE_KEY"
+    "Missing Supabase admin environment variables. " +
+    "Please check PUBLIC_SUPABASE_URL and ADMIN_TOKEN are set."
   );
 }
 
-// สร้าง Supabase client สำหรับ server-side (full access)
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
+// Admin client - ใช้เฉพาะฝั่ง server!
+const supabaseAdmin = createClient(supabaseUrl, adminToken, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+});
+
+export { supabaseAdmin };
