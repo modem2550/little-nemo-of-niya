@@ -9,8 +9,4 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-console.log("Checking Supabase Config...");
-console.log("URL exists:", !!import.meta.env.PUBLIC_SUPABASE_URL);
-
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-// ... ส่วนที่เหลือ
+export { supabase };
