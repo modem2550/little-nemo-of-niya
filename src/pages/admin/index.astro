@@ -69,40 +69,41 @@ if (error) console.error(error);
     </div>
 
     <script>
-        async function deleteEvent(id) {
-            if (!confirm('แน่ใจว่าต้องการลบกิจกรรมนี้?')) return;
-            
-            try {
-                const response = await fetch('/api/admin-event-delete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: parseInt(id) })
-                });
-                
-                if (response.ok) {
-                alert('ลบสำเร็จ!');
-                window.location.reload();
-                } else {
-                const result = await response.json();
-                alert(`เกิดข้อผิดพลาด: ${result.error || 'Unknown error'}`);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
-            }
-            }
+  async function deleteEvent(id: string) {
+    if (!confirm('แน่ใจว่าต้องการลบกิจกรรมนี้?')) return;
+    
+    try {
+      const response = await fetch('/api/admin-event-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: parseInt(id) })
+      });
+      
+      if (response.ok) {
+        alert('ลบสำเร็จ!');
+        window.location.reload();
+      } else {
+        const result = await response.json();
+        alert('เกิดข้อผิดพลาด: ' + (result.error || 'Unknown error')); // แก้ตรงนี้
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+    }
+  }
 
-            // แก้ไขตรงนี้ - เพิ่ม async ใน event listener
-            document.addEventListener('DOMContentLoaded', () => {
-                document.querySelectorAll('.delete-btn').forEach(button => {
-                    button.addEventListener('click', async () => {
-                    const eventId = (button as HTMLButtonElement).dataset.eventId;
-                    if (eventId) {
-                        await deleteEvent(eventId);
-                    }
-                    });
-                });
-            });
-        </script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const deleteButtons = document.querySelectorAll<HTMLButtonElement>('.delete-btn');
+    
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', async () => {  // ต้องมี async ตรงนี้!
+        const eventId = button.dataset.eventId;
+        if (eventId) {
+          await deleteEvent(eventId);
+        }
+      });
+    });
+  });
+</script>
     </body>
 </html>
