@@ -6,7 +6,7 @@ import EventCard from '../components/EventCard.astro';
 import socialData from '../data/social.json';
 
 // ✅ ดึง Events จาก Supabase
-import { supabase } from '../lib/supabase.js';
+import { supabase } from '../lib/supabase';
 
 // ดึงข้อมูล Events จาก Supabase
 const { data: events, error } = await supabase
