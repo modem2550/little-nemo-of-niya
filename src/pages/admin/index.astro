@@ -1,76 +1,63 @@
 ---
-import { supabaseAdmin } from '../../lib/supabaseAdmin';
+import { supabaseAdmin } from "../../lib/supabaseAdmin";
 import "../../styles/main.css";
 
-//const auth = Astro.request.headers.get("authorization");
-
-//if (auth !== `Bearer ${import.meta.env.ADMIN_TOKEN}`) {
-//  return new Response("Unauthorized", { status: 401 });
-//}
 const { data: events, error } = await supabaseAdmin
-    .from('event_data')
-    .select('*')
-    .order('date', { ascending: false });
+  .from("event_data")
+  .select("*")
+  .order("date", { ascending: false });
 
-if (Astro.request.method === "POST") {
-    const formData = await Astro.request.formData();
-    const id = formData.get("id");
-    await supabaseAdmin.from('event_data').delete().eq('id', id);
-    return Astro.redirect('/admin'); // Refresh หน้า
-} else if (error) {
-    console.error('Error fetching events:', error);
-}
+if (error) console.error(error);
 ---
 
 <meta charset="UTF-8" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<div class="container">
 
-    <section>
-        <h1>Event Management</h1>
-        <a href="/admin/create">เพิ่มกิจกรรมใหม่</a>
-        <table>
-            <thead>
-                <tr>
-                <th>Title</th>
-                <th>Date</th>
-                <th>End Date</th>
-                <th>Location (option)</th>
-                <th>Link</th>
-                <th>Image URL</th>
-                <th>Live</th>
-                </tr>
-            </thead>
-            <tbody>
-                {events?.map((event) => (
-                <tr>
-                    <td>{event.title}</td>
-                    <td>{event.date}</td>
-                    <td>{event.end_date}</td>
-                    <td>{event.location}</td>
-                    <td>{event.link}</td>
-                    <td>{event.image_url}</td>
-                    <td>{event.live}</td>
-                    <td>
-                    <a href={`/admin/edit/${event.id}`}>แก้ไข</a>
-                    <form method="POST" style="display:inline;">
-                        <input type="hidden" name="id" value={event.id} />
-                        <button type="submit" onclick="return confirm('ยืนยันการลบ?')">ลบ</button>
-                    </form>
-                    </td>
-                </tr>
-                ))}
-            </tbody>
-        </table>
-    </section>  
+<div class="container">
+  <h1>Event Management</h1>
+  <a href="/admin/create" class="btn btn-success mb-3">เพิ่มกิจกรรมใหม่</a>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Date</th>
+        <th>End Date</th>
+        <th>Location</th>
+        <th>Link</th>
+        <th>Image</th>
+        <th>Live</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {events?.map((event) => (
+        <tr>
+          <td>{event.title}</td>
+          <td>{event.date}</td>
+          <td>{event.end_date}</td>
+          <td>{event.location}</td>
+          <td>{event.link}</td>
+          <td>{event.image_url}</td>
+          <td>{event.live}</td>
+          <td>
+            <a href={`/admin/edit/${event.id}`} class="btn btn-primary btn-sm">แก้ไข</a>
+            <button class="btn btn-danger btn-sm" onclick={`deleteEvent(${event.id})`}>ลบ</button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
 </div>
 
-<style>
-    body {
-        overflow: scroll;
-    }
+<script>
+async function deleteEvent(id) {
+  if (!confirm("ยืนยันการลบ?")) return;
+  const formData = new FormData();
+  formData.append("id", id);
 
-    section {
-        background-color: none;
-    }
-</style>
+  const res = await fetch("/api/admin-event-delete", { method: "POST", body: formData });
+  if (res.ok) window.location.reload();
+  else alert(await res.text());
+}
+</script>

@@ -1,6 +1,6 @@
 import { e as createComponent, l as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_cZ6mB_Wd.mjs';
 import 'piccolore';
-import { s as supabase, $ as $$MainLayout, a as $$EventCard } from '../chunks/supabase_DvvaIrRq.mjs';
+import { s as supabase, $ as $$MainLayout, a as $$EventCard } from '../chunks/supabase_CZv2cxNX.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$Schedule = createComponent(async ($$result, $$props, $$slots) => {
