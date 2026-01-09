@@ -1,6 +1,7 @@
+/// <reference types="vite/client" />
 import { createClient } from "@supabase/supabase-js";
 
-export const supabasePublic = createClient(
-  import.meta.env.PUBLIC_SUPABASE_URL,
+const supabase = createClient(
+  import.meta.env.PUBLIC_SUPABASE_URL,  // client-safe
   import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 );
