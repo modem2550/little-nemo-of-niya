@@ -133,7 +133,6 @@ section {
     background-repeat: no-repeat;
     aspect-ratio: 1/1;
     width: 100%;
-    border-radius: var(--r-base) var(--r-base) 0 0
 }
 
 .card__img {

@@ -6,6 +6,7 @@
 .event-past .carded {
     display: grid;
     background-color: var(--c-light);
+    border-radius: 5px;
     grid-template-columns: 80px auto;
     transition: all .4s cubic-bezier(.175, .885, 0, 1);
     box-shadow: 0 13px 10px -7px rgb(0 0 0 / 0);
@@ -19,6 +20,7 @@
 .event-past .card__img,
 .event-past .card__img--hover {
     aspect-ratio: 1/1;
+    border-radius: 5px;
     background-position: top;
     height: 80px;
 }
