@@ -4,4 +4,7 @@ import vercel from '@astrojs/vercel'; // ตรวจสอบว่าใช้
 export default defineConfig({
   output: 'server', // หรือ 'hybrid'
   adapter: vercel(),
+  image: {
+    domains: ['https://kqfnhyaktxgulhitdvqq.supabase.co'],
+  },
 });

@@ -215,7 +215,10 @@ main.page-main {
     overflow: hidden;
     position: relative;
     transition: all .4s cubic-bezier(.175, .885, 0, 1);
-    
+}
+
+.carded .event-past{
+    border-radius: none;
 }
 
 .card__img,
