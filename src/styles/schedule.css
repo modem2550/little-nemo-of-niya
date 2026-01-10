@@ -21,7 +21,6 @@
     aspect-ratio: 1/1;
     background-position: top;
     height: 80px;
-    border-radius: 5px;
 }
 
 .event-past .card_link {
@@ -78,7 +77,6 @@ main.page-main {
     background-repeat: no-repeat;
     aspect-ratio: 1/1;
     width: 100%;
-    border-radius: var(--r-base) var(--r-base) 0 0;
     transition: 0.2s all ease-out;
 }
 
