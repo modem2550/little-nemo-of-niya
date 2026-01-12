@@ -12,11 +12,6 @@
     box-shadow: 0 13px 10px -7px rgb(0 0 0 / 0);
 }
 
-.event-past .carded:hover {
-    text-decoration: underline;
-    color: var(--c-primary);
-}
-
 .event-past .card__img,
 .event-past .card__img--hover {
     aspect-ratio: 1/1;

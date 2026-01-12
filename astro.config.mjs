@@ -7,4 +7,7 @@ export default defineConfig({
   image: {
     domains: ['https://kqfnhyaktxgulhitdvqq.supabase.co'],
   },
+  redirects: {
+    '/events-images/[...slug]': 'https://kqfnhyaktxgulhitdvqq.supabase.co/storage/v1/object/public/event-images/events/[...slug]'
+  },
 });

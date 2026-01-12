@@ -48,7 +48,7 @@ export async function POST({ request }) {
         .from('event-images')
         .getPublicUrl(filePath);
 
-      urls[size] = publicUrl;
+      urls[size] = filePath;
     }
 
     return new Response(

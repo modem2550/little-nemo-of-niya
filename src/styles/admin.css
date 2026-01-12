@@ -17,12 +17,12 @@ input {
 
 .header-actions {
     display: flex;
-    gap: 1rem;
     margin: 2rem;
-    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .btn-create {
+    width: 100%;
     background: var(--c-primary);
     color: white;
     border: none;
@@ -101,7 +101,7 @@ input {
 }
 
 .table tbody td {
-    padding: 1rem;
+    padding: 5px;
     vertical-align: middle;
 }
 
@@ -115,7 +115,7 @@ input {
 
 .event-thumb {
     width: 80px;
-    height: 53px;
+    height: 80px;
     object-fit: cover;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -145,10 +145,10 @@ input {
 .badge-live {
     background: var(--c-primary);
     color: white;
+    text-align: center;
     padding: 0.25rem 0.75rem;
     border-radius: var(--r-round);
     font-size: 0.85rem;
-    font-weight: 600;
 }
 
 .action-buttons {
@@ -159,7 +159,7 @@ input {
 
 .btn-edit {
     padding: 0.18rem;
-    background: var(--c-primary);
+    background: #00AEEF;
     color: white;
     border: none;
     border-radius: var(--r-round);
@@ -177,8 +177,8 @@ input {
 
 .btn-delete {
     background: white;
-    color: var(--c-primary);
-    border: 2px solid var(--c-primary);
+    color: var(--c-primary-hover);
+    border: 2px solid var(--c-primary-hover);
     border-radius: var(--r-round);
     font-weight: 600;
     font-size: 0.875rem;
@@ -186,7 +186,7 @@ input {
 }
 
 .btn-delete:hover {
-    background: var(--c-primary);
+    background: var(--c-primary-hover);
     color: white;
 }
 
@@ -214,12 +214,6 @@ input {
 
     .action-buttons {
         flex-direction: row;
-    }
-
-    .btn-edit,
-    .btn-delete {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.8rem;
     }
 }
 
@@ -411,6 +405,7 @@ input {
 }
 
 .btn-cancel {
+    width: 100%;
     padding: 0.875rem 2rem;
     font-weight: 600;
     border-radius: var(--r-round);
@@ -432,15 +427,21 @@ input {
 }
 
 .btn-submit {
+    width: 100%;
     flex: 1;
     padding: 0.875rem 2rem;
     font-weight: 600;
     border-radius: var(--r-round);
     border: none;
-    background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-primary-hover) 100%);
+    background: var(--c-primary);
     color: white;
     transition: all 0.3s ease;
     font-size: 1rem;
+}
+
+.btn-submit:hover {
+    background-color: var(--c-primary-hover);
+    color: white;
 }
 
 .btn-submit:disabled {
@@ -451,11 +452,6 @@ input {
 @media (max-width: 768px) {
     .create-body {
         padding: 1.5rem;
-    }
-
-    .btn-submit,
-    .btn-cancel {
-        width: 100%;
     }
 
     .preview-grid {
@@ -527,8 +523,10 @@ input {
     .action-buttons {
         flex-direction: column-reverse;
     }
+}
 
-    .btn-cancel {
-        width: 100%;
+@media (max-width: 423px) {
+    .header-actions{
+        flex-direction: column;
     }
 }

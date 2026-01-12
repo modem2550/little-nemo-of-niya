@@ -17,44 +17,6 @@ const { data: event, error: fetchError } = await supabaseAdmin
 if (fetchError || !event) {
   return new Response("Not found", { status: 404 });
 }
-
-// ===== POST =====
-if (Astro.request.method === "POST") {
-  const form = await Astro.request.formData();
-
-  const date = form.get("date") || null;
-  const end_date = form.get("end_date") || null;
-
-  if (date && end_date && end_date < date) {
-    return new Response("end_date ห้ามน้อยกว่า date", { status: 400 });
-  }
-
-  const payload = {
-    title: form.get("title"),
-    date: form.get("date") || null,
-    end_date: form.get("end_date") || null,
-    location: form.get("location"),
-    link: form.get("link"),
-    image_url: form.get("image_url"),
-    live: form.get("live") || null,
-  };
-
-  const { data, error } = await supabaseAdmin
-    .from("event_data")
-    .update(payload)
-    .eq("id", Number(id))
-    .select();
-
-  console.log(data, error);
-  if (error) {
-    return new Response(
-      JSON.stringify(error, null, 2),
-      { status: 500 }
-    );
-  }
-
-  return Astro.redirect("/admin");
-}
 ---
 
 <!DOCTYPE html>
@@ -162,39 +124,105 @@ if (Astro.request.method === "POST") {
             </div>
           </div>
 
-          <!-- รูปภาพและสถานะ -->
+          <!-- รูปภาพ -->
           <div class="form-section">
-            <div class="section-title">รูปภาพและสถานะ</div>
+            <div class="section-title">รูปภาพกิจกรรม</div>
             
-            <div class="mb-3">
-              <label for="image_url" class="form-label">URL รูปภาพ</label>
-              <input 
-                type="url" 
-                class="form-control" 
-                id="image_url" 
-                name="image_url" 
-                value={event.image_url || ''} 
-                placeholder="https://..."
-              />
-              {event.image_url && (
-                <div class="image-preview">
-                  <img src={event.image_url} alt="Preview" />
+            <!-- แสดงรูปเก่า (ถ้ามี) -->
+            {(event.image_url || event.image_urls) && (
+              <div class="mb-3">
+                <label class="form-label">รูปภาพปัจจุบัน</label>
+                <div class="current-image-preview">
+                  {event.image_urls ? (
+                    <img 
+                      src={event.image_urls.medium || event.image_urls.small || event.image_urls.large} 
+                      alt="Current event image" 
+                      style="max-width: 300px; border-radius: 8px;"
+                    />
+                  ) : event.image_url ? (
+                    <img 
+                      src={event.image_url} 
+                      alt="Current event image" 
+                      style="max-width: 300px; border-radius: 8px;"
+                    />
+                  ) : null}
                 </div>
-              )}
+                <small class="helper-text">อัปโหลดรูปใหม่ด้านล่างเพื่อแทนที่</small>
+              </div>
+            )}
+
+            <div class="mb-3">
+              <label for="imageFile" class="form-label">เลือกรูปภาพใหม่ (ถ้าต้องการเปลี่ยน)</label>
+              <input 
+                type="file" 
+                class="form-control" 
+                id="imageFile" 
+                accept="image/*"
+              />
+              <small class="helper-text">
+                รองรับ: JPG, PNG, GIF (สูงสุด 10MB) • จะถูก optimize อัตโนมัติเป็น 4 ขนาด
+              </small>
             </div>
 
-            
+            <!-- Progress Section -->
+            <div id="progressSection" class="progress-section">
+              <h6 class="mb-3">
+                <span class="spinner-border spinner-border-sm"></span>
+                <span>กำลังประมวลผลรูปภาพ...</span>
+              </h6>
+              
+              <div class="size-progress">
+                <label class="form-label">Thumbnail (150px)</label>
+                <div class="progress">
+                  <div id="progress-thumbnail" class="progress-bar" role="progressbar">0%</div>
+                </div>
+              </div>
+
+              <div class="size-progress">
+                <label class="form-label">Small (640px)</label>
+                <div class="progress">
+                  <div id="progress-small" class="progress-bar" role="progressbar">0%</div>
+                </div>
+              </div>
+
+              <div class="size-progress">
+                <label class="form-label">Medium (1024px)</label>
+                <div class="progress">
+                  <div id="progress-medium" class="progress-bar" role="progressbar">0%</div>
+                </div>
+              </div>
+
+              <div class="size-progress">
+                <label class="form-label">Large (1920px)</label>
+                <div class="progress">
+                  <div id="progress-large" class="progress-bar" role="progressbar">0%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preview Grid -->
+            <div id="previewGrid" class="preview-grid"></div>
+          </div>
+
+          <!-- Upload Status -->
+          <div id="uploadSection" class="upload-section">
+            <div class="d-flex align-items-center">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              <span id="uploadStatus">กำลังประมวลผล...</span>
+            </div>
           </div>
 
           <!-- Action Buttons -->
-          <div class="action-buttons">
-            <a href="/admin" class="btn-cancel">
-              ← ยกเลิก
-            </a>
-            <button type="submit" class="btn-submit" id="submitBtn">
-              <span id="submitText">บันทึกการแก้ไข</span>
-              <span id="submitSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
-            </button>
+          <div class="row">
+            <div class="col-12 col-lg-6 mb-3">
+              <a href="/admin" class="btn-cancel">← ยกเลิก</a>
+            </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <button type="submit" id="submitBtn" class="btn-submit">
+                <span id="submitText">บันทึกการแก้ไข</span>
+                <span id="submitSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -202,53 +230,96 @@ if (Astro.request.method === "POST") {
   </div>
 
   <script>
-    const form = document.getElementById("editForm") as HTMLFormElement;
-    const submitBtn = document.getElementById("submitBtn") as HTMLButtonElement;
-    const submitText = document.getElementById("submitText") as HTMLElement;
-    const submitSpinner = document.getElementById("submitSpinner") as HTMLElement;
+    import { 
+      generateResponsiveImages, 
+      validateImageFile, 
+      formatFileSize 
+    } from '../../../lib/imageOptimizer';
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    const form = document.getElementById('editForm') as HTMLFormElement;
+    const imageFile = document.getElementById('imageFile') as HTMLInputElement;
+    const progressSection = document.getElementById('progressSection') as HTMLElement;
+    const previewGrid = document.getElementById('previewGrid') as HTMLElement;
+    const uploadSection = document.getElementById('uploadSection') as HTMLElement;
+    const uploadStatus = document.getElementById('uploadStatus') as HTMLElement;
+    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+    const submitText = document.getElementById('submitText') as HTMLElement;
+    const submitSpinner = document.getElementById('submitSpinner') as HTMLElement;
 
-      // Disable button
-      submitBtn.disabled = true;
-      submitText.textContent = "กำลังบันทึก...";
-      submitSpinner.style.display = "inline-block";
+    let generatedImages: any = null;
 
-      const data = new FormData(form);
+    // Handle image selection
+    imageFile.addEventListener('change', async (e) => {
+      const target = e.target as HTMLInputElement;
+      const file = target.files?.[0];
+      
+      if (!file) {
+        generatedImages = null;
+        return;
+      }
+
+      // Validate file
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        alert(validation.error);
+        imageFile.value = '';
+        generatedImages = null;
+        return;
+      }
 
       try {
-        const res = await fetch("/api/admin-event-edit", {
-          method: "POST",
-          body: data
+        // Show progress section
+        progressSection.classList.add('active');
+        previewGrid.innerHTML = '';
+        previewGrid.style.display = 'none';
+
+        // Generate responsive images
+        generatedImages = await generateResponsiveImages(file, (progress) => {
+          const sizeKey = progress.size.split(' ')[0].toLowerCase();
+          updateProgress(sizeKey, progress.progress);
         });
 
-        if (res.ok) {
-          submitText.textContent = "✓ บันทึกสำเร็จ!";
-          submitSpinner.style.display = "none";
+        // Show previews
+        previewGrid.style.display = 'grid';
+        for (const [size, imgFile] of Object.entries(generatedImages)) {
+          const url = URL.createObjectURL(imgFile as File);
+          const fileSize = formatFileSize((imgFile as File).size);
           
-          setTimeout(() => {
-            window.location.href = "/admin";
-          }, 500);
-        } else {
-          const text = await res.text();
-          alert("เกิดข้อผิดพลาด: " + text);
+          const sizeLabels: Record<string, string> = {
+            thumbnail: 'Thumbnail',
+            small: 'Small',
+            medium: 'Medium',
+            large: 'Large'
+          };
           
-          // Re-enable button
-          submitBtn.disabled = false;
-          submitText.textContent = "💾 บันทึกการแก้ไข";
-          submitSpinner.style.display = "none";
+          const previewItem = document.createElement('div');
+          previewItem.className = 'preview-item';
+          previewItem.innerHTML = `
+            <img src="${url}" alt="${size}" loading="lazy">
+            <strong>${sizeLabels[size]}</strong>
+            <span class="badge">${fileSize}</span>
+          `;
+          previewGrid.appendChild(previewItem);
         }
-      } catch (err) {
-        console.error(err);
-        alert("เกิดข้อผิดพลาดเครือข่าย");
-        
-        // Re-enable button
-        submitBtn.disabled = false;
-        submitText.textContent = "💾 บันทึกการแก้ไข";
-        submitSpinner.style.display = "none";
+
+        progressSection.classList.remove('active');
+
+      } catch (error: any) {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการประมวลผลรูปภาพ');
+        imageFile.value = '';
+        generatedImages = null;
+        progressSection.classList.remove('active');
       }
     });
+
+    function updateProgress(size: string, percent: number) {
+      const progressBar = document.getElementById(`progress-${size}`);
+      if (progressBar) {
+        progressBar.style.width = `${percent}%`;
+        progressBar.textContent = `${Math.round(percent)}%`;
+      }
+    }
 
     // Date validation
     const startDate = document.getElementById('date') as HTMLInputElement;
@@ -262,6 +333,102 @@ if (Astro.request.method === "POST") {
         }
       });
     }
+
+    // Handle form submit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+      }
+
+      try {
+        // Disable submit button
+        submitBtn.disabled = true;
+        submitText.textContent = 'กำลังบันทึก...';
+        submitSpinner.style.display = 'inline-block';
+
+        let imageUrls = null;
+
+        // ถ้ามีการอัปโหลดรูปใหม่
+        if (generatedImages) {
+          uploadSection.classList.add('active');
+          uploadStatus.textContent = 'กำลังอัปโหลดรูปภาพใหม่...';
+
+          // Generate unique event ID
+          const eventId = `event-${Date.now()}`;
+
+          // Upload images via API
+          const formData = new FormData();
+          formData.append('eventId', eventId);
+          
+          for (const [size, file] of Object.entries(generatedImages)) {
+            formData.append(size, file as File);
+          }
+
+          const uploadResponse = await fetch('/api/upload-images', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (!uploadResponse.ok) {
+            const error = await uploadResponse.json();
+            throw new Error(error.error || 'Upload failed');
+          }
+
+          const { urls } = await uploadResponse.json();
+          imageUrls = urls;
+
+          uploadStatus.textContent = 'กำลังบันทึกข้อมูล...';
+        }
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('id', (document.querySelector('input[name="id"]') as HTMLInputElement).value);
+        formData.append('title', (document.getElementById('title') as HTMLInputElement).value);
+        formData.append('date', (document.getElementById('date') as HTMLInputElement).value);
+        formData.append('end_date', (document.getElementById('end_date') as HTMLInputElement).value || '');
+        formData.append('location', (document.getElementById('location') as HTMLInputElement).value || '');
+        formData.append('link', (document.getElementById('link') as HTMLInputElement).value || '');
+        formData.append('live', (document.getElementById('live') as HTMLInputElement).value || '');
+
+        // Add image_urls if new images were uploaded
+        if (imageUrls) {
+          formData.append('image_urls', JSON.stringify(imageUrls));
+        }
+
+        // Submit to API
+        const response = await fetch('/api/admin-event-edit', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(text || 'เกิดข้อผิดพลาด');
+        }
+
+        // Success!
+        if (uploadSection.classList.contains('active')) {
+          uploadStatus.textContent = '✓ บันทึกสำเร็จ!';
+        }
+        submitText.textContent = '✓ บันทึกสำเร็จ!';
+        
+        setTimeout(() => {
+          window.location.href = '/admin';
+        }, 500);
+
+      } catch (error: any) {
+        console.error('Error:', error);
+        alert(`เกิดข้อผิดพลาด: ${error.message}`);
+        
+        submitBtn.disabled = false;
+        submitText.textContent = 'บันทึกการแก้ไข';
+        submitSpinner.style.display = 'none';
+        uploadSection.classList.remove('active');
+      }
+    });
   </script>
 </body>
 </html>
