@@ -220,18 +220,38 @@ function renderEvents(eventData, containerId, filterUpcoming) {
     if (!container) return;
 
     container.innerHTML = '';
-    const now = new Date();
-    // ตั้งค่าวันนี้เวลา 00:00:00 เพื่อเทียบวันที่
-    const todayMS = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    // สร้าง "วันนี้" โดยตัดเวลาทิ้ง (00:00:00)
+    const d = new Date();
+    const todayMS = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 
     let finalHtml = '';
     const isBootstrapRow = container.classList.contains('row');
 
-    // กรองข้อมูลตามเงื่อนไข (Upcoming หรือ Past)
     const filteredEvents = eventData.filter(event => {
-        const eventDate = new Date(event.date.replace(/-/g, '/')).getTime();
-        // ถ้าเป็น upcoming ให้เอาเฉพาะวันนี้เป็นต้นไป, ถ้าเป็น past ให้เอาที่ผ่านไปแล้ว
-        return filterUpcoming ? eventDate >= todayMS : eventDate < todayMS;
+        const toMS = (str) => {
+            if (!str) return null;
+            // ตัดเอาเฉพาะ YYYY-MM-DD
+            const datePart = str.split('T')[0].split(' ')[0].replace(/-/g, '/');
+            const parts = datePart.split('/');
+            
+            // สร้าง Date โดยระบุเวลาเป็น 00:00:00 เพื่อให้เทียบกับ todayMS ได้แม่นยำ
+            // และใช้ค่านั้นเป็นตัวเลข MS
+            return new Date(parts[0], parts[1] - 1, parts[2], 0, 0, 0).getTime();
+        };
+
+        const startMS = toMS(event.date);
+        // ตรวจสอบทั้ง end_date และ endDate (เผื่อชื่อคอลัมน์ไม่ตรง)
+        const rawEndDate = event.end_date || event.endDate || null;
+        const endMS = rawEndDate ? toMS(rawEndDate) : startMS;
+
+        if (filterUpcoming) {
+            // งานจะอยู่ Upcoming ถ้า "วันสิ้นสุด" มากกว่าหรือเท่ากับ "วันนี้ (00:00:00)"
+            return endMS !== null && endMS >= todayMS;
+        } else {
+            // งานจะอยู่ Past ถ้า "วันสิ้นสุด" น้อยกว่า "วันนี้"
+            return endMS !== null && endMS < todayMS;
+        }
     });
 
     if (filteredEvents.length === 0) {
@@ -239,22 +259,13 @@ function renderEvents(eventData, containerId, filterUpcoming) {
         return;
     }
 
+    // --- ส่วนสร้าง HTML (คงเดิมตามโค้ดของคุณ) ---
     filteredEvents.forEach(event => {
         const formattedDate = formatDate(event.date, event.end_date);
         const imageStyle = event.image_url ? `style="background-image: url('${event.image_url}')"` : '';
         const specialClass = !filterUpcoming ? 'event-past' : '';
-
-        const locationHtml = event.location ? `
-            <div class="ct-da">
-                <svg class="icon" width="16" height="16"><use href="#icon-pin"></use></svg>
-                <p>${event.location}</p>
-            </div>` : '';
-
-        const liveHtml = event.live ? `
-            <div class="ct-da text-danger">
-                <svg class="icon" width="16" height="16"><use href="#icon-live"></use></svg>
-                <p>LIVE: ${event.live.toUpperCase()}</p>
-            </div>` : '';
+        const locationHtml = event.location ? `<div class="ct-da"><svg class="icon" width="16" height="16"><use href="#icon-pin"></use></svg><p>${event.location}</p></div>` : '';
+        const liveHtml = event.live ? `<div class="ct-da text-danger"><svg class="icon" width="16" height="16"><use href="#icon-live"></use></svg><p>LIVE: ${event.live.toUpperCase()}</p></div>` : '';
 
         const articleHtml = `
             <article class="slide-right show carded ${specialClass}">
@@ -276,25 +287,14 @@ function renderEvents(eventData, containerId, filterUpcoming) {
                     </a>
                 </div>
             </article>`;
-
         finalHtml += isBootstrapRow ? `<div class="col d-flex justify-content-center">${articleHtml}</div>` : articleHtml;
     });
 
     container.innerHTML = finalHtml;
-
-    // สั่งให้ Observer เริ่มทำงานกับ Element ใหม่
     if (typeof observer !== 'undefined') {
         document.querySelectorAll(".slide-right").forEach(el => observer.observe(el));
     }
 }
-
-const SUPABASE_URL = 'https://kqfnhyaktxgulhitdvqq.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxZm5oeWFrdHhndWxoaXRkdnFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2NTIxMzQsImV4cCI6MjA4MzIyODEzNH0.pwtVfQJ2vmJCTLOYW8p8FH9M56qXBJL_rDCvfNWvvmA';
-// ตรวจสอบ Library ก่อนสร้าง Client
-const _supabase = (typeof supabase !== 'undefined')
-    ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-    : null;
-
 // ==================== CORE FUNCTIONS ====================
 
 // 1. ฟังก์ชันดึงข้อมูลหลัก

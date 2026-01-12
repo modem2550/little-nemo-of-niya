@@ -1,0 +1,50 @@
+---
+interface Props {
+  imageUrls?: {
+    thumbnail?: string;
+    small?: string;
+    medium?: string;
+    large?: string;
+  } | null;
+  alt: string;
+  className?: string;
+  sizes?: string;
+}
+
+const { 
+  imageUrls, 
+  alt, 
+  className = '',
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+} = Astro.props;
+
+// Fallback ถ้าไม่มีรูป
+const placeholder = '/img/placeholder.jpg';
+const src = imageUrls?.medium || imageUrls?.small || imageUrls?.large || placeholder;
+
+// สร้าง srcset
+const srcset = imageUrls ? [
+  imageUrls.small && `${imageUrls.small} 640w`,
+  imageUrls.medium && `${imageUrls.medium} 1024w`,
+  imageUrls.large && `${imageUrls.large} 1920w`
+].filter(Boolean).join(', ') : '';
+---
+
+{imageUrls ? (
+  <img
+    src={src}
+    srcset={srcset || undefined}
+    sizes={srcset ? sizes : undefined}
+    alt={alt}
+    class={className}
+    loading="lazy"
+    decoding="async"
+  />
+) : (
+  <img 
+    src={placeholder} 
+    alt={alt} 
+    class={className}
+    loading="lazy"
+  />
+)}

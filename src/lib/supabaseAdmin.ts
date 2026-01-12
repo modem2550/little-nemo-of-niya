@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
@@ -11,12 +10,16 @@ if (!supabaseUrl || !adminToken) {
   );
 }
 
-// Admin client - ใช้เฉพาะฝั่ง server!
-const supabaseAdmin = createClient(supabaseUrl, adminToken, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+console.log("URL:", supabaseUrl);
+console.log("TOKEN:", adminToken ? "Found" : "Not Found");
 
-export { supabaseAdmin };
+export const supabaseAdmin = createClient(
+  supabaseUrl,
+  adminToken,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  }
+);

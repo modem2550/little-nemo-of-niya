@@ -868,15 +868,3 @@ a {
     cursor: pointer
 }
 
-#upcoming-events-section {
-    padding: 0;
-}
-
-input {
-    width: 100%;
-    margin-bottom: 1rem;
-}
-
-.POST {
-    padding: 80px 0;
-}

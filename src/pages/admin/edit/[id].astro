@@ -3,6 +3,7 @@ export const prerender = false;
 
 import { supabaseAdmin } from "../../../lib/supabaseAdmin";
 import "../../../styles/main.css";
+import "../../../styles/admin.css";
 
 const { id } = Astro.params;
 
@@ -23,29 +24,28 @@ if (Astro.request.method === "POST") {
 
   const date = form.get("date") || null;
   const end_date = form.get("end_date") || null;
-  const live = form.get("live") === "on"; // checkbox
 
   if (date && end_date && end_date < date) {
     return new Response("end_date ห้ามน้อยกว่า date", { status: 400 });
   }
 
   const payload = {
-  title: form.get("title"),
-  date: form.get("date") || null,
-  end_date: form.get("end_date") || null,
-  location: form.get("location"),
-  link: form.get("link"),
-  image_url: form.get("image_url"),
-  live: form.get("live") || null, // text
-};
+    title: form.get("title"),
+    date: form.get("date") || null,
+    end_date: form.get("end_date") || null,
+    location: form.get("location"),
+    link: form.get("link"),
+    image_url: form.get("image_url"),
+    live: form.get("live") || null,
+  };
 
-const { data, error } = await supabaseAdmin
-  .from("event_data")
-  .update(payload)
-  .eq("id", Number(id))
-  .select();
+  const { data, error } = await supabaseAdmin
+    .from("event_data")
+    .update(payload)
+    .eq("id", Number(id))
+    .select();
 
-console.log(data, error);
+  console.log(data, error);
   if (error) {
     return new Response(
       JSON.stringify(error, null, 2),
@@ -57,67 +57,211 @@ console.log(data, error);
 }
 ---
 
-<meta charset="UTF-8" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<div class="container">
-  <form id="editForm">
-    <input type="hidden" name="id" value={event.id} />
-    <p>ชื่อกิจกรรม </p>
-    <input name="title" value={event.title} />
-    <p>วันที่ </p>
-    <input type="date" id="date" name="date" value={event.date} />
-    <p>ถึงวันที่ </p>
-    <input type="date" id="end_date" name="end_date" value={event.end_date} />
-    <p>สถานที่ </p>
-    <input name="location" value={event.location} />
-    <p>ลิงก์ </p>
-    <input name="link" value={event.link} />
-    <p>รูปภาพ </p>
-    <input name="image_url" value={event.image_url} />
-    <p>ช่องไลฟ์ </p>
-    <input name="live" value={event.live} />
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+  <title>แก้ไขกิจกรรม - Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div>
+    <div class="create-card">
+      <!-- Header -->
+      <div class="header">
+        <h1 class="display-2">Edit Event</h1>
+      </div>
 
-    <button type="submit" class="btn btn-primary">บันทึก</button>
-  </form>
-</div>
+      <!-- Form Body -->
+      <div class="create-body">
+        <form id="editForm">
+          <input type="hidden" name="id" value={event.id} />
 
-<script>
-  const form = document.getElementById("editForm") as HTMLFormElement;
+          <!-- ข้อมูลหลัก -->
+          <div class="form-section">
+            <div class="section-title">ข้อมูลพื้นฐาน</div>
+            
+            <div class="mb-3">
+              <label for="title" class="form-label required">ชื่อกิจกรรม</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="title" 
+                name="title" 
+                value={event.title} 
+                required
+                placeholder="เช่น BNK48 Concert 2026"
+              />
+            </div>
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="date" class="form-label required">วันที่เริ่ม</label>
+                <input 
+                  type="date" 
+                  class="form-control" 
+                  id="date" 
+                  name="date" 
+                  value={event.date} 
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="end_date" class="form-label">วันที่สิ้นสุด</label>
+                <input 
+                  type="date" 
+                  class="form-control" 
+                  id="end_date" 
+                  name="end_date" 
+                  value={event.end_date || ''} 
+                />
+                <small class="helper-text">ไม่ต้องกรอกถ้าจบในวันเดียว</small>
+              </div>
+            </div>
+          </div>
 
-  const data = new FormData(form);
+          <!-- สถานที่และลิงก์ -->
+          <div class="form-section">
+            <div class="section-title">สถานที่และลิงก์</div>
+            
+            <div class="mb-3">
+              <label for="location" class="form-label">สถานที่</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="location" 
+                name="location" 
+                value={event.location || ''} 
+                placeholder="เช่น MBK Center, Avenue A G Floor"
+              />
+            </div>
 
-  try {
-    const res = await fetch("/api/admin-event-edit", {
-      method: "POST",
-      body: data
-    });
+            <div class="mb-3">
+              <label for="link" class="form-label required">ลิงก์กิจกรรม</label>
+              <input 
+                type="url" 
+                class="form-control" 
+                id="link" 
+                name="link" 
+                value={event.link} 
+                required
+                placeholder="https://..."/>
+            </div>
+            <div class="mb-3">
+              <label for="live" class="form-label">ช่องไลฟ์ / สถานะ</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="live" 
+                name="live" 
+                value={event.live || ''} 
+                placeholder="เช่น YouTube Live, Facebook Live, TikTok Live"
+              />
+            </div>
+          </div>
 
-    if (res.ok) {
-      alert("แก้ไขเรียบร้อย!");
-      window.location.href = "/admin";
-    } else {
-      const text = await res.text();
-      alert("เกิดข้อผิดพลาด: " + text);
-    }
-  } catch (err) {
-    console.error(err);
-    alert("เกิดข้อผิดพลาดเครือข่าย");
-  }
-});
+          <!-- รูปภาพและสถานะ -->
+          <div class="form-section">
+            <div class="section-title">รูปภาพและสถานะ</div>
+            
+            <div class="mb-3">
+              <label for="image_url" class="form-label">URL รูปภาพ</label>
+              <input 
+                type="url" 
+                class="form-control" 
+                id="image_url" 
+                name="image_url" 
+                value={event.image_url || ''} 
+                placeholder="https://..."
+              />
+              {event.image_url && (
+                <div class="image-preview">
+                  <img src={event.image_url} alt="Preview" />
+                </div>
+              )}
+            </div>
 
+            
+          </div>
 
-const startDate = document.getElementById('date') as HTMLInputElement;
-const endDate = document.getElementById('end_date') as HTMLInputElement;
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <a href="/admin" class="btn-cancel">
+              ← ยกเลิก
+            </a>
+            <button type="submit" class="btn-submit" id="submitBtn">
+              <span id="submitText">บันทึกการแก้ไข</span>
+              <span id="submitSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
-  if (startDate && endDate) {
-    startDate.addEventListener("change", () => {
-      endDate.min = startDate.value;
-      if (endDate.value && endDate.value < startDate.value) {
-        endDate.value = "";
+  <script>
+    const form = document.getElementById("editForm") as HTMLFormElement;
+    const submitBtn = document.getElementById("submitBtn") as HTMLButtonElement;
+    const submitText = document.getElementById("submitText") as HTMLElement;
+    const submitSpinner = document.getElementById("submitSpinner") as HTMLElement;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Disable button
+      submitBtn.disabled = true;
+      submitText.textContent = "กำลังบันทึก...";
+      submitSpinner.style.display = "inline-block";
+
+      const data = new FormData(form);
+
+      try {
+        const res = await fetch("/api/admin-event-edit", {
+          method: "POST",
+          body: data
+        });
+
+        if (res.ok) {
+          submitText.textContent = "✓ บันทึกสำเร็จ!";
+          submitSpinner.style.display = "none";
+          
+          setTimeout(() => {
+            window.location.href = "/admin";
+          }, 500);
+        } else {
+          const text = await res.text();
+          alert("เกิดข้อผิดพลาด: " + text);
+          
+          // Re-enable button
+          submitBtn.disabled = false;
+          submitText.textContent = "💾 บันทึกการแก้ไข";
+          submitSpinner.style.display = "none";
+        }
+      } catch (err) {
+        console.error(err);
+        alert("เกิดข้อผิดพลาดเครือข่าย");
+        
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitText.textContent = "💾 บันทึกการแก้ไข";
+        submitSpinner.style.display = "none";
       }
     });
-  }
-</script>
+
+    // Date validation
+    const startDate = document.getElementById('date') as HTMLInputElement;
+    const endDate = document.getElementById('end_date') as HTMLInputElement;
+
+    if (startDate && endDate) {
+      startDate.addEventListener("change", () => {
+        endDate.min = startDate.value;
+        if (endDate.value && endDate.value < startDate.value) {
+          endDate.value = "";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

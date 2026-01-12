@@ -29,12 +29,15 @@ const pastEvents = events
 ---
 
 <MainLayout title="Schedule - Niya BNK48's">
-    <main class="page-main">
-        <header class="mb-5">
-            <h1 class="text-center fw-800 mb-1 h-sec"><strong>Niya BNK48's Schedule</strong></h1>
+    <div style="margin-top: 108px; background: var(--c-primary); padding: 30px 0 30px 0; color: white;" class="mb-3">
+        <header>
+            <h1 class="text-center fw-800 h1"><strong>Niya BNK48's Schedule</strong></h1>
             <p class="text-center fw-600 mb-0" style="font-size:18px">ตารางงานและกิจกรรมของนีญ่า</p>
         </header>
-
+    </div>
+    <main class="page-main">
+        <h2 class="h1 text-center fw-800 h-sec mb-0"><strong>Upcoming Events</strong></h2>
+        <p class="text-center mb-4 text-muted">กิจกรรมที่กำลังจะจัด</p>
         <section id="upcoming-events-section" style="padding: 0; background: none;">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
                 {upcomingEvents.length > 0 ? (
@@ -52,7 +55,7 @@ const pastEvents = events
         </section>
 
         <div class="text-center mt-5">
-            <a class="btn btn-primary btn-rounded fw-600 px-4" href="/"> 
+            <a class="btn btn-primary btn-rounded fw-600 px-4 mb-5" href="/"> 
                 <div class="d-flex align-items-center">
                     <strong>Back Home</strong>
                     <svg class="icon arrow-svg ms-2" width="24" height="24" style="height:1em;width:1em">
@@ -62,10 +65,8 @@ const pastEvents = events
             </a>
         </div>
 
-        <hr class="my-5">
-
         <section id="past-events-section" style="padding: 0; background: none;">
-            <h2 class="h-sec text-center">Past Event</h2>
+            <h2 class="h-sec h1 text-center mb-0">Past Events</h2>
             <p class="text-center mb-4 text-muted">กิจกรรมที่จัดไปแล้ว</p>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 event-past">
                 {pastEvents.map(event => (
