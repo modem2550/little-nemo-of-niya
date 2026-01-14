@@ -62,23 +62,22 @@ function toSlug(text) {
                 <h2 class=fw-bold>Niya's event soon</h2>
                 <p class=text-muted>ติดตามผลงานนีญ่าได้ที่</p>
             </div>
-        </div>
-        
-        <section id="upcoming-events-section">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
-                {upcomingEvents.length > 0 ? (
-                    upcomingEvents.map((eventItem) => (
-                        <div class="col d-flex justify-content-center">
-                            <EventCard event={eventItem} />
-                        </div>
-                    ))
-                ) : (
-                <div class="w-100 text-center py-5">
-                    <p class="text-muted italic">ยังไม่มีกิจกรรมประกาศในขณะนี้</p>
+            <section id="upcoming-events-section" style=" padding: 0;">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+                    {upcomingEvents.length > 0 ? (
+                        upcomingEvents.map((eventItem) => (
+                            <div class="col d-flex justify-content-center">
+                                <EventCard event={eventItem} />
+                            </div>
+                        ))
+                    ) : (
+                    <div class="w-100 text-center py-5">
+                        <p class="text-muted italic">ยังไม่มีกิจกรรมประกาศในขณะนี้</p>
+                    </div>
+                    )}
                 </div>
-                )}
-            </div>
-        </section>
+            </section>
+        </div>
         <div class="text-center mt-5">
             <a class="btn btn-primary btn-rounded fw-600 px-4" href="schedule">
                 <div><strong>More schedule</strong><svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"> <use href="#icon-arrow-right"></use> </svg></div>
@@ -401,10 +400,10 @@ function toSlug(text) {
                         </div>
                     </div>
                     <div class="col-12 col-lg-6 mb-3">
-                        <div class=fc-bt>
-                            <a onclick=openPopup()>
+                        <div class="fc-bt">
+                            <button onclick="openPopup()" style="color: white;background: none;border: none;width: 100%;padding: 0;">
                                 <div class="fw-bold h5 text-center mb-0">เพิ่มเติม</div>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
