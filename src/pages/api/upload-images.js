@@ -43,11 +43,7 @@ export async function POST({ request }) {
         );
       }
 
-      // Get public URL
-      const { data: { publicUrl } } = supabaseAdmin.storage
-        .from('event-images')
-        .getPublicUrl(filePath);
-
+      // บันทึกแค่ path ไม่เอา full URL
       urls[size] = filePath;
     }
 

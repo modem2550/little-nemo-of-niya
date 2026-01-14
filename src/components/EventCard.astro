@@ -1,5 +1,6 @@
 ---
-// ลบ import ResponsiveImage ออก เพราะไม่ได้ใช้
+import { getImageUrl } from '../lib/imageHelper';
+
 const { event, isPast = false } = Astro.props;
 
 const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
@@ -36,16 +37,19 @@ const formatSmartEventDate = (event) => {
   return `${d1} ${m1} ${y1} – ${d2} ${m2} ${y2}`;
 };
 
-// ใช้ image_urls ใหม่ แต่ fallback ไปที่ image_url เก่า
-const imageUrls = event.image_urls || {
-  small: event.image_url,
-  medium: event.image_url,
-  large: event.image_url
-};
+// ใช้ helper function เพื่อ support ทั้งข้อมูลเก่าและใหม่
+let backgroundImage = '/img/placeholder.jpg';
+let hoverImage = '/img/placeholder.jpg';
 
-// เลือกขนาดที่เหมาะสมสำหรับ background
-const backgroundImage = imageUrls?.medium || imageUrls?.small || event.image_url || '/img/placeholder.jpg';
-const hoverImage = imageUrls?.large || imageUrls?.medium || event.image_url || '/img/placeholder.jpg';
+if (event.image_urls) {
+  // ข้อมูลใหม่ (มี image_urls)
+  backgroundImage = getImageUrl(event.image_urls.medium) || getImageUrl(event.image_urls.small) || backgroundImage;
+  hoverImage = getImageUrl(event.image_urls.large) || getImageUrl(event.image_urls.medium) || backgroundImage;
+} else if (event.image_url) {
+  // ข้อมูลเก่า (มีแค่ image_url)
+  backgroundImage = event.image_url;
+  hoverImage = event.image_url;
+}
 ---
 
 <article class={`slide-right show carded ${isPast ? 'event-past' : ''}`}>

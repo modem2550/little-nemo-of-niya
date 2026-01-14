@@ -1,8 +1,12 @@
-export async function GET(req, params) {
-  const eventId = params.id
+export async function GET({ params }) {
+  const { id } = params
+
+  if (!id) {
+    return new Response('Bad Request', { status: 400 })
+  }
 
   const imageUrl =
-    `https://kqfnhyaktxgulhitdvqq.supabase.co/storage/v1/object/public/event-images/events/${eventId}/cover.webp`
+    `https://kqfnhyaktxgulhitdvqq.supabase.co/storage/v1/object/public/event-images/events/${id}/cover.webp`
 
   const res = await fetch(imageUrl)
 
