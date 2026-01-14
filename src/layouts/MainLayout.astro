@@ -99,15 +99,15 @@ import "../styles/schedule.css";
                 <div class=switcher__track>
                     <div class=switcher__indicator aria-hidden=true style=transition:none;width:78px;transform:translateX(0);height:60px></div>
                     <label class="switcher__option glass" data-href=#home>
-                        <input c-option=1 class=switcher__input name=nav type=radio value=home checked>
-                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg>
+                        <input c-option=1 class=switcher__input name=nav type=radio value=home aria-label="Home" checked>
+                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg aria-hidden="true">
                             <path d="M17 21H7C4.79086 21 3 19.2091 3 17V10.7076C3 9.30887 3.73061 8.01175 4.92679 7.28679L9.92679 4.25649C11.2011 3.48421 12.7989 3.48421 14.0732 4.25649L19.0732 7.28679C20.2694 8.01175 21 9.30887 21 10.7076V17C21 19.2091 19.2091 21 17 21Z" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
                             <path d="M9 17H15" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
                         </svg>
                     </label>
                     <label class=switcher__option data-href=#event>
-                        <input c-option=2 class=switcher__input name=nav type=radio value=event>
-                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg>
+                        <input c-option=2 class=switcher__input name=nav type=radio value=event aria-label="event">
+                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg aria-hidden="true">
                             <path d="M15 4V2M15 4V6M15 4H10.5M3 10V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V10H3Z" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
                             <path d="M3 10V6C3 4.89543 3.89543 4 5 4H7" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
                             <path d="M7 2V6" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
@@ -115,23 +115,23 @@ import "../styles/schedule.css";
                         </svg>
                     </label>
                     <label class=switcher__option data-href=#info>
-                        <input c-option=3 class=switcher__input name=nav type=radio value=info>
-                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg>
+                        <input c-option=3 class=switcher__input name=nav type=radio value=info aria-label="info">
+                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg aria-hidden="true">
                             <path d="M3 17V7C3 5.89543 3.89543 5 5 5H19C20.1046 5 21 5.89543 21 7V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17Z" stroke=var(--c) stroke-width=1.5></path>
                             <path d="M6 8H7" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
                         </svg>
                     </label>
                     <label class=switcher__option data-href=#social>
-                        <input c-option=4 class=switcher__input name=nav type=radio value=social>
-                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg>
+                        <input c-option=4 class=switcher__input name=nav type=radio value=social aria-label="social">
+                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg aria-hidden="true">
                             <path d="M7 16C9.20914 16 11 14.2091 11 12C11 9.79086 9.20914 8 7 8C4.79086 8 3 9.79086 3 12C3 14.2091 4.79086 16 7 16Z" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
                             <path d="M15 16C16.1046 16 17 14.2091 17 12C17 9.79086 16.1046 8 15 8C13.8954 8 13 9.79086 13 12C13 14.2091 13.8954 16 15 16Z" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
                             <path d="M20 16C20.5523 16 21 14.2091 21 12C21 9.79086 20.5523 8 20 8C19.4477 8 19 9.79086 19 12C19 14.2091 19.4477 16 20 16Z" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
                         </svg>
                     </label>
                     <label class=switcher__option data-href=#library>
-                        <input c-option=5 class=switcher__input name=nav type=radio value=library>
-                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg>
+                        <input c-option=5 class=switcher__input name=nav type=radio value=library aria-label="library">
+                        <svg viewBox="0 0 24 24" class=switcher__icon fill=none xmlns=http://www.w3.org/2000/svg aria-hidden="true">
                             <path d="M7 19V11C7 9.89543 7.89543 9 9 9H20C21.1046 9 22 9.89543 22 11V19C22 20.1046 21.1046 21 20 21H9C7.89543 21 7 20.1046 7 19Z" stroke=var(--c) stroke-width=1.5></path>
                             <path d="M6.5 16H4C2.89543 16 2 15.1046 2 14V6C2 4.89543 2.89543 4 4 4H15C16.1046 4 17 4.89543 17 6V9" stroke=var(--c) stroke-width=1.5></path>
                             <path d="M10 12H11" stroke=var(--c) stroke-width=1.5 stroke-linecap=round stroke-linejoin=round></path>
