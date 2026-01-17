@@ -1,0 +1,46 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import GalleryCard from '../components/GalleryCard.astro';
+import { supabase } from '../lib/supabase';
+
+const { data: events, error } = await supabase
+  .from('event_gallery')
+  .select('*')
+  .order('Date-At', { ascending: false });
+
+if (error) {
+  console.error('Error fetching events:', error);
+}
+---
+
+<MainLayout title="Gallery - Niya BNK48's">
+    <div style="margin-top: 108px; background: var(--c-primary); padding: 30px 0 30px 0; color: white;" class="mb-3">
+        <header>
+            <h1 class="text-center fw-800 h1"><strong>Niya BNK48's Gallery</strong></h1>
+            <p class="text-center fw-600 mb-0" style="font-size:18px">คลังรูปของนีญ่า</p>
+        </header>
+    </div>
+
+    <main class="py-5 px-5">
+        <div>
+            {(!events || events.length === 0) ? (
+                <div class="row">   
+                    <div class="col-12">
+                        <div class="alert alert-info text-center" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            ไม่พบข้อมูลรูปภาพ
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+                        {events.map((event) => (
+                            <GalleryCard event={event} />
+                        ))}
+                    </div>
+                </>
+            )}
+        </div>
+    </main>
+</MainLayout>

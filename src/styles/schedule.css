@@ -1,23 +1,131 @@
-#upcoming-events-container, #past-events-container{
+/* ===============================
+   Containers
+================================ */
+#upcoming-events-container,
+#past-events-container {
     padding: 24px 0;
 }
-/* สไตล์ Event Card หลัก (สำหรับ Upcoming/Ongoing - ใช้ main.css) */
 
+#upcoming-events-container {
+    padding: 0 !important;
+}
+
+main.page-main {
+    padding: 24px;
+}
+
+/* ===============================
+   Card Base
+================================ */
+.carded {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border-radius: var(--r-base);
+    transition: all .4s cubic-bezier(.175,.885,0,1);
+}
+
+.carded:hover .card__info {
+    background: transparent;
+}
+
+/* ===============================
+   Card Image
+================================ */
+.card__img,
+.card__img--hover {
+    width: 100%;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    transition: all .4s cubic-bezier(.175,.885,.32,1);
+}
+
+.card__img--hover {
+    position: absolute;
+    inset: 0;
+    height: 0;
+    opacity: 0;
+    padding-bottom: 100%;
+}
+
+.carded:hover .card__img--hover {
+    height: 100%;
+    padding-bottom: 0;
+    opacity: 1;
+}
+
+.card__img--hover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
+    border-radius: 16px;
+    box-shadow:
+        15px 15px 27px #e1e1e3,
+       -15px -15px 27px #ffffff;
+}
+
+/* ===============================
+   Card Info
+================================ */
+.card__info {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    transition: background .2s ease;
+}
+
+.da-sp {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.da-sp .h5 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--c-content);
+}
+
+/* ===============================
+   Date / Icon
+================================ */
+.ct-da {
+    display: grid;
+    grid-template-columns: var(--r-large) auto;
+    align-items: center;
+}
+
+.ct-da p {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--c-content);
+}
+
+.ct-da svg {
+    width: 1.1rem;
+    fill: var(--c-content);
+}
+
+/* ===============================
+   Event Past (override เฉพาะที่จำเป็น)
+================================ */
 .event-past .carded {
     display: grid;
+    grid-template-columns: 80px auto;
     background-color: var(--c-light);
     border-radius: 5px;
-    grid-template-columns: 80px auto;
-    transition: all .4s cubic-bezier(.175, .885, 0, 1);
-    box-shadow: 0 13px 10px -7px rgb(0 0 0 / 0);
+    box-shadow: none;
 }
 
 .event-past .card__img,
 .event-past .card__img--hover {
-    aspect-ratio: 1/1;
-    border-radius: 5px;
-    background-position: top;
+    aspect-ratio: 1 / 1;
     height: 80px;
+    border-radius: 5px;
 }
 
 .event-past .card_link {
@@ -28,165 +136,19 @@
     display: block;
 }
 
-.event-past .card__img {
-    visibility: unset;
-}
-
 .event-past .da-sp {
     padding: 0 1rem;
 }
 
 .event-past .ct-da p {
-    margin: 0;
     font-size: .75rem;
-    color: var(--c-content);
 }
 
 .event-past .da-sp .h5 {
     font-size: .95rem;
-    color: var(--c-content);
-    font-weight: 800;
 }
 
-
-main.page-main {
-    padding: 24px;
-}
-
-.carded {
-    width: 100%;
-    background: #fff;
-    border-radius: var(--r-base);
-    overflow: hidden;
-    position: relative;
-    transition: all .4s cubic-bezier(.175, .885, 0, 1);
-}
-
-.carded .event-past{
-    border-radius: none;
-}
-
-.card__img,
-.card__img--hover {
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat;
-    aspect-ratio: 1/1;
-    width: 100%;
-    transition: 0.2s all ease-out;
-}
-
-.card__img {
-    visibility: hidden;
-    transition: 0.2s all ease-out;
-}
-
-.card__img--hover {
-    position: absolute;
-    top: 0;
-    transition: transform .4s cubic-bezier(.175, .885, .32, 1), opacity .3s;
-}
-
-.carded:hover .card__img--hover {
-    height: 101%;
-    opacity: .3;
-    background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
-}
-
-.carded:hover .card__info {
-    background: #fff0;
-    position: relative;
-    transition: 0.2s all ease-out;
-}
-
-.da-col {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(289.25px, 1fr));
-    gap: var(--r-large);
-    justify-content: center;
-    justify-items: center;
-    color: var(--c-content)
-}
-
-.da-sp {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column
-}
-
-.ct-da {
-    display: grid;
-    grid-template-columns: var(--r-large) auto;
-    align-items: center;
-}
-
-.ct-da svg {
-    fill: var(--c-content);
-    width: 1.1rem
-}
-
-.ct-da p {
-    margin: 0;
-    font-size: .95rem;
-    font-weight: 600;
-    color: var(--c-content)
-}
-
-.da-sp .h5 {
-    font-size: 1.05rem;
-    color: var(--c-content);
-    font-weight: 800
-}
-
-.h-body {
-    max-height: 720px;
-    height: 100vh;
-}
-
-.br-i {
-    font-size: 1.16rem;
-    padding: 50px;
-    border-radius: var(--r-large); /* ใช้ตัวแปร */
-    background-color: #fffcff;
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent), inset 1.8px 3px 0 -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), inset -2px -2px 0 -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), inset -.3px -1px 4px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 0 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0 1px 5px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0 6px 16px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent)
-}
-
-.br-i ul li a {
-    color: var(--c-section-text);
-    text-decoration: none
-}
-
-.br-i ul li a:hover {
-    color: var(--c-primary-hover) !important; /* ใช้ตัวแปร */
-    ;
-    text-decoration: none
-}
-
-.pc {
-    z-index: 1
-}
-
-.p-body {
-    display: none;
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin: 0 auto;
-    max-width: none !important;
-    box-shadow: 0 10px 20px rgb(0 0 0 / .1)
-}
-
-.bd-info.container {
-    display: flex;
-    align-items: center;
-}
-
-.br-i ul li {
-    text-align: start
-}
-
-.event-past div article{
+.event-past article {
     width: 100%;
     max-width: 100%;
 }
@@ -196,34 +158,37 @@ main.page-main {
     color: var(--c-primary);
 }
 
+/* ===============================
+   Layout
+================================ */
+.da-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(289.25px, 1fr));
+    gap: var(--r-large);
+    justify-items: center;
+    color: var(--c-content);
+}
+
+/* ===============================
+   Buttons / Links
+================================ */
 .btn {
-    --bs-btn-border-radius: var(--r-round) !important; /* ใช้ตัวแปร */
+    --bs-btn-border-radius: var(--r-round) !important;
 }
 
 .btn-primary,
 a {
     --bs-btn-color: #fff !important;
-    --bs-btn-bg: var(--c-primary) !important; /* ใช้ตัวแปร */
-    --bs-btn-border-color: var(--c-primary) !important; /* ใช้ตัวแปร */
-    --bs-btn-hover-color: #fff !important;
-    --bs-btn-hover-bg: var(--c-primary-hover) !important; /* ใช้ตัวแปร */
-    --bs-btn-hover-border-color: #fa3164 !important;
-    --bs-btn-focus-shadow-rgb: 252, 128, 159 !important;
-    --bs-btn-active-color: #fff !important;
-    --bs-btn-active-bg: #fa3164 !important;
-    --bs-btn-active-border-color: #f91c53 !important;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
-    --bs-btn-disabled-color: #fff !important;
-    --bs-btn-disabled-bg: var(--c-primary) !important; /* ใช้ตัวแปร */
-    --bs-btn-disabled-border-color: var(--c-primary) !important; /* ใช้ตัวแปร */
+    --bs-btn-bg: var(--c-primary) !important;
+    --bs-btn-border-color: var(--c-primary) !important;
+    --bs-btn-hover-bg: var(--c-primary-hover) !important;
 }
 
+/* ===============================
+   Misc
+================================ */
 .arrow-svg {
     transform: rotate(-45deg);
     height: 1em;
-    vertical-align: -.125em
-}
-
-#upcoming-events-container {
-    padding: 0 !important;
+    vertical-align: -.125em;
 }
