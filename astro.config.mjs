@@ -3,7 +3,6 @@ import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
   output: 'server',
-
   adapter: vercel(),
 
   image: {
@@ -13,9 +12,5 @@ export default defineConfig({
   redirects: {
     '/events-images/[...slug]':
       'https://kqfnhyaktxgulhitdvqq.supabase.co/storage/v1/object/public/event-images/events/[...slug]',
-  },
-
-  ssr: {
-    noExternal: ['clsx', 'piccolore'],
   },
 });
