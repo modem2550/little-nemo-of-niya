@@ -2,7 +2,7 @@ import { e as createComponent, k as renderComponent, r as renderTemplate, m as m
 import { $ as $$MainLayout } from '../chunks/MainLayout_jDcjEGYK.mjs';
 import { $ as $$EventCard } from '../chunks/EventCard_C4jNXqsv.mjs';
 import { $ as $$GalleryCard } from '../chunks/GalleryCard_QdqTf2Mb.mjs';
-import { g as getSupabaseServer } from '../chunks/supabase.server_Dl9QLLXZ.mjs';
+import { g as getSupabase } from '../chunks/supabase.server_DxCuIpeL.mjs';
 export { renderers } from '../renderers.mjs';
 
 const socialData = [
@@ -45,7 +45,7 @@ const socialData = [
 ];
 
 const $$Index = createComponent(async ($$result, $$props, $$slots) => {
-  const supabase = getSupabaseServer();
+  const supabase = getSupabase();
   const { data: upcomingData } = await supabase.from("events_upcoming").select("*").order("date", { ascending: false });
   const { data: galleryData } = await supabase.from("event_gallery").select("*").order("Date-At", { ascending: false });
   const today = /* @__PURE__ */ new Date();

@@ -1,7 +1,7 @@
-import { g as getSupabaseServer } from '../../../chunks/supabase.server_Dl9QLLXZ.mjs';
+import { g as getSupabase } from '../../../chunks/supabase.server_DxCuIpeL.mjs';
 export { renderers } from '../../../renderers.mjs';
 
-const supabase = getSupabaseServer();
+const supabase = getSupabase();
 
 async function GET({ request }) {
   const url = new URL(request.url);

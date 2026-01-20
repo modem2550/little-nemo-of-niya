@@ -1,7 +1,7 @@
 import { e as createComponent, k as renderComponent, r as renderTemplate, l as defineScriptVars, n as Fragment, m as maybeRenderHead } from '../chunks/astro/server_B3Rps_87.mjs';
 import { $ as $$MainLayout } from '../chunks/MainLayout_jDcjEGYK.mjs';
 import { $ as $$GalleryCard } from '../chunks/GalleryCard_QdqTf2Mb.mjs';
-import { g as getSupabaseServer } from '../chunks/supabase.server_Dl9QLLXZ.mjs';
+import { g as getSupabase } from '../chunks/supabase.server_DxCuIpeL.mjs';
 /* empty css                                   */
 export { renderers } from '../renderers.mjs';
 
@@ -10,7 +10,7 @@ var __defProp = Object.defineProperty;
 var __template = (cooked, raw) => __freeze(__defProp(cooked, "raw", { value: __freeze(raw || cooked.slice()) }));
 var _a;
 const $$Gallery = createComponent(async ($$result, $$props, $$slots) => {
-  const supabase = getSupabaseServer();
+  const supabase = getSupabase();
   const { data: allEvents, error } = await supabase.from("event_gallery").select("*").order("Date-At", { ascending: false });
   if (error) {
     console.error("Error fetching events:", error);
