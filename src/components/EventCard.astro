@@ -1,0 +1,96 @@
+---
+import { getImageUrl } from '../lib/imageHelper';
+
+const { event, isPast = false } = Astro.props;
+
+const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+
+const formatSmartEventDate = (event) => {
+  if (!event?.date) return '';
+
+  const start = new Date(event.date.replace(/-/g, '/'));
+  const end = event.end_date
+    ? new Date(event.end_date.replace(/-/g, '/'))
+    : null;
+
+  const d1 = start.getDate().toString().padStart(2, '0');
+  const m1 = months[start.getMonth()];
+  const y1 = start.getFullYear();
+
+  if (!end) return `${d1} ${m1} ${y1}`;
+
+  const d2 = end.getDate().toString().padStart(2, '0');
+  const m2 = months[end.getMonth()];
+  const y2 = end.getFullYear();
+
+  if (start.getTime() === end.getTime()) {
+    return `${d1} ${m1} ${y1}`;
+  }
+
+  if (y1 === y2) {
+    if (m1 === m2) {
+      return `${d1}–${d2} ${m1} ${y1}`;
+    }
+    return `${d1} ${m1} – ${d2} ${m2} ${y1}`;
+  }
+
+  return `${d1} ${m1} ${y1} – ${d2} ${m2} ${y2}`;
+};
+
+// ใช้ helper function เพื่อ support ทั้งข้อมูลเก่าและใหม่
+let backgroundImage = '/img/placeholder.jpg';
+let hoverImage = '/img/placeholder.jpg';
+
+if (event.image_urls) {
+  // ข้อมูลใหม่ (มี image_urls)
+  backgroundImage = getImageUrl(event.image_urls.medium) || getImageUrl(event.image_urls.small) || backgroundImage;
+  hoverImage = getImageUrl(event.image_urls.large) || getImageUrl(event.image_urls.medium) || backgroundImage;
+} else if (event.image_url) {
+  // ข้อมูลเก่า (มีแค่ image_url)
+  backgroundImage = event.image_url;
+  hoverImage = event.image_url;
+}
+---
+
+<article class={`slide-right show carded ${isPast ? 'event-past' : ''}`}>
+    <!-- Background image: ใช้ medium สำหรับ default -->
+    <div class="card__img" style={`background-image: url(${backgroundImage});`}></div>
+    
+    <a href={event.link} class="card_link" target="_blank" rel="noopener noreferrer">
+        <!-- Hover image: ใช้ large เพื่อความคมชัด -->
+        <div class="card__img--hover" style={`background-image: url(${hoverImage});`}></div>
+    </a>
+    
+    <div class="card__info">
+        <a href={event.link} class="card_link" target="_blank" rel="noopener noreferrer">
+            <div class="da-sp">
+                <div class="h5">{event.title}</div>
+                
+                {event.location && (
+                    <div class="ct-da">
+                        <svg class="icon" width="16" height="16">
+                            <use href="#icon-pin"></use>
+                        </svg>   
+                        <p>{event.location}</p>
+                    </div>
+                )}
+                
+                {event.live && (
+                    <div class="ct-da">
+                        <svg class="icon" width="16" height="16">
+                            <use href="#icon-live"></use> 
+                        </svg>
+                        <p>{event.live}</p>
+                    </div>
+                )}
+
+                <div class="ct-da">
+                    <svg class="icon" width="16" height="16">
+                        <use href="#icon-calendar"></use>
+                    </svg>
+                    <p>{formatSmartEventDate(event)}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</article>

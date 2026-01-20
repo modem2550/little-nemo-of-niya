@@ -1,0 +1,30 @@
+---
+import socialData from "../data/social.json";
+---
+
+<div id="social-links-container">
+  <div class="row g-3">
+    {socialData.map((social) => (
+      <div class="col-6 col-md-4">
+        <a
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-decoration-none"
+          title={social.platform}
+        >
+          <div class="social-box p-3 border rounded text-center h-100 shadow-sm">
+            <div class="fw-bold text-dark">
+              {social.platform}
+            </div>
+
+            {/* ถ้าอยากแสดง username */}
+            <div class="text-muted small">
+              {social.username}
+            </div>
+          </div>
+        </a>
+      </div>
+    ))}
+  </div>
+</div>

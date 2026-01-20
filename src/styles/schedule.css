@@ -1,0 +1,194 @@
+/* ===============================
+   Containers
+================================ */
+#upcoming-events-container,
+#past-events-container {
+    padding: 24px 0;
+}
+
+#upcoming-events-container {
+    padding: 0 !important;
+}
+
+main.page-main {
+    padding: 24px;
+}
+
+/* ===============================
+   Card Base
+================================ */
+.carded {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border-radius: var(--r-base);
+    transition: all .4s cubic-bezier(.175,.885,0,1);
+}
+
+.carded:hover .card__info {
+    background: transparent;
+}
+
+/* ===============================
+   Card Image
+================================ */
+.card__img,
+.card__img--hover {
+    width: 100%;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    transition: all .4s cubic-bezier(.175,.885,.32,1);
+}
+
+.card__img--hover {
+    position: absolute;
+    inset: 0;
+    height: 0;
+    opacity: 0;
+    padding-bottom: 100%;
+}
+
+.carded:hover .card__img--hover {
+    height: 100%;
+    padding-bottom: 0;
+    opacity: 1;
+}
+
+.card__img--hover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
+    border-radius: 16px;
+    box-shadow:
+        15px 15px 27px #e1e1e3,
+       -15px -15px 27px #ffffff;
+}
+
+/* ===============================
+   Card Info
+================================ */
+.card__info {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    transition: background .2s ease;
+}
+
+.da-sp {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.da-sp .h5 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--c-content);
+}
+
+/* ===============================
+   Date / Icon
+================================ */
+.ct-da {
+    display: grid;
+    grid-template-columns: var(--r-large) auto;
+    align-items: center;
+}
+
+.ct-da p {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--c-content);
+}
+
+.ct-da svg {
+    width: 1.1rem;
+    fill: var(--c-content);
+}
+
+/* ===============================
+   Event Past (override เฉพาะที่จำเป็น)
+================================ */
+.event-past .carded {
+    display: grid;
+    grid-template-columns: 80px auto;
+    background-color: var(--c-light);
+    border-radius: 5px;
+    box-shadow: none;
+}
+
+.event-past .card__img,
+.event-past .card__img--hover {
+    aspect-ratio: 1 / 1;
+    height: 80px;
+    border-radius: 5px;
+}
+
+.event-past .card_link {
+    display: none;
+}
+
+.event-past .card__info .card_link {
+    display: block;
+}
+
+.event-past .da-sp {
+    padding: 0 1rem;
+}
+
+.event-past .ct-da p {
+    font-size: .75rem;
+}
+
+.event-past .da-sp .h5 {
+    font-size: .95rem;
+}
+
+.event-past article {
+    width: 100%;
+    max-width: 100%;
+}
+
+.event-past .carded:hover {
+    text-decoration: underline;
+    color: var(--c-primary);
+}
+
+/* ===============================
+   Layout
+================================ */
+.da-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(289.25px, 1fr));
+    gap: var(--r-large);
+    justify-items: center;
+    color: var(--c-content);
+}
+
+/* ===============================
+   Buttons / Links
+================================ */
+.btn {
+    --bs-btn-border-radius: var(--r-round) !important;
+}
+
+.btn-primary,
+a {
+    --bs-btn-color: #fff !important;
+    --bs-btn-bg: var(--c-primary) !important;
+    --bs-btn-border-color: var(--c-primary) !important;
+    --bs-btn-hover-bg: var(--c-primary-hover) !important;
+}
+
+/* ===============================
+   Misc
+================================ */
+.arrow-svg {
+    transform: rotate(-45deg);
+    height: 1em;
+    vertical-align: -.125em;
+}
