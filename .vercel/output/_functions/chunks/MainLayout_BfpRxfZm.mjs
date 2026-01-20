@@ -1,7 +1,7 @@
 import { e as createComponent, f as createAstro, r as renderTemplate, o as renderScript, p as renderSlot, q as renderHead, h as addAttribute } from './astro/server_Jst4A1od.mjs';
 import 'piccolore';
 import 'clsx';
-/* empty css                           */
+/* empty css                                                  */
 
 var __freeze = Object.freeze;
 var __defProp = Object.defineProperty;

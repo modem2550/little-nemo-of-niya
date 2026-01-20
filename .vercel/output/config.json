@@ -47,11 +47,19 @@
 			"dest": "_render"
 		},
 		{
-			"src": "^/postlink/?$",
+			"src": "^/schedule/?$",
 			"dest": "_render"
 		},
 		{
-			"src": "^/schedule/?$",
+			"src": "^/Sky Lantern Wich - Grace BNK48/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/Sky Lantern Wich - Hoop BNK48/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/Sky Lantern Wich - Wei Xiaoya TSH48/?$",
 			"dest": "_render"
 		},
 		{

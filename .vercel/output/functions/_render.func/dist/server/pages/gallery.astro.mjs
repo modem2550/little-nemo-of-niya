@@ -1,6 +1,6 @@
 import { e as createComponent, k as renderComponent, r as renderTemplate, l as defineScriptVars, n as Fragment, m as maybeRenderHead } from '../chunks/astro/server_Jst4A1od.mjs';
 import 'piccolore';
-import { $ as $$MainLayout } from '../chunks/MainLayout_CWPVgMBp.mjs';
+import { $ as $$MainLayout } from '../chunks/MainLayout_BfpRxfZm.mjs';
 import { $ as $$GalleryCard } from '../chunks/GalleryCard_L9Lg_d9O.mjs';
 import { s as supabase } from '../chunks/supabase_CCFB4Op4.mjs';
 /* empty css                                   */
