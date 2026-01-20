@@ -1,6 +1,6 @@
-import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_B3Rps_87.mjs';
-import { $ as $$MainLayout } from '../chunks/MainLayout_jDcjEGYK.mjs';
-import { $ as $$EventCard } from '../chunks/EventCard_C4jNXqsv.mjs';
+import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_Dm_8-9sK.mjs';
+import { $ as $$MainLayout } from '../chunks/MainLayout_CPgeBE0y.mjs';
+import { $ as $$EventCard } from '../chunks/EventCard_DvbFfeAx.mjs';
 import { g as getSupabase } from '../chunks/supabase.server_DxCuIpeL.mjs';
 export { renderers } from '../renderers.mjs';
 

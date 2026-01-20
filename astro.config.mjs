@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   output: 'server',
@@ -12,5 +12,15 @@ export default defineConfig({
   redirects: {
     '/events-images/[...slug]':
       'https://kqfnhyaktxgulhitdvqq.supabase.co/storage/v1/object/public/event-images/events/[...slug]',
+  },
+
+  vite: {
+    ssr: {
+      noExternal: [
+        'astro',
+        'clsx',
+        'piccolore',
+      ],
+    },
   },
 });

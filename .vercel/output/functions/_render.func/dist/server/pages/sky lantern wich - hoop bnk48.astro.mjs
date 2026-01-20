@@ -1,5 +1,5 @@
-import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead, h as addAttribute } from '../chunks/astro/server_B3Rps_87.mjs';
-import { $ as $$MainLayout } from '../chunks/MainLayout_jDcjEGYK.mjs';
+import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead, h as addAttribute } from '../chunks/astro/server_Dm_8-9sK.mjs';
+import { $ as $$MainLayout } from '../chunks/MainLayout_CPgeBE0y.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$SkyLanternWichHoopBNK48 = createComponent(($$result, $$props, $$slots) => {

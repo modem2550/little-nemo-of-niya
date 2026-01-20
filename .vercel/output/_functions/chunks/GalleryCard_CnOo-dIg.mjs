@@ -1,5 +1,4 @@
-import { e as createComponent, f as createAstro, m as maybeRenderHead, h as addAttribute, u as unescapeHTML, r as renderTemplate } from './astro/server_B3Rps_87.mjs';
-import 'clsx';
+import { e as createComponent, f as createAstro, m as maybeRenderHead, h as addAttribute, u as unescapeHTML, r as renderTemplate } from './astro/server_Dm_8-9sK.mjs';
 
 const $$Astro = createAstro();
 const $$GalleryCard = createComponent(($$result, $$props, $$slots) => {
