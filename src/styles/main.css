@@ -828,3 +828,16 @@ a {
     cursor: pointer
 }
 
+#home .btn-primary, #home a {
+    --bs-btn-color: var(--c-primary) !important;
+    --bs-btn-bg: var(--c-light) !important;
+    --bs-btn-border-color: var(--c-light) !important;
+    --bs-btn-hover-bg: var(--c-light) !important;
+}
+
+#home .btn-primary:hover, #home a:hover {
+    --bs-btn-color: var(--c-light) !important;
+    --bs-btn-bg: var(--c-primary) !important;
+    --bs-btn-border-color: var(--c-primary) !important;
+    --bs-btn-hover-bg: var(--c-primary-hover) !important;
+}
