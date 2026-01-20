@@ -1,5 +1,5 @@
 ---
-// ส่วนประกอบของ Props ที่จะรับมาจากหน้าอื่นๆ
+// 1. รวม Props ไว้ที่เดียว
 interface Props {
     title?: string;
     description?: string;
@@ -10,12 +10,18 @@ const {
     description = "เว็บไซต์แฟนคลับอย่างเป็นทางการของนีญ่า สุวิภาส์ ลายถมยา" 
 } = Astro.props;
 
-// ✅ Import เฉพาะไฟล์ CSS เท่านั้น
+// 2. Import CSS และ Component (ลบตัวแปรซ้ำออก)
 import "../styles/main.css";
 import "../styles/schedule.css";
 import "../styles/gallery.css";
+import SpeedInsights from '@vercel/speed-insights/astro';
 
+// ลบบรรทัด const { title, description } = Astro.props; ที่อยู่ข้างล่างออก
 ---
+
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
 
 <html lang="th">
     <head>
