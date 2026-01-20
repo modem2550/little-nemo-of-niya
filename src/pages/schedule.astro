@@ -1,9 +1,9 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import EventCard from '../components/EventCard.astro';
-import { getSupabaseServer } from "../lib/supabase.server";
+import { getSupabase } from "../lib/supabase.server";
 
-const supabase = getSupabaseServer();
+const supabase = getSupabase();
 // ดึงข้อมูลจาก Supabase
 const { data: events, error } = await supabase
   .from('event_data')

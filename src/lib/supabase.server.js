@@ -10,14 +10,3 @@ export function getSupabase() {
 
   return createClient(url, anon);
 }
-
-export function getSupabaseAdmin() {
-  const url = process.env.SUPABASE_URL;
-  const service = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!url || !service) {
-    throw new Error("Supabase service role env vars not found");
-  }
-
-  return createClient(url, service);
-}
