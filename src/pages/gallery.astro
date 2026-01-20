@@ -1,9 +1,9 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import GalleryCard from '../components/GalleryCard.astro';
-import { getSupabase } from '../lib/supabase';
+import { getSupabaseServer } from "../lib/supabase.server";
 
-const supabase = getSupabase();
+const supabase = getSupabaseServer();
 // โหลดข้อมูลทั้งหมดมาก่อน
 const { data: allEvents, error } = await supabase
   .from('event_gallery')

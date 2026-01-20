@@ -2,10 +2,9 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import EventCard from '../components/EventCard.astro';
 import GalleryCard from '../components/GalleryCard.astro';
-import { getSupabase } from '../lib/supabase';
+import { getSupabaseServer } from "../lib/supabase.server";
 
-const supabase = getSupabase();
-
+const supabase = getSupabaseServer();
 
 // ✅ ดึง Social จาก Local JSON
 import socialData from '../data/social.json';
