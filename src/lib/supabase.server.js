@@ -1,12 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
 
-export function getSupabaseServer() {
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+export function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const anon = process.env.SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase env vars not found");
+  if (!url || !anon) {
+    throw new Error("Supabase anon env vars not found");
   }
 
-  return createClient(supabaseUrl, supabaseKey);
+  return createClient(url, anon);
+}
+
+export function getSupabaseAdmin() {
+  const url = process.env.SUPABASE_URL;
+  const service = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !service) {
+    throw new Error("Supabase service role env vars not found");
+  }
+
+  return createClient(url, service);
 }
