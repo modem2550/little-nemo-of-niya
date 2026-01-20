@@ -1,0 +1,212 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+const tweetText = `[🏮✨]
+
+🗓️ TODAY
+🕘 18.00
+
+📢 ขอชวนแฟนคลับร่วมกันส่งกำลังใจสำหรับ Character Teaser & Concept Photo
+โดย quote ข้อความ ของ official พร้อม 2 Hashtag
+
+#BNK48TSH48_SkyLanternWish
+#GraceBNK48`;
+
+const twitterShareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+---
+
+<MainLayout>
+    <section class="hero-section">
+        <div class="sparkles"></div>
+        <div class="sparkles sparkles-2"></div>
+        <div class="sparkles sparkles-3"></div>
+        
+        <div>
+            <div class="row justify-content-center align-items-center w-auto">
+                <a 
+                    href={twitterShareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="glass-button"
+                >
+                    <span class="button-shine"></span>
+                    BNK48 & TSH48 Sky Lantern Wish<br>#GraceBNK48
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .hero-section {
+            min-height: 100vh;
+            background-image: url('https://pbs.twimg.com/media/G_A0oRXWMAAPuHu?format=jpg&name=large');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glassmorphism Button */
+        .glass-button {
+            position: relative;
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            clip-path: polygon(
+                10px 0%, calc(100% - 10px) 0%, 100% 10px,
+                100% calc(100% - 10px), calc(100% - 10px) 100%,
+                10px 100%, 0% calc(100% - 10px), 0% 10px
+            );
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.1),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            z-index: 10;
+        }
+        
+        .glass-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            clip-path: polygon(
+                10px 0%, calc(100% - 10px) 0%, 100% 10px,
+                100% calc(100% - 10px), calc(100% - 10px) 100%,
+                10px 100%, 0% calc(100% - 10px), 0% 10px
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .glass-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .glass-button:hover::before {
+            left: 100%;
+        }
+
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 12px 48px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                0 0 60px rgba(255, 255, 255, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+        
+        .glass-button:hover::after {
+            opacity: 1;
+        }
+
+        .glass-button:active {
+            transform: translateY(0);
+        }
+
+        /* Sparkle Effect */
+        .sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 80%, white, transparent),
+                radial-gradient(1px 1px at 15% 90%, white, transparent);
+            background-size: 200% 200%;
+            animation: sparkle 8s linear infinite;
+            opacity: 0.6;
+        }
+
+        .sparkles-2 {
+            background-image: 
+                radial-gradient(2px 2px at 40% 20%, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1px 1px at 70% 80%, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(2px 2px at 10% 60%, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1px 1px at 85% 40%, rgba(255, 255, 255, 0.8), transparent);
+            animation: sparkle 6s linear infinite reverse;
+        }
+
+        .sparkles-3 {
+            background-image: 
+                radial-gradient(1px 1px at 25% 45%, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(2px 2px at 55% 15%, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(1px 1px at 75% 85%, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(2px 2px at 95% 25%, rgba(255, 255, 255, 0.9), transparent);
+            animation: sparkle 10s linear infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                background-position: 0% 0%, 100% 100%, 50% 50%, 80% 20%, 10% 90%, 30% 70%, 60% 40%;
+                opacity: 0.3;
+            }
+            50% {
+                background-position: 100% 100%, 0% 0%, 25% 75%, 70% 30%, 40% 60%, 90% 10%, 20% 80%;
+                opacity: 0.8;
+            }
+        }
+
+        /* Glass reflection shine */
+        .button-shine {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: rotate(45deg) translate(-100%, -100%);
+            }
+            50%, 100% {
+                transform: rotate(45deg) translate(100%, 100%);
+            }
+        }
+    </style>
+</MainLayout>

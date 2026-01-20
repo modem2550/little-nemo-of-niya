@@ -1,0 +1,62 @@
+{
+	"version": 3,
+	"routes": [
+		{
+			"src": "^/events-images(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?$",
+			"headers": {
+				"Location": "https://kqfnhyaktxgulhitdvqq.supabase.co/storage/v1/object/public/event-images/events/[...slug]"
+			},
+			"status": 301
+		},
+		{
+			"handle": "filesystem"
+		},
+		{
+			"src": "^/_astro/(.*)$",
+			"headers": {
+				"cache-control": "public, max-age=31536000, immutable"
+			},
+			"continue": true
+		},
+		{
+			"src": "^/_server-islands/([^/]+?)/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/_image/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/image/gallery/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/image(?:/(.*?))?/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/events/([^/]+?)/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/events-images(?:/(.*?))?/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/gallery/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/postlink/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/schedule/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/$",
+			"dest": "_render"
+		}
+	]
+}
