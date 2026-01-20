@@ -1,4 +1,6 @@
-import { supabase } from "../../../lib/supabase";
+import { getSupabase } from "../../../lib/supabase";
+
+const supabase = getSupabase();
 
 export async function GET({ request }) {
   const url = new URL(request.url);
