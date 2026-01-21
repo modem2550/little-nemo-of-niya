@@ -1,26 +1,35 @@
-import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import { defineConfig, envField } from 'astro/config';
+import vercel from '@astrojs/vercel/server';
 
 export default defineConfig({
   output: 'server',
   adapter: vercel(),
 
+  env: {
+    schema: {
+      SUPABASE_URL: envField.string({
+        context: 'server',
+        access: 'secret',
+      }),
+      SUPABASE_ANON_KEY: envField.string({
+        context: 'server',
+        access: 'secret',
+      }),
+      ADMIN_TOKEN: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+    },
+  },
+
   image: {
     domains: ['kqfnhyaktxgulhitdvqq.supabase.co'],
   },
 
-  redirects: {
-    '/events-images/[...slug]':
-      'https://kqfnhyaktxgulhitdvqq.supabase.co/storage/v1/object/public/event-images/events/[...slug]',
-  },
-
   vite: {
     ssr: {
-      noExternal: [
-        'astro',
-        'clsx',
-        'piccolore',
-      ],
+      noExternal: ['clsx'],
     },
   },
 });

@@ -1,12 +1,12 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
 
 export function getSupabase() {
-  const url = process.env.SUPABASE_URL;
-  const anon = process.env.SUPABASE_ANON_KEY;
+  const url = import.meta.env.SUPABASE_URL;
+  const key = import.meta.env.SUPABASE_ANON_KEY;
 
-  if (!url || !anon) {
-    throw new Error("Supabase anon env vars not found");
+  if (!url || !key) {
+    throw new Error('Supabase anon env vars not found');
   }
 
-  return createClient(url, anon);
+  return createClient(url, key);
 }

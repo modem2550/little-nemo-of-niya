@@ -21,7 +21,7 @@ const eventDate = formatSmartEventDate(event['Date-At']);
 <div class="col d-flex justify-content-center">
     <div class="img-box tabcontent Event" style="display: block;">
         <a href={event['Photo-page-link'] || "#"} target="_blank" rel="noopener noreferrer">
-            <img src={event['IMG_link'] || 'https://via.placeholder.com/400x300?text=No+Image'} alt={event.Event || 'Event'} class="gallery" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Error'" />
+            <img src={event['IMG_link'] || 'https://via.placeholder.com/400x300?text=No+Image'} alt={event.Event || 'Event'} class="gallery" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Error'" loading="lazy"/>
             <div class="transparent-box">
                 <div class="caption mb-0">
                     <p><strong set:html={event.Event} /></p>

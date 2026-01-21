@@ -163,9 +163,12 @@ section {
     font-size: 1.16rem;
     padding: 50px;
     border-radius: var(--r-large);
-    /* ใช้ตัวแปร */
     background-color: #fffcff;
     box-shadow: var(--glass-shadow);
+}
+
+.br-i ul{
+    text-align: start;
 }
 
 .br-i ul li a {
@@ -175,9 +178,7 @@ section {
 
 .br-i ul li a:hover {
     color: var(--c-primary-hover) !important;
-    /* ใช้ตัวแปร */
-    ;
-    text-decoration: none
+    text-decoration: none;
 }
 
 .pc {
@@ -626,6 +627,9 @@ a {
 }
 
 @media (max-width:1200px) {
+    .container{
+        --bs-gutter-x: 0 !important;
+    }
     .col-lg-6 {
         width: 100% !important
     }
