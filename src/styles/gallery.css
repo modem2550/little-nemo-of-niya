@@ -6,13 +6,13 @@ body {
 .img-box {
     box-sizing: border-box;
     width: 100%;
-    aspect-ratio: 5 / 4;
+    aspect-ratio: 3 / 2;
     overflow: hidden;
     display: inline-block;
     position: relative;
     background-color: white;
-    animation: fadeEffect 1s ease-in-out;
-    border-radius: var(--r-base);
+    animation: fadeEffect .6s ease-out;
+    animation-fill-mode: both;
     cursor: pointer;
 }
 
@@ -27,6 +27,10 @@ body {
     display: block;
 }
 
+.img-box.is-loaded {
+    animation: none;
+}
+
 /* --- Layer สีดำโปร่งแสง --- */
 .transparent-box {
     position: absolute;
@@ -34,15 +38,20 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0);
-    transition: background-color 0.4s cubic-bezier(.175, .885, .32, 1);
+    background-color: rgba(0,0,0,.5);
+    opacity: 0;
+    transition: opacity .4s cubic-bezier(.175,.885,.32,1);
     z-index: 1;
+}
+
+.img-box:hover .transparent-box {
+    opacity: 1;
 }
 
 /* --- ส่วนคำบรรยาย (Caption) --- */
 .caption {
     position: absolute;
-    padding: 20px;
+    padding: 12px;
     bottom: 0; /* เปลี่ยนจาก -20px เป็น 0 */
     left: 0;
     right: 0;
@@ -126,7 +135,7 @@ body {
 
 .ct-ga p {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--c-light);
 }
@@ -136,9 +145,7 @@ body {
     overflow: hidden;
     background: var(--c-light);
     border-radius: var(--r-base);
-    box-shadow: 0 13px 10px -7px rgb(0 0 0 / .1);
 
-    /* snap ที่คุณตั้งมาดีแล้ว */
     transition:
         transform .4s cubic-bezier(.175,.885,0,1),
         box-shadow .4s cubic-bezier(.175,.885,0,1);
@@ -147,57 +154,22 @@ body {
 /* ===============================
    Images (base + hover)
 ================================ */
-.card__img,
-.card__img--hover {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat;
+
+.gallery-group {
+    padding: 0;
+    border-bottom: 2px solid #111; padding-bottom: 5px;
+    background-color: #ffffffff;
 }
 
-/* hover layer */
-.card__img--hover {
-    position: absolute;
-    inset: 0;
-    height: 0;
-    padding-bottom: 100%;
-    opacity: 0;
-
-    /* แยก transition ชัด ๆ ป้องกัน jank */
-    transition:
-        opacity .4s cubic-bezier(.175,.885,.32,1),
-        height .4s cubic-bezier(.175,.885,.32,1),
-        padding-bottom .4s cubic-bezier(.175,.885,.32,1);
+.group-header{
+    border: #111 0px solid;
 }
 
-/* glass overlay */
-.card__img--hover::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
-    opacity: 0;
-    transition: opacity .4s cubic-bezier(.175,.885,.32,1);
+.form-select[data-astro-cid-sahthylw] {
+    min-width: 200px;
+    border-radius: var(--r-round);
 }
 
-/* ===============================
-   Hover state
-================================ */
-.carded:hover .card__img--hover {
-    height: 100%;
-    padding-bottom: 0;
-    opacity: 1;
-}
-
-.carded:hover .card__img--hover::before {
-    opacity: 1;
-}
-
-.carded {
-    will-change: transform;
-}
-
-.card__img--hover {
-    will-change: opacity, height;
+.form-select {
+    border-radius: var(--r-round);
 }

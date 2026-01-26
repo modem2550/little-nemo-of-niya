@@ -7,14 +7,13 @@ interface Props {
 
 const { 
     title = "Niya BNK48 - Fan Website", 
-    description = "เว็บไซต์แฟนคลับอย่างเป็นทางการของนีญ่า สุวิภาส์ ลายถมยา" 
+    description = "ติดตามและเป็นกำลังใจให้กับ Niya BNK48 ผ่านเว็บไซต์แฟนคลับอย่างเป็นทางการนี้ ที่นี่คุณจะได้พบกับข่าวสารล่าสุด ตารางงาน กิจกรรม และคลังรูปภาพของ Niya BNK48 ที่ทำไว้เพื่อแฟนคลับทุกคน", 
 } = Astro.props;
 
 // 2. Import CSS และ Component (ลบตัวแปรซ้ำออก)
 import "../styles/main.css";
 import "../styles/schedule.css";
 import "../styles/gallery.css";
-import SpeedInsights from '@vercel/speed-insights/astro';
 
 // ลบบรรทัด const { title, description } = Astro.props; ที่อยู่ข้างล่างออก
 ---

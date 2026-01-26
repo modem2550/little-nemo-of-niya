@@ -19,25 +19,55 @@ const { data: upcomingData } = await supabase
 const { data: galleryData } = await supabase
     .from('event_gallery')
     .select('*')
-    .order('Date-At', { ascending: false });
+    .order('Date-At', { ascending: false })
+    .limit(3);
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// แยกประเภทงาน (ใช้เฉพาะ upcomingData)
-const upcomingEvents = upcomingData 
-  ? upcomingData.filter(event => {
-      const eventDate = new Date(event.date.replace(/-/g, '/'));
-      return eventDate >= today;
-    }).reverse() 
-  : [];
+// แยกประเภทงานและเรียงลำดับให้ถูกต้อง
+let upcomingEvents: any[] = [];
+let pastEvents: any[] = [];
 
-const pastEvents = upcomingData 
-  ? upcomingData.filter(event => {
+if (upcomingData) {
+  upcomingData.forEach(event => {
+    try {
       const eventDate = new Date(event.date.replace(/-/g, '/'));
-      return eventDate < today;
-    }) 
-  : [];
+      eventDate.setHours(0, 0, 0, 0);
+      
+      if (eventDate >= today) {
+        upcomingEvents.push(event);
+      } else {
+        pastEvents.push(event);
+      }
+    } catch (e) {
+      // หากไม่สามารถแปลงวันที่ได้ ให้ถือว่าเป็น past event
+      pastEvents.push(event);
+    }
+  });
+  
+  // เรียงลำดับ upcomingEvents จากใกล้ถึงไกล (ascending)
+  upcomingEvents.sort((a, b) => {
+    try {
+      const dateA = new Date(a.date.replace(/-/g, '/'));
+      const dateB = new Date(b.date.replace(/-/g, '/'));
+      return dateA.getTime() - dateB.getTime();
+    } catch (e) {
+      return 0;
+    }
+  });
+  
+  // เรียงลำดับ pastEvents จากใหม่ไปเก่า (descending)
+  pastEvents.sort((a, b) => {
+    try {
+      const dateA = new Date(a.date.replace(/-/g, '/'));
+      const dateB = new Date(b.date.replace(/-/g, '/'));
+      return dateB.getTime() - dateA.getTime();
+    } catch (e) {
+      return 0;
+    }
+  });
+}
 
 function toSlug(text) {
   return text
@@ -47,6 +77,11 @@ function toSlug(text) {
     .replace(/[()]/g, "")
     .replace(/[^a-z0-9-]/g, "");
 }
+
+// จำนวนกิจกรรมที่แสดง
+const upcomingCount = upcomingEvents.length;
+const pastCount = pastEvents.length;
+const galleryCount = galleryData?.length || 0;
 ---
 
 <MainLayout title="Niya BNK48 - Fan Website">
@@ -59,8 +94,13 @@ function toSlug(text) {
                     <strong>Niya</strong> BNK48<p class=h3>Suvibha Laithomya</p>
                 </div>
             </div>
-            <video autoplay loop muted playsinline class="w-100 video-bg">
-                <source src="video/BG-video.mp4" type="video/mp4">
+            <video  class="video-bg"
+                    autoplay
+                    loop
+                    muted
+                    playsinline
+                    preload="none">
+                <source   src="video/BG-video.mp4" type="video/mp4">
             </video>
         </div>
     </section>
@@ -72,9 +112,9 @@ function toSlug(text) {
             </div>
         <section id="upcoming-events-section" style="padding: 0;">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
-                {upcomingEvents.length > 0 ? (
+                {upcomingCount > 0 ? (
                     upcomingEvents.map((eventItem) => (
-                        <div class="col d-flex justify-content-center">
+                        <div class="col d-flex justify-content-center" data-event-date={eventItem.date}>
                             <EventCard event={eventItem} />
                         </div>
                     ))
@@ -85,25 +125,27 @@ function toSlug(text) {
                 )}
         </section>
         <div class="text-center mt-5"> 
-                    <a class="btn btn-primary btn-rounded fw-600 px-4" href="schedule"> 
-                <div><strong>More Event</strong><svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"> <use href="#icon-arrow-right"></use> </svg></div> </a> </div>
+            <a class="btn btn-primary btn-rounded fw-600 px-4" href="schedule" id="moreEventsBtn"> 
+                <div><strong>More Event</strong><svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"> <use href="#icon-arrow-right"></use> </svg></div> 
+            </a> 
+        </div>
             </div>
     </section>
     <section id=info>
         <div class="container bd-info">
-            <img alt=half-body class="h-body fade-in" loading=lazy src="/img/h-body.png">
+            <img alt=half-body class="h-body fade-in" loading=lazy src="/img/h-body.png" data-loading="lazy">
             <div class=pc>
-                <img alt=profile class=p-body loading=lazy src="/img/profile.jpg">
+                <img alt=profile class=p-body loading=lazy src="/img/profile.jpg" data-loading="lazy">
             </div>
             <div class="slide-right br-i">
                 <div class="fw-bold h3">Niya - Suvibha Laithomya</div>
-                <p>สวัสดีค่ะ ชื่อนีญ่า ชื่อจริง สุวิภาส์ ลายถมยา แปลว่า “ผู้หญิงที่สวย” ชอบกินไดฟูกุรสชาเขียว, แซลมอน, และของเค็มทุกชนิด ชอบสีพาสเทลทุกสีงานอดิเรก เล่นรูบิค, ฟัง The Ghost Radio ความสามารถพิเศษเล่นรูบิค, เล่นอูคูเลเล่</p>
+                <p>สวัสดีค่ะ ชื่อนีญ่า ชื่อจริง สุวิภาส์ ลายถมยา แปลว่า "ผู้หญิงที่สวย" ชอบกินไดฟูกุรสชาเขียว, แซลมอน, และของเค็มทุกชนิด ชอบสีพาสเทลทุกสีงานอดิเรก เล่นรูบิค, ฟัง The Ghost Radio ความสามารถพิเศษเล่นรูบิค, เล่นอูคูเลเล่</p>
                 <ul>
                     <li>ตำแหน่ง Center จากการเลือกตั้ง BNK48 & CGM48 Thai-Chinese Cultural Ambassador</li>
-                    <li>ได้รับคัดเลือกให้เป็นเซ็มบัตสึในซิงเกิลที่ 20 ของ BNK48 <a href="https://music.apple.com/th/album/masaka-no-confession-%E0%B8%84%E0%B8%B3%E0%B8%AA%E0%B8%B2%E0%B8%A3%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%97-%E0%B9%84%E0%B8%A1-%E0%B8%84%E0%B8%B2%E0%B8%94%E0%B8%9D-%E0%B8%99/1846837749?i=1846837864">Masaka No Confession</a></li>
-                    <li>ได้รับคัดเลือกเป็นเซ็มบัตสึในเพลงรอง <a href="https://music.apple.com/th/album/saikyou-twintail-%E0%B8%97%E0%B8%A7-%E0%B8%99%E0%B9%80%E0%B8%97%E0%B8%A5-%E0%B8%AA-%E0%B8%94%E0%B8%A2%E0%B8%AD%E0%B8%94%E0%B9%80%E0%B8%A5%E0%B8%A2/1801922410?i=1801922635">Saikyou Twintail</a></li>
+                    <li>ได้รับคัดเลือกให้เป็นเซ็มบัตสึในซิงเกิลที่ 20 ของ BNK48 <a href="https://music.apple.com/th/album/masaka-no-confession-%E0%B8%84%E0%B8%B3%E0%B8%AA%E0%B8%B2%E0%B8%A3%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%97-%E0%B9%84%E0%B8%A1-%E0%B8%84%E0%B8%B2%E0%B8%94%E0%B8%9F-%E0%B8%99/1846837749?i=1846837864" class="highlight-link">Masaka No Confession</a></li>
+                    <li>ได้รับคัดเลือกเป็นเซ็มบัตสึในเพลงรอง <a href="https://music.apple.com/th/album/saikyou-twintail-%E0%B8%97%E0%B8%A7-%E0%B8%99%E0%B9%80%E0%B8%97%E0%B8%A5-%E0%B8%AA-%E0%B8%94%E0%B8%A2%E0%B8%AD%E0%B8%94%E0%B9%80%E0%B8%A5%E0%B8%A2/1801922410?i=1801922635" class="highlight-link">Saikyou Twintail</a></li>
                     <li>ตำแหน่ง Under Girls อันดับที่ 24 <sup>th</sup>จากการเลือกตั้ง BNK48 & CGM48 Senbatsu General Election 2025</li>
-                    <li>มีผลงานในฐานะเซ็มบัตสึในซิงเกิลและอัลบั้มต่าง ๆ ของ <a href=https://tpop.fandom.com/wiki/Niya>BNK48</a> อย่างต่อเนื่อง</li>
+                    <li>มีผลงานในฐานะเซ็มบัตสึในซิงเกิลและอัลบั้มต่าง ๆ ของ <a href=https://tpop.fandom.com/wiki/Niya class="highlight-link">BNK48</a> อย่างต่อเนื่อง</li>
                 </ul>
             </div>
         </div>
@@ -111,10 +153,10 @@ function toSlug(text) {
     <section id=social>
         <div class=container>
             <h2 class="h-sec display-5 mb-1 fw-800 t-center">Social Media</h2>
-            <p class="fw-bold h5 mb-5 t-center">ช่องทางติดตามโซเชีลยลนีญ่า
+            <p class="fw-bold h5 mb-5 t-center">ช่องทางติดตามโซเชีลยลนีญ่า</p>
             <div class="embed-row">
-                <div class="slide-right embed">
-                    <a href="https://www.instagram.com/yourstellaloulover/?utm_source=ig_embed" target="_blank" style="text-decoration: none; color: inherit;">
+                <div class="slide-right embed" data-embed-type="instagram">
+                    <a href="https://www.instagram.com/yourstellaloulover/?utm_source=ig_embed" target="_blank" style="text-decoration: none; color: inherit;" class="social-link">
                         <div class="ig-banner">
                             <div class="fw-bold h5">
                                 <svg viewBox="0 0 512 512" class="front icon-svg"><use href="#icon-instagram"></use></svg>
@@ -132,19 +174,21 @@ function toSlug(text) {
                             src="https://www.instagram.com/yourstellaloulover/embed/?cr=1&v=14"
                             title="Instagram feed of yourstellaloulover"
                             height="559"
+                            loading="lazy"
                             frameborder="0"
                             scrolling="no"
                             allowtransparency="true"
                             allow="accelerometer; gyroscope; encrypted-media; picture-in-picture"
                             class="instagram-media instagram-media-rendered"
                             style="background-color:#fff; border:1px solid #e3e3e4; width: 100%;"
-                            tabindex="-1">
+                            tabindex="-1"
+                            data-lazy-iframe>
                         </iframe>
                     </div>
                 </div>
 
-                <div class="slide-right embed">
-                    <a href="https://www.tiktok.com/@niya.bnk48.official" target="_blank" style="text-decoration: none; color: inherit;">
+                <div class="slide-right embed" data-embed-type="tiktok">
+                    <a href="https://www.tiktok.com/@niya.bnk48.official" target="_blank" style="text-decoration: none; color: inherit;" class="social-link">
                         <div class="tiktok-banner">
                             <div class="fw-bold h5">
                                 <svg viewBox="0 0 512 512" class="front icon-svg"><use href="#icon-tiktok"></use></svg>
@@ -162,11 +206,13 @@ function toSlug(text) {
                             style="max-width:780px; min-width:288px; margin: 0 auto;">
                             <iframe
                                 src="https://www.tiktok.com/embed/@niya.bnk48.official?lang=en-US"
+                                loading="lazy"
                                 title="TikTok videos by niya.bnk48.official"
                                 style="width:100%; height:494px; display:block; visibility:unset; max-height:494px; border:none;"
                                 allow="accelerometer; gyroscope; encrypted-media; picture-in-picture"
                                 sandbox="allow-popups allow-popups-to-escape-sandbox allow-scripts allow-top-navigation allow-same-origin allow-forms"
-                                tabindex="-1">
+                                tabindex="-1"
+                                data-lazy-iframe>
                             </iframe>
                         </blockquote>
                     </div>
@@ -174,8 +220,8 @@ function toSlug(text) {
             </div>
             <div class="mb-4 row">
                 <div class="col-12 col-lg-4">
-                    <a href=https://www.instagram.com/niya.bnk48official/ class="slide-right social-box -instagram"
-                        target=_blank title=instagram>
+                    <a href=https://www.instagram.com/niya.bnk48official/ class="slide-right social-box -instagram social-link"
+                        target=_blank title=instagram tabindex="0">
                         <svg viewBox="0 0 512 512" class="svg-inline--fa fa-instagram front" data-icon="instagram"
                             data-prefix="fab" role="img" aria-hidden="true" data-fa-i2svg="" fill="currentColor">
                             <use href="#icon-instagram" preserveAspectRatio="xMidYMid meet"></use>
@@ -197,8 +243,8 @@ function toSlug(text) {
                     </a>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <a href=https://www.facebook.com/niya.bnk48official class="slide-right social-box -facebook"
-                        target=_blank title=Facebook>
+                    <a href=https://www.facebook.com/niya.bnk48official class="slide-right social-box -facebook social-link"
+                        target=_blank title=Facebook tabindex="0">
                         <svg viewBox="0 0 512 512" class="svg-inline--fa fa-facebook front" data-icon=facebook
                             data-prefix=fab role=img aria-hidden=true data-fa-i2svg="">
                             <use href="#icon-facebook" preserveAspectRatio="xMidYMid meet"></use>
@@ -222,8 +268,8 @@ function toSlug(text) {
                     </a>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <a href=https://app.bnk48.com/member-profile/131 class="slide-right social-box -iam48" target=_blank
-                        title=iAM48>
+                    <a href=https://app.bnk48.com/member-profile/131 class="slide-right social-box -iam48 social-link" target=_blank
+                        title=iAM48 tabindex="0">
                         <svg viewBox="0 0 512 512" class="svg-inline--fa fa-iam48 front" data-icon=iAM48 data-prefix=fab
                             role=img aria-hidden=true data-fa-i2svg="">
                             <path
@@ -256,8 +302,8 @@ function toSlug(text) {
     <section id=library>
         <div class=container>
             <div class="h-sec display-5 mb-1 fw-800 t-center">Selected Highlights</div>
-            <p class="fw-bold h5 text-center mb-5">ไฮไลต์ผลงานทที่โดดเด่นนีญ่า
-            <div class="slide-right mb-4 youtube-block">
+            <p class="fw-bold h5 text-center mb-5">ไฮไลต์ผลงานทที่โดดเด่นนีญ่า</p>
+            <div class="slide-right mb-4 youtube-block" data-video-id="VlVJWXXZCOQ">
                 <div class="info p-4">
                     <p class="h5 mb-0 bnk48-color">
                         <svg viewBox="0 0 256 256" class="svg-inline--fa fa-star me-2">
@@ -265,44 +311,20 @@ function toSlug(text) {
                                 d=M240.58984,128a15.84794,15.84794,0,0,1-10.53125,15.03711l-63.81543,23.206-23.206,63.81543a16.001,16.001,0,0,1-30.07422,0L89.75684,166.24316l-63.81543-23.206a16.001,16.001,0,0,1,0-30.07422L89.75684,89.75684l23.20605-63.81543a16.001,16.001,0,0,1,30.07422,0l23.206,63.81543,63.81543,23.20605A15.84794,15.84794,0,0,1,240.58984,128Z>
                             </path>
                         </svg>
-                        Side-Stories of MIRAI
-                    <h3 class="fw-700 mb-2 h1">BNK48 Original Special</h3>
+                        Double Center Position
+                    <h3 class="fw-700 mb-2 h1">Sky Lantern Wish (天灯愿)</h3>
                     <p class=mb-0>
-                        Song included in the 5<sup>th</sup>
-                        album <a href=https://music.apple.com/th/album/sukinanda/1784883311 class=bnk48-color>#SukiNanda</a>
+                        Original Spacial Single Lead Song
                 </div>
                 <div class="ratio ratio-16x9">
-                    <iframe src="https://www.youtube.com/embed/VlVJWXXZCOQ?si=02-mnR2mKA9ZIhWT" height=315 allowfullscreen
+                    <iframe src="https://www.youtube.com/embed/HpQ9B13uv0w?si=ILXAznZNwq0MSsZM" height=315 allowfullscreen
                         frameborder=0
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        loading=lazy title="YouTube video player" width=560></iframe>
+                        loading=lazy title="YouTube video player" width=560 data-lazy-iframe></iframe>
                 </div>
             </div>
             <div class="mb-4 row">
-                <div class="slide-right col-12 col-lg-6">
-                    <div class="mb-4 youtube-block">
-                        <div class="info p-4">
-                            <p class="fw-bold bnk48-color mb-0">
-                                <svg viewBox="0 0 256 256" class="svg-inline--fa fa-star me-2">
-                                    <path
-                                        d=M240.58984,128a15.84794,15.84794,0,0,1-10.53125,15.03711l-63.81543,23.206-23.206,63.81543a16.001,16.001,0,0,1-30.07422,0L89.75684,166.24316l-63.81543-23.206a16.001,16.001,0,0,1,0-30.07422L89.75684,89.75684l23.20605-63.81543a16.001,16.001,0,0,1,30.07422,0l23.206,63.81543,63.81543,23.20605A15.84794,15.84794,0,0,1,240.58984,128Z>
-                                    </path>
-                                </svg>
-                                STAGE CENTER
-                            <h3 class="h3 fw-700 mb-2">Saikyou Twintail - ทวินเทล สุดยอดเลย!</h3>
-                            <p class=mb-0 style=font-size:14px>
-                                BNK48 18<sup>th</sup>
-                                Single Coupling Song
-                        </div>
-                        <div class="ratio ratio-16x9">
-                            <iframe src="https://www.youtube.com/embed/YKfOHpEYkSA?si=tasOMtcy_8LapVG9" height=315
-                                allowfullscreen frameborder=0
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                loading=lazy title="YouTube video player" width=560></iframe>
-                        </div>
-                    </div>
-                </div>
-                <div class="slide-right col-12 col-lg-6">
+                <div class="slide-right col-12 col-lg-6" data-video-id="a5bPbwk0F7k">
                     <div class="mb-4 youtube-block">
                         <div class="info p-4">
                             <p class="fw-bold bnk48-color mb-0">
@@ -321,15 +343,38 @@ function toSlug(text) {
                             <iframe src="https://www.youtube.com/embed/a5bPbwk0F7k?si=wVBylsY6I8FZKeQ_" height=315
                                 allowfullscreen frameborder=0
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                loading=lazy title="YouTube video player" width=560></iframe>
+                                loading=lazy title="YouTube video player" width=560 data-lazy-iframe></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-right col-12 col-lg-6" data-video-id="YKfOHpEYkSA">
+                    <div class="mb-4 youtube-block">
+                        <div class="info p-4">
+                            <p class="fw-bold bnk48-color mb-0">
+                                <svg viewBox="0 0 256 256" class="svg-inline--fa fa-star me-2">
+                                    <path
+                                        d=M240.58984,128a15.84794,15.84794,0,0,1-10.53125,15.03711l-63.81543,23.206-23.206,63.81543a16.001,16.001,0,0,1-30.07422,0L89.75684,166.24316l-63.81543-23.206a16.001,16.001,0,0,1,0-30.07422L89.75684,89.75684l23.20605-63.81543a16.001,16.001,0,0,1,30.07422,0l23.206,63.81543,63.81543,23.20605A15.84794,15.84794,0,0,1,240.58984,128Z>
+                                    </path>
+                                </svg>
+                                Side-Stories of MIRAI
+                            <h3 class="h3 fw-700 mb-2">BNK48 Original Special</h3>
+                            <p class=mb-0>
+                                Song included in the 5<sup>th</sup>
+                                album <a href=https://music.apple.com/th/album/sukinanda/1784883311 class=bnk48-color>#SukiNanda</a>
+                        </div>
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/VlVJWXXZCOQ?si=02-mnR2mKA9ZIhWT" height=315 allowfullscreen
+                            frameborder=0
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            loading=lazy title="YouTube video player" width=560 data-lazy-iframe></iframe>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="mb-5">
                 <div class="col-12 col-lg-6 b-ce">
-                    <a href=https://app.bnk48.com/member-profile/131 class="slide-right social-box -iam48" target=_blank
-                        title=iAM48>
+                    <a href=https://app.bnk48.com/member-profile/131 class="slide-right social-box -iam48 social-link" target=_blank
+                        title=iAM48 tabindex="0">
                         <svg viewBox="0 0 512 512" class="svg-inline--fa fa-iam48 front" data-icon=iAM48 data-prefix=fab
                             role=img aria-hidden=true data-fa-i2svg="">
                             <path
@@ -370,59 +415,62 @@ function toSlug(text) {
                     </a>
                 </div>
             </div>
-            {(!galleryData && galleryData || galleryData && galleryData.length === 0) ? (
-                <div class="row">   
-                    <div class="col-12">
-                        <div class="alert alert-info text-center" role="alert">
-                            <i class="bi bi-info-circle me-2"></i>
-                            ไม่พบข้อมูลรูปภาพ
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <>
-                    <div class="mb-4 row">
-                        {galleryData && galleryData.slice(0, 3).map((event) => (
-                            <div class="slide-right col-12 col-lg-4 mb-4 show">
-                                <GalleryCard event={event} />
-                            </div>
-                        ))}
-                    </div>
-                </>
-            )}
-        </div>
-        <div class="text-center mt-5">
-            <a class="btn btn-primary btn-rounded fw-600 px-4" href="gallery">
-                <div><strong>More Photo</strong><svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"> <use href="#icon-arrow-right"></use> </svg></div>
-            </a>
         </div>
     </section>
     <section id=fanclub>
         <div class=container>
-            <h2 class="fw-bold text-center display-5 h-sec mb-1">Fans’ Newsline</h2>
-            <p class="fw-bold h5 text-center mb-5">ช่องทางติดตามข่าวสารจากแฟนคลับ
+            <h2 class="fw-bold text-center display-5 h-sec mb-1">Fans' Newsline</h2>
+            <p class="fw-bold h5 text-center mb-5">ช่องทางติดตามข่าวสารจากแฟนคลับ</p>
             <div class="mb-4 row align-items-center">
+                <div class="slide-in">
+                    {(!galleryData || galleryData.length === 0) ? (
+                        <div class="row">   
+                            <div class="col-12">
+                                <div class="alert alert-info text-center" role="alert">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    ไม่พบข้อมูลรูปภาพ
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <div class="mb-4 row">
+                                {galleryData.slice(0, 3).map((event, index) => (
+                                    <div class="slide-right col-12 col-lg-4 mb-4 show" data-gallery-index={index}>
+                                        <GalleryCard event={event} />
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                    <div class="text-center mt-3 mb-5">
+                        <a class="btn btn-primary btn-rounded fw-600 px-4" href="gallery" id="moreGalleryBtn">
+                            <div><strong>More Photo</strong><svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"> <use href="#icon-arrow-right"></use> </svg></div>
+                        </a>
+                    </div>
+                </div>
                 <div class="slide-in col-12 col-lg-6">
-                    <img alt="Nemo and Niya Art" class="mb-4 img-fluid" loading=lazy src=/img/lit-img.png>
+                    <img alt="Nemo and Niya Art" class="mb-4 img-fluid" loading=lazy src=/img/lit-img.png data-loading="lazy">
                 </div>
                 <div class="fade-right col-12 col-lg-6">
                     <h3 class=h1>Little Nemo of Niya</h3>
-                    <p class=text-muted>แฟนด้อมที่มากกว่าการติดตาม
+                    <p class=text-muted>แฟนด้อมที่มากกว่าการติดตาม</p>
                     <p>ไม่ใช่เพียงแค่การชื่นชมผลงานจากระยะไกล แต่คือการได้ก้าวเข้ามาเป็นส่วนหนึ่งในเส้นทางของ Niya
                         อย่างแท้จริง คุณจะได้สัมผัสทุกเบื้องหลังของการสร้างสรรค์
                         รับรู้ถึงหยดเหงื่อและความตั้งใจที่ซ่อนอยู่ในแต่ละรายละเอียด
-                        ร่วมเดินไปพร้อมกับทุกความท้าทายและทุกก้าวแห่งความสำเร็จ
+                        ร่วมเดินไปพร้อมกับทุกความท้าทายและทุกก้าวแห่งความสำเร็จ</p>
                     <div class=row>
                         <div class="col-12 col-lg-6 mb-3">
                             <div class=fc-bt>
-                                <a href=https://line.me/ti/g2/YYQYpuFlsvlTQz6KyvKM7m0zmLJ39JlzdphDqA>
+                                <a href=https://line.me/ti/g2/YYQYpuFlsvlTQz6KyvKM7m0zmLJ39JlzdphDqA class="fc-link">
                                     <div class="fw-bold h5 text-center mb-0">เข้าร่วมพูดคุย</div>
                                 </a>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6 mb-3">
                             <div class="fc-bt">
-                                <button onclick="openPopup()" style="color: white;background: none;border: none;width: 100%;padding: 0;">
+                                <button onclick="openPopup()" style="color: white;background: none;border: none;width: 100%;padding: 0;" 
+                                        class="fc-link" id="moreInfoBtn">
                                     <div class="fw-bold h5 text-center mb-0">เพิ่มเติม</div>
                                 </button>
                             </div>
@@ -432,7 +480,7 @@ function toSlug(text) {
             </div>
             <div id=popup-overlay>
                 <div class=popup-container>
-                    <button class=popup-close onclick=closePopup()>
+                    <button class=popup-close onclick=closePopup() id="closePopupBtn">
                         <svg viewBox="0 0 460.775 460.775" xmlns=http://www.w3.org/2000/svg fill=#000000 height=25px
                             id=Capa_1 version=1.1 width=25px xml:space=preserve xmlns:xlink=http://www.w3.org/1999/xlink>
                             <g id=SVGRepo_bgCarrier stroke-width=0></g>
@@ -451,8 +499,8 @@ function toSlug(text) {
 
                         return (
                         <div class="d-grid">
-                            <a href={social.url} class={`social-box -${slug}`} target="_blank" rel="noopener noreferrer"
-                                title={social.platform}>
+                            <a href={social.url} class={`social-box -${slug} social-link`} target="_blank" rel="noopener noreferrer"
+                                title={social.platform} tabindex="0">
                                 {/* icon */}
                                 <svg viewBox="0 0 512 512" class={`svg-inline--fa fa-${slug}`} data-icon={slug}
                                     data-prefix="fab" role="img" aria-hidden="true">
@@ -480,4 +528,215 @@ function toSlug(text) {
             </div>
         </div>
     </section>
+    
+    <script>
+        // UX Enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Add page load progress indicator
+            const progressBar = document.createElement('div');
+            progressBar.id = 'page-load-progress';
+            document.body.appendChild(progressBar);
+            
+            // Simulate loading progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 90) {
+                    clearInterval(progressInterval);
+                    setTimeout(() => {
+                        progressBar.style.width = '100%';
+                        setTimeout(() => {
+                            progressBar.style.opacity = '0';
+                            setTimeout(() => {
+                                progressBar.remove();
+                            }, 300);
+                        }, 200);
+                    }, 100);
+                }
+            }, 50);
+            
+            // 2. Add scroll to top button
+            const scrollToTopBtn = document.createElement('button');
+            scrollToTopBtn.id = 'scrollToTop';
+            scrollToTopBtn.innerHTML = '↑';
+            scrollToTopBtn.title = 'กลับสู่ด้านบน';
+            scrollToTopBtn.setAttribute('aria-label', 'Scroll to top');
+            document.body.appendChild(scrollToTopBtn);
+            
+            // Show/hide scroll to top button
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+            
+            // Scroll to top functionality
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 3. Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+                    
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        e.preventDefault();
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // 4. Lazy load iframes when they enter viewport
+            const lazyIframes = document.querySelectorAll('iframe[data-lazy-iframe]');
+            const lazyIframeObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const iframe = entry.target as HTMLIFrameElement;
+                        // Already loaded by browser, just remove placeholder
+                        iframe.style.background = 'transparent';
+                        lazyIframeObserver.unobserve(iframe);
+                    }
+                });
+            }, { rootMargin: '50px' });
+            
+            lazyIframes.forEach(iframe => {
+                lazyIframeObserver.observe(iframe);
+            });
+            
+            // 5. Add visual feedback for social media links
+            const socialLinks = document.querySelectorAll('.social-link');
+            socialLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Track external link clicks (can be used for analytics)
+                    const platform = this.classList.contains('-instagram') ? 'Instagram' :
+                                   this.classList.contains('-facebook') ? 'Facebook' :
+                                   this.classList.contains('-tiktok') ? 'TikTok' :
+                                   this.classList.contains('-iam48') ? 'iAM48' : 'Social';
+                    
+                    console.log(`Clicked ${platform} link`);
+                });
+            });
+            
+            // 6. Enhanced event cards interaction
+            const eventCards = document.querySelectorAll('[data-event-date]');
+            eventCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // 7. Button tracking for analytics
+            const trackButtons = ['moreEventsBtn', 'moreGalleryBtn', 'moreInfoBtn'];
+            trackButtons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        const action = btnId === 'moreEventsBtn' ? 'view_more_events' :
+                                     btnId === 'moreGalleryBtn' ? 'view_more_gallery' :
+                                     'view_more_info';
+                        
+                        console.log(`User clicked: ${action}`);
+                    });
+                }
+            });
+            
+            // 8. Close popup with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closePopup();
+                }
+            });
+            
+            // 9. Popup accessibility improvements
+            const closePopupBtn = document.getElementById('closePopupBtn');
+            if (closePopupBtn) {
+                closePopupBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        closePopup();
+                    }
+                });
+            }
+            
+            // 10. Prevent video autoplay on mobile data saver mode
+            const video = document.querySelector('.video-bg');
+            if (video) {
+                video.addEventListener('loadeddata', function() {
+                    // Video loaded successfully
+                    this.classList.add('loaded');
+                });
+                
+                video.addEventListener('error', function() {
+                    // Fallback to poster image if video fails to load
+                    this.style.display = 'none';
+                    const poster = this.getAttribute('poster');
+                    if (poster) {
+                        const img = document.createElement('img');
+                        img.src = poster;
+                        img.className = 'w-100';
+                        img.alt = 'Niya BNK48';
+                        this.parentNode.insertBefore(img, this.nextSibling);
+                    }
+                });
+            }
+            
+            // 11. Gallery card hover effects
+            const galleryCards = document.querySelectorAll('[data-gallery-index]');
+            galleryCards.forEach(card => {
+                card.addEventListener('focus', function() {
+                    this.style.zIndex = '10';
+                });
+                
+                card.addEventListener('blur', function() {
+                    this.style.zIndex = '1';
+                });
+            });
+            
+            // 12. Performance monitoring
+            window.addEventListener('load', function() {
+                const loadTime = window.performance.timing.domContentLoadedEventEnd - 
+                               window.performance.timing.navigationStart;
+                console.log(`Page loaded in ${loadTime}ms`);
+                
+                // Mark page as fully loaded for CSS transitions
+                document.documentElement.classList.add('page-loaded');
+            });
+        });
+        
+        // Popup functions (existing)
+        function openPopup() {
+            const popupOverlay = document.getElementById('popup-overlay');
+            if (popupOverlay) {
+                popupOverlay.style.display = 'flex';
+                // Focus trap for accessibility
+                const firstLink = document.querySelector('#popup-overlay .social-link') as HTMLElement;
+                if (firstLink) firstLink.focus();
+            }
+        }
+        
+        function closePopup() {
+            const popupOverlay = document.getElementById('popup-overlay');
+            if (popupOverlay) {
+                popupOverlay.style.display = 'none';
+            }
+            // Return focus to the button that opened the popup
+            document.getElementById('moreInfoBtn')?.focus();
+        }
+    </script>
 </MainLayout>

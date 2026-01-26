@@ -4,18 +4,79 @@ import GalleryCard from '../components/GalleryCard.astro';
 import { getSupabase } from "../lib/supabase.server";
 
 const supabase = getSupabase();
-// โหลดข้อมูลทั้งหมดมาก่อน
+
 const { data: allEvents, error } = await supabase
   .from('event_gallery')
-  .select('*')
+  .select(`*`)
   .order('Date-At', { ascending: false });
 
+// Handle error
 if (error) {
-  console.error('Error fetching events:', error);
+  console.error('Error fetching gallery data:', error);
 }
 
-const ITEMS_PER_PAGE = 16;
-const initialEvents = allEvents?.slice(0, ITEMS_PER_PAGE) || [];
+// ดึงค่า unique ของ Photo-page และ Event
+const allEventsData = allEvents || [];
+const uniquePhotoPages = [...new Set(allEventsData.map(e => e['Photo-page'] || e['Phot-page'] || '').filter(Boolean))].sort();
+const uniqueEvents = [...new Set(allEventsData.map(e => e.Event || e.Name || '').filter(Boolean))].sort();
+
+type Group = { 
+  key: string;
+  label: string;
+  events: any[] 
+};
+
+// Function สำหรับจัดกลุ่ม
+function groupEvents(events: any[] | null, groupBy: string): Group[] {
+  const grouped: Record<string, Group> = {};
+  const eventsList = events || [];
+  
+  eventsList.forEach((event: any) => {
+    let key = '';
+    let label = '';
+    
+    switch(groupBy) {
+      case 'date':
+        try {
+          const date = new Date(event['Date-At']);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          key = `${year}-${month}`;
+          label = `${year} / ${month}`;
+        } catch (e) {
+          key = 'unknown-date';
+          label = 'วันที่ไม่ทราบ';
+        }
+        break;
+      case 'photo-page':
+        key = event['Photo-page'] || event['Phot-page'] || 'Unknown';
+        label = key;
+        break;
+      case 'event':
+        key = event.Event || event.Name || 'Untitled';
+        label = key;
+        break;
+      default:
+        key = 'all';
+        label = 'All Events';
+    }
+    
+    if (!grouped[key]) {
+      grouped[key] = { key, label, events: [] };
+    }
+    grouped[key].events.push(event);
+  });
+  
+  // เรียงลำดับกลุ่ม
+  return Object.values(grouped).sort((a, b) => {
+    if (groupBy === 'date') {
+      return b.key.localeCompare(a.key); // ใหม่ไปเก่า
+    }
+    return a.label.localeCompare(b.label, 'th'); // A-Z
+  });
+}
+
+const initialGroups = groupEvents(allEventsData, 'date');
 ---
 
 <MainLayout title="Gallery - Niya BNK48's">
@@ -26,149 +87,292 @@ const initialEvents = allEvents?.slice(0, ITEMS_PER_PAGE) || [];
         </header>
     </div>
 
-    <main class="py-5 px-5">
-        <div>
-            {(!allEvents || allEvents.length === 0) ? (
-                <div class="row">   
-                    <div class="col-12">
-                        <div class="alert alert-info text-center" role="alert">
-                            <i class="bi bi-info-circle me-2"></i>
-                            ไม่พบข้อมูลรูปภาพ
-                        </div>
+    <!-- Filter/Sort Controls -->
+    <div class="container-fluid px-4 py-3">
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label class="form-label mb-0 fw-600">จัดเรียงตาม:</label>
+            </div>
+            <div class="col-auto">
+                <select id="groupBy" class="form-select">
+                    <option value="date" selected>Date Update</option>
+                    <option value="photo-page">Photographer</option>
+                    <option value="event">Event</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button id="resetFilters" class="btn btn-primary">
+                    รีเซ็ต
+                </button>
+            </div>
+            <div class="col-auto ms-auto">
+                <span>
+                    ทั้งหมด <span id="totalCount">{allEventsData.length}</span> รูป
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <main class="py-4 px-4">
+        {allEventsData.length === 0 ? (
+            <div class="row">   
+                <div class="col-12">
+                    <div class="alert alert-info text-center" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        {error ? 'เกิดข้อผิดพลาดในการโหลดข้อมูล' : 'ไม่พบข้อมูลรูปภาพ'}
                     </div>
                 </div>
-            ) : (
-                <>
-                    <div id="gallery-container" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
-                        {initialEvents.map((event) => (
-                            <GalleryCard event={event} />
-                        ))}
-                    </div>
-                    
-                    {allEvents.length > ITEMS_PER_PAGE && (
-                        <>
-                            <div id="loading-indicator" class="text-center mt-4" style="display: none;">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">กำลังโหลด...</span>
-                                </div>
-                                <p class="mt-2">กำลังโหลดรูปภาพเพิ่มเติม...</p>
-                            </div>
+            </div>
+        ) : (
+            <div id="gallery-sections">
+                {initialGroups.map((group) => (
+                    <section class="gallery-group mb-5" data-group-key={group.key}>
+                        <div class="group-header d-flex justify-content-between mb-3">
+                            <h2 class="group-title" style="font-size: 3rem; font-weight: 800; line-height: 1; margin: 0;">
+                                {group.label}
+                            </h2>
+                            <span class="badge" style="font-size: 1rem;">
+                                {group.events.length} รูป
+                            </span>
+                        </div>
 
-                            <div id="no-more-data" class="text-center mt-4" style="display: none;">
-                                <p class="text-muted"></p>
-                            </div>
-                            <div id="sentinel"></div>
-                        </>
-                    )}
-                </>
-            )}
-        </div>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6 g-4 mb-4">
+                            {group.events.map((event) => (
+                                <GalleryCard event={event} />
+                            ))}
+                        </div>
+                    </section>
+                ))}
+            </div>
+        )}
     </main>
 
-    <script define:vars={{ allEventsData: allEvents, ITEMS_PER_PAGE }}>
-        if (allEventsData && allEventsData.length > ITEMS_PER_PAGE) {
-            let currentIndex = ITEMS_PER_PAGE;
-            let isLoading = false;
-            const events = allEventsData;
-            let hasMoreData = currentIndex < events.length;
+    <script define:vars={{ allEventsData }}>
+        const allEvents = allEventsData || [];
+        const galleryContainer = document.getElementById('gallery-sections');
+        const groupBySelect = document.getElementById('groupBy');
+        const resetButton = document.getElementById('resetFilters');
+        const totalCountSpan = document.getElementById('totalCount');
 
-            const galleryContainer = document.getElementById('gallery-container');
-            const loadingIndicator = document.getElementById('loading-indicator');
-            const noMoreDataIndicator = document.getElementById('no-more-data');
-
-            function formatDate(dateString) {
-                if (!dateString) return '';
+        function formatDate(dateString) {
+            if (!dateString) return 'วันที่ไม่ทราบ';
+            try {
                 const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'วันที่ไม่ทราบ';
+                
                 const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
                 const day = String(date.getDate()).padStart(2, '0');
                 const month = months[date.getMonth()];
                 const year = date.getFullYear();
                 return `${day} ${month} ${year}`;
+            } catch (e) {
+                return 'วันที่ไม่ทราบ';
             }
+        }
 
-            function loadMoreEvents() {
-                if (isLoading || !hasMoreData) return;
+        function groupEvents(events, groupBy) {
+            const grouped = {};
+            
+            events.forEach(event => {
+                let key = '';
+                let label = '';
+                
+                switch(groupBy) {
+                    case 'date':
+                        try {
+                            const date = new Date(event['Date-At']);
+                            if (isNaN(date.getTime())) throw new Error('Invalid date');
+                            
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 
+                                              'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                            key = `${year}-${month}`;
+                            label = `${monthNames[date.getMonth()]} ${year}`;
+                        } catch (e) {
+                            key = 'unknown-date';
+                            label = 'วันที่ไม่ทราบ';
+                        }
+                        break;
+                    case 'photo-page':
+                        key = event['Photo-page'] || event['Phot-page'] || 'Unknown';
+                        label = key;
+                        break;
+                    case 'event':
+                        key = event.Event || event.Name || 'Untitled';
+                        label = key;
+                        break;
+                }
+                
+                if (!grouped[key]) {
+                    grouped[key] = { key, label, events: [] };
+                }
+                grouped[key].events.push(event);
+            });
+            
+            // เรียงลำดับกลุ่ม
+            let sortedGroups = Object.values(grouped);
+            
+            sortedGroups.sort((a, b) => {
+                if (groupBy === 'date') {
+                    if (a.key === 'unknown-date') return 1;
+                    if (b.key === 'unknown-date') return -1;
+                    
+                    // เรียงจากใหม่ไปเก่าเสมอ (DESC)
+                    return b.key.localeCompare(a.key);
+                }
+                if (a.key === 'Unknown') return 1;
+                if (b.key === 'Unknown') return -1;
+                
+                return a.label.localeCompare(b.label, 'th'); // A-Z สำหรับ photographer และ event
+            });
+            
+            return sortedGroups;
+        }
 
-                isLoading = true;
-                loadingIndicator.style.display = 'block';
-
-                setTimeout(() => {
-                    const nextEvents = events.slice(currentIndex, currentIndex + ITEMS_PER_PAGE);
-
-                    nextEvents.forEach(event => {
-                        const colDiv = document.createElement('div');
-                        colDiv.className = 'col d-flex justify-content-center';
-                        
-                        const formattedDate = formatDate(event['Date-At']);
-                        const photoPageLink = event['Photo-page-link'] || '#';
-                        const imgLink = event['IMG_link'] || event['Cover-Image'] || 'https://via.placeholder.com/400x300?text=Image+Error';
-                        const photoPage = event['Phot-page'] || event['Photo-page'] || 'Unknown';
-                        const eventName = event.Event || event.Name || 'Untitled Event';
-                        
-                        colDiv.innerHTML = `
-                            <div class="img-box tabcontent Event" style="display: block;">
-                                <a href="${photoPageLink}" target="_blank" rel="noopener noreferrer">
-                                    <img src="${imgLink}" 
-                                         alt="${eventName}" 
-                                         class="gallery" 
-                                         loading="lazy"
-                                         onerror="this.src='https://via.placeholder.com/400x300?text=Image+Error'">
-                                    <div class="transparent-box">
-                                        <div class="caption mb-0">
-                                            <p><strong>${eventName}</strong></p>
-                                            <div class="ct-ga">
-                                                <svg class="icon" width="16" height="16">
-                                                    <use href="#icon-post"></use>
-                                                </svg>
-                                                <p class="opacity-low mb-0">${photoPage}</p>
-                                            </div>
-                                            <div class="ct-ga">
-                                                <svg class="icon" width="16" height="16">
-                                                    <use href="#icon-calendar"></use>
-                                                </svg>
-                                                <p>${formattedDate}</p>
-                                            </div>
+        function renderGallery() {
+            const groupBy = groupBySelect.value;
+            const groups = groupEvents(allEvents, groupBy);
+            
+            if (!galleryContainer) return;
+            
+            galleryContainer.innerHTML = '';
+            
+            groups.forEach(group => {
+                const section = document.createElement('section');
+                section.className = 'gallery-group mb-5';
+                section.setAttribute('data-group-key', group.key);
+                
+                const header = document.createElement('div');
+                header.className = 'group-header d-flex justify-content-between align-items-end mb-3';
+                header.innerHTML = `
+                    <h2 class="group-title" style="font-size: 3rem; font-weight: 800; line-height: 1; margin: 0;">
+                        ${group.label}
+                    </h2>
+                    <span class="badge" style="font-size: 1rem; color: var(--c-content);">
+                        ${group.events.length} รูป
+                    </span>
+                `;
+                
+                const grid = document.createElement('div');
+                grid.className = 'row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6 g-4 mb-4';
+                
+                group.events.forEach(event => {
+                    const colDiv = document.createElement('div');
+                    colDiv.className = 'col';
+                    
+                    const formattedDate = formatDate(event['Date-At']);
+                    const photoPageLink = event['Photo-page-link'] || '#';
+                    const imgLink = event['IMG_link'] || event['Cover-Image'] || 'https://via.placeholder.com/400x300?text=Image+Error';
+                    const photoPage = event['Photo-page'] || event['Phot-page'] || 'Unknown';
+                    const eventName = event.Event || event.Name || 'Untitled Event';
+                    
+                    colDiv.innerHTML = `
+                        <div class="img-box tabcontent Event" style="display: block;">
+                            <a href="${photoPageLink}" target="_blank" rel="noopener noreferrer">
+                                <img src="${imgLink}" 
+                                     alt="${eventName}" 
+                                     class="gallery" 
+                                     loading="lazy"
+                                     onerror="this.src='https://via.placeholder.com/400x300?text=Image+Error'">
+                                <div class="transparent-box">
+                                    <div class="caption mb-0">
+                                        <p><strong>${eventName}</strong></p>
+                                        <div class="ct-ga">
+                                            <svg class="icon" width="16" height="16">
+                                                <use href="#icon-post"></use>
+                                            </svg>
+                                            <p class="opacity-low mb-0">${photoPage}</p>
+                                        </div>
+                                        <div class="ct-ga">
+                                            <svg class="icon" width="16" height="16">
+                                                <use href="#icon-calendar"></use>
+                                            </svg>
+                                            <p class="mb-0">${formattedDate}</p>
                                         </div>
                                     </div>
-                                </a>
-                            </div>
-                        `;
-                        
-                        galleryContainer.appendChild(colDiv);
-                    });
-
-                    currentIndex += nextEvents.length;
-                    hasMoreData = currentIndex < events.length;
-
-                    if (!hasMoreData) {
-                        noMoreDataIndicator.style.display = 'block';
-                    }
-
-                    isLoading = false;
-                    loadingIndicator.style.display = 'none';
-                }, 300);
-            }
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && hasMoreData && !isLoading) {
-                        loadMoreEvents();
-                    }
+                                </div>
+                            </a>
+                        </div>
+                    `;
+                    
+                    grid.appendChild(colDiv);
                 });
-            }, {
-                rootMargin: '200px'
+                
+                section.appendChild(header);
+                section.appendChild(grid);
+                galleryContainer.appendChild(section);
             });
+        }
 
-            const sentinel = document.getElementById('sentinel');
-            if (sentinel) {
-                observer.observe(sentinel);
-            }
+        // Event listeners
+        if (groupBySelect) groupBySelect.addEventListener('change', renderGallery);
+        if (resetButton) {
+            resetButton.addEventListener('click', () => {
+                if (groupBySelect) groupBySelect.value = 'date';
+                renderGallery();
+            });
+        }
+
+        // Initialize
+        if (galleryContainer && allEvents.length > 0) {
+            renderGallery();
         }
     </script>
 
     <style>
-        #sentinel {
-            height: 1px;
+        .form-select {
+            min-width: 180px;
+        }
+        
+        .gallery-group {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .img-box {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            height: 100%;
+        }
+        
+        .img-box img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .img-box:hover img {
+            transform: scale(1.05);
+        }
+        
+        .transparent-box {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 16px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .img-box:hover .transparent-box {
+            transform: translateY(0);
+        }
+        
+        .ct-ga {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </MainLayout>

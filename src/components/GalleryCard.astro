@@ -1,45 +1,94 @@
 ---
+/**
+ * GalleryCard.astro
+ * - ใช้ SSR เท่านั้น
+ * - รองรับ set:html (จำเป็น)
+ * - normalize data ภายใน component
+ * - performance + CLS friendly
+ */
+
 const { event } = Astro.props;
 
-const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+/* ===============================
+   Constants
+================================ */
+const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
 
-const formatSmartEventDate = (dateString) => {
+/* ===============================
+   Helpers
+================================ */
+function formatSmartEventDate(dateString) {
   if (!dateString) return '';
 
-  const start = new Date(dateString.replace(/-/g, '/'));
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
 
-  const d1 = start.getDate().toString().padStart(2, '0');
-  const m1 = months[start.getMonth()];
-  const y1 = start.getFullYear();
+  const d = String(date.getDate()).padStart(2, '0');
+  const m = MONTHS[date.getMonth()];
+  const y = date.getFullYear();
 
-  return `${d1} ${m1} ${y1}`;
+  return `${d} ${m} ${y}`;
+}
+
+/* ===============================
+   Normalize event data
+   (ป้องกัน field สะกดไม่ตรง)
+================================ */
+const normalized = {
+  title: event.Event || event.Name || 'Untitled Event',
+  photoPage: event['Photo-page'] || event['Phot-page'] || 'By Niya BNK48',
+  photoPageLink: event['Photo-page-link'] || '#',
+  image:
+    event['IMG_link']
+      ? `${event['IMG_link']}?quality=60`
+      : 'https://via.placeholder.com/400x300?text=No+Image',
+  date: formatSmartEventDate(event['Date-At']),
 };
-
-const eventDate = formatSmartEventDate(event['Date-At']);
 ---
 
 <div class="col d-flex justify-content-center">
-    <div class="img-box tabcontent Event" style="display: block;">
-        <a href={event['Photo-page-link'] || "#"} target="_blank" rel="noopener noreferrer">
-            <img src={event['IMG_link'] || 'https://via.placeholder.com/400x300?text=No+Image'} alt={event.Event || 'Event'} class="gallery" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Error'" loading="lazy"/>
-            <div class="transparent-box">
-                <div class="caption mb-0">
-                    <p><strong set:html={event.Event} /></p>
-                    
-                    <div class="ct-ga">
-                        <svg class="icon" width="16" height="16">
-                            <use href="#icon-post"></use>
-                        </svg>
-                        <p class="opacity-low mb-0">{event['Phot-page'] || 'By Niya BNK48'}</p>
-                    </div>
-                    <div class="ct-ga">
-                        <svg class="icon" width="16" height="16">
-                            <use href="#icon-calendar"></use>
-                        </svg>
-                        <p>{eventDate}</p>
-                    </div>
-                </div>
+  <div class="img-box tabcontent Event">
+    <a
+      href={normalized.photoPageLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={normalized.title}
+    >
+      <img
+        src={normalized.image}
+        alt={normalized.title}
+        class="gallery"
+        loading="lazy"
+        decoding="async"
+        width="400"
+        height="300"
+        onerror="this.onerror=null;this.src='https://via.placeholder.com/400x300?text=Image+Error';"
+      />
+
+      <div class="transparent-box">
+        <div class="caption mb-0">
+          <!-- จำเป็นต้องใช้ set:html -->
+          <p>
+            <strong set:html={normalized.title} />
+          </p>
+
+          <div class="ct-ga">
+            <svg class="icon" width="16" height="16" aria-hidden="true">
+              <use href="#icon-post"></use>
+            </svg>
+            <p class="opacity-low mb-0">{normalized.photoPage}</p>
+          </div>
+
+          {normalized.date && (
+            <div class="ct-ga">
+              <svg class="icon" width="16" height="16" aria-hidden="true">
+                <use href="#icon-calendar"></use>
+              </svg>
+              <p>{normalized.date}</p>
             </div>
-        </a>
-    </div>
+          )}
+        </div>
+      </div>
+    </a>
+  </div>
 </div>

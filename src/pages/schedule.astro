@@ -4,29 +4,71 @@ import EventCard from '../components/EventCard.astro';
 import { getSupabase } from "../lib/supabase.server";
 
 const supabase = getSupabase();
+
 // ดึงข้อมูลจาก Supabase
 const { data: events, error } = await supabase
   .from('event_data')
   .select('*')
-  // ดึงมาทั้งหมดก่อน แล้วค่อยมา Filter ด้วย Logic ที่ซับซ้อนขึ้นด้านล่าง
   .order('date', { ascending: false });
 
 if (error) {
   console.error('Error fetching events:', error);
 }
 
-// ตั้งค่าวันที่ปัจจุบัน (เซ็ตเวลาเป็น 00:00:00 เพื่อให้เปรียบเทียบแค่วันที่)
+// ตั้งค่าวันที่ปัจจุบัน
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// แยกประเภทงานจากข้อมูลที่ได้มา (events)
-const upcomingEvents = events 
-  ? events.filter(event => new Date(event.date.replace(/-/g, '/')) >= today).reverse() 
-  : [];
+// แยกประเภทงานจากข้อมูล
+let upcomingEvents: any[] = [];
+let pastEvents: any[] = [];
 
-const pastEvents = events 
-  ? events.filter(event => new Date(event.date.replace(/-/g, '/')) < today) 
-  : [];
+if (events) {
+  // ใช้ try-catch เพื่อป้องกัน error จากการแปลงวันที่
+  events.forEach(event => {
+    try {
+      // แปลงวันที่จาก event.date (ควรเป็น format YYYY-MM-DD หรือ ISO string)
+      const eventDate = new Date(event.date);
+      eventDate.setHours(0, 0, 0, 0);
+      
+      if (eventDate >= today) {
+        upcomingEvents.push(event);
+      } else {
+        pastEvents.push(event);
+      }
+    } catch (e) {
+      console.warn('Error parsing date for event:', event.id, e);
+      // หากไม่สามารถแปลงวันที่ได้ ให้ถือว่าเป็น past event
+      pastEvents.push(event);
+    }
+  });
+  
+// เรียงลำดับ upcomingEvents จากใกล้ถึงไกล (ascending)
+  upcomingEvents.sort((a, b) => {
+    try {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA.getTime() - dateB.getTime();
+    } catch (e) {
+      return 0;
+    }
+  });
+  
+// เรียงลำดับ pastEvents จากใหม่ไปเก่า (descending)
+  pastEvents.sort((a, b) => {
+    try {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    } catch (e) {
+      return 0;
+    }
+  });
+}
+
+// นับจำนวนกิจกรรม
+const upcomingCount = upcomingEvents.length;
+const pastCount = pastEvents.length;
 ---
 
 <MainLayout title="Schedule - Niya BNK48's">
@@ -36,23 +78,26 @@ const pastEvents = events
             <p class="text-center fw-600 mb-0" style="font-size:18px">ตารางงานและกิจกรรมของนีญ่า</p>
         </header>
     </div>
+    
     <main class="page-main">
-        <h2 class="h1 text-center fw-800 h-sec mb-0"><strong>Upcoming Events</strong></h2>
-        <p class="text-center mb-4 text-muted">กิจกรรมที่กำลังจะจัด</p>
+        <!-- Upcoming Events Section -->
         <section id="upcoming-events-section" style="padding: 0; background: none;">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
-                {upcomingEvents.length > 0 ? (
-                    upcomingEvents.map(event => (
+            <h2 class="h1 text-center fw-800 h-sec mb-0"><strong>Upcoming Events</strong></h2>
+            <p class="text-center mb-5 text-muted">กิจกรรมที่จะถึง</p>
+
+            {upcomingEvents.length > 0 ? (
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+                    {upcomingEvents.map(event => (
                         <div class="col d-flex justify-content-center">
                             <EventCard event={event} />
                         </div>
-                    ))
-                ) : (
-                    <div class="w-100 text-center py-5">
-                        <p class="text-muted italic">ยังไม่มีกิจกรรมประกาศในขณะนี้</p>
-                    </div>
-                )}
-            </div>
+                    ))}
+                </div>
+            ) : (
+                <div class="w-100 text-center py-5">
+                    <p class="text-muted italic">ยังไม่มีกิจกรรมประกาศในขณะนี้</p>
+                </div>
+            )}
         </section>
 
         <div class="text-center mt-5">
@@ -66,9 +111,10 @@ const pastEvents = events
             </a>
         </div>
 
+        <!-- Past Events Section -->
+        <h2 class="h-sec h1 text-center mb-0">Past Events</h2>
+        <p class="text-center mb-5 text-muted">กิจกรรมที่จัดไปแล้ว</p>
         <section id="past-events-section" style="padding: 0; background: none;">
-            <h2 class="h-sec h1 text-center mb-0">Past Events</h2>
-            <p class="text-center mb-4 text-muted">กิจกรรมที่จัดไปแล้ว</p>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 event-past">
                 {pastEvents.map(event => (
                     <div class="col d-flex justify-content-center">
@@ -78,4 +124,140 @@ const pastEvents = events
             </div>
         </section>
     </main>
+
+    <style>
+        /* เพิ่ม animation แบบไม่กระทบกับ UI เดิม */
+        .event-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .badge {
+            font-size: 0.85rem;
+            padding: 0.35em 0.65em;
+        }
+        
+        /* Scroll to top button */
+        #scrollToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        #scrollToTop.show {
+            opacity: 1;
+        }
+        
+        /* เพิ่ม subtle animation เมื่อเข้าสู่หน้า */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .event-card {
+            animation: fadeInUp 0.3s ease-out;
+        }
+    </style>
+    
+    <script>
+        // UX Improvements
+        
+        // 1. เพิ่มปุ่ม scroll to top
+        document.addEventListener('DOMContentLoaded', function() {
+            // สร้างปุ่ม scroll to top
+            const scrollToTopBtn = document.createElement('button');
+            scrollToTopBtn.id = 'scrollToTop';
+            scrollToTopBtn.className = 'btn btn-outline-secondary btn-sm';
+            scrollToTopBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
+            scrollToTopBtn.title = 'กลับสู่ด้านบน';
+            document.body.appendChild(scrollToTopBtn);
+            
+            // แสดง/ซ่อนปุ่มเมื่อ scroll
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+            
+            // คลิกปุ่มเพื่อ scroll ขึ้น
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 2. เพิ่ม animation delay สำหรับแต่ละการ์ด
+            const eventCards = document.querySelectorAll('.event-card');
+            eventCards.forEach((card, index) => {
+                (card as HTMLElement).style.animationDelay = `${index * 0.05}s`;
+            });
+            
+            // 3. เพิ่ม keyboard navigation สำหรับการ์ด
+            eventCards.forEach(card => {
+                card.setAttribute('tabindex', '0');
+                card.addEventListener('keydown', function(e) {
+                    if (e instanceof KeyboardEvent && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        const link = this.querySelector('a');
+                        if (link) {
+                            (link as any).click();
+                        }
+                    }
+                });
+            });
+            
+            // 4. เพิ่ม loading state (ป้องกันการกระพริบ)
+            document.body.classList.add('page-loaded');
+            
+            // 5. Track visibility of events (สำหรับ analytics ในอนาคต)
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const eventId = entry.target.getAttribute('data-event-id');
+                        if (eventId) {
+                            // สามารถเพิ่ม tracking code ได้ที่นี่
+                            console.log('Event viewed:', eventId);
+                        }
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            // Observe each event card
+            eventCards.forEach(card => {
+                observer.observe(card);
+            });
+            
+            // 6. เพิ่ม confirmation เมื่อกดกลับหน้าหลัก
+            const backHomeBtn = document.querySelector('a[href="/"]');
+            if (backHomeBtn) {
+                backHomeBtn.addEventListener('click', function(e) {
+                    // สามารถเพิ่ม analytics หรือ confirmation ได้ที่นี่
+                    console.log('Navigating back to home');
+                });
+            }
+        });
+        
+        // 7. Handle browser back/forward navigation
+        window.addEventListener('pageshow', function(event) {
+            // Scroll to top เมื่อกลับมาที่หน้านี้
+            if (event.persisted) {
+                window.scrollTo(0, 0);
+            }
+        });
+    </script>
 </MainLayout>

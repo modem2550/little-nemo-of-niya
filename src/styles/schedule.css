@@ -62,9 +62,6 @@ main.page-main {
     inset: 0;
     background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
     border-radius: 16px;
-    box-shadow:
-        15px 15px 27px #e1e1e3,
-       -15px -15px 27px #ffffff;
 }
 
 /* ===============================
@@ -191,4 +188,94 @@ a {
     transform: rotate(-45deg);
     height: 1em;
     vertical-align: -.125em;
+}
+
+.card__img,.card__img--hover {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat
+}
+
+.card__img--hover {
+    position: absolute;
+    inset: 0;
+    height: 0;
+    padding-bottom: 100%;
+    opacity: 0;
+    transition: opacity .4s cubic-bezier(.175,.885,.32,1),height .4s cubic-bezier(.175,.885,.32,1),padding-bottom .4s cubic-bezier(.175,.885,.32,1)
+}
+
+.card__img--hover:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb,var(--c-glass) 36%,transparent);
+    opacity: 0;
+    transition: opacity .4s cubic-bezier(.175,.885,.32,1);
+    box-shadow: 0;
+}
+
+.carded:hover .card__img--hover {
+    height: 100%;
+    padding-bottom: 0;
+    opacity: 1
+}
+
+.carded:hover .card__img--hover:before {
+    opacity: 1
+}
+
+.carded {
+    will-change: transform;
+}
+
+.card__img--hover {
+    will-change: opacity,height;
+}
+
+.card__img,.card__img--hover {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat
+}
+
+.card__img--hover {
+    position: absolute;
+    inset: 0;
+    height: 0;
+    padding-bottom: 100%;
+    opacity: 0;
+    transition: opacity .4s cubic-bezier(.175,.885,.32,1),height .4s cubic-bezier(.175,.885,.32,1),padding-bottom .4s cubic-bezier(.175,.885,.32,1)
+}
+
+.card__img--hover:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb,var(--c-glass) 36%,transparent);
+    opacity: 0;
+    transition: opacity .4s cubic-bezier(.175,.885,.32,1);
+    box-shadow: 0;
+}
+
+.carded:hover .card__img--hover {
+    height: 100%;
+    padding-bottom: 0;
+    opacity: 1
+}
+
+.carded:hover .card__img--hover:before {
+    opacity: 1
+}
+
+.carded {
+    will-change: transform;
+}
+
+.card__img--hover {
+    will-change: opacity,height;
 }
