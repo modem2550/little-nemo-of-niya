@@ -85,23 +85,21 @@ const galleryCount = galleryData?.length || 0;
 ---
 
 <MainLayout title="Niya BNK48 - Fan Website">
-    <section id=home>
+    <section id="home">
         <h1 class="visually-hidden">Niya BNK48 Official Fan Website</h1>
-        <div class="w-100 hero-video">
-            <div class=ht-1>
+        
+        <div class="video-container">
+            <video class="video-bg" autoplay loop muted playsinline preload="auto">
+                <source src="video/BG-video.mp4" type="video/mp4">
+            </video>
+
+            <div class="ht-1">
                 <div class="overlay"></div>
                 <div class="slide-right show display-1 ht-2">
-                    <strong>Niya</strong> BNK48<p class=h3>Suvibha Laithomya</p>
+                    <strong>Niya</strong> BNK48
+                    <p class="h3">Suvibha Laithomya</p>
                 </div>
             </div>
-            <video  class="video-bg"
-                    autoplay
-                    loop
-                    muted
-                    playsinline
-                    preload="none">
-                <source class="hero-video" src="video/BG-video.mp4" type="video/mp4">
-            </video>
         </div>
     </section>
     <section id=event>

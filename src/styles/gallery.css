@@ -148,9 +148,6 @@ body {
 ================================ */
 .gallery-group {
     padding: 0;
-    border-bottom: 1px solid var(--c-content); 
-    padding-bottom: 5px;
-    background-color: #ffffff;
 }
 
 .group-title {
@@ -200,10 +197,6 @@ body {
    Responsive Adjustments
 ================================ */
 @media (max-width: 576px) {
-    .img-box {
-        aspect-ratio: 4 / 3;
-    }
-    
     .caption {
         padding: 8px;
     }
