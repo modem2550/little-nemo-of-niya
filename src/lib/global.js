@@ -2,9 +2,9 @@
 
 function toSlug(text) {
     return text.toLowerCase()
-        .replace(/[^\w\s-]/g, '') // ลบอักขระพิเศษ
-        .replace(/\s+/g, '-')     // แทนที่ช่องว่างด้วย -
-        .replace(/--+/g, '-')     // ลบ -- ที่ติดกัน
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/--+/g, '-')
         .trim();
 }
 
@@ -46,7 +46,7 @@ function initSwitcher() {
             radios.forEach((r, i) => r.setAttribute('data-prev', i === index));
         }
 
-        // --- Click handlers ---
+        // Click handlers
         options.forEach((opt, idx) => {
             const radio = radios[idx];
             opt.addEventListener("click", (e) => {
@@ -82,7 +82,7 @@ function initSwitcher() {
             });
         });
 
-        // --- Intersection Observer (Scrollspy) ---
+        // Intersection Observer (Scrollspy)
         const observer = new IntersectionObserver((entries) => {
             if (isClickScrolling) return;
 
@@ -134,7 +134,9 @@ function safeInitSwitcher() {
 // ==================== ANIMATION OBSERVER ====================
 const animationObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add("show");
+        if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+        }
     });
 }, { threshold: 0.2 });
 
@@ -149,13 +151,13 @@ function renderSocialLinks(socialLinks) {
         const slug = toSlug(item.platform);
 
         const socialIconSvg = ` 
-            <svg viewBox="0 0 512 512" class="svg-inline--fa fa-${slug}" data-icon="${slug}" data-prefix="fab" role="img" aria-hidden="true" data-fa-i2svg=""> 
+            <svg viewBox="0 0 512 512" class="svg-inline--fa fa-${slug}" data-icon="${slug}" data-prefix="fab" role="img" aria-hidden="true"> 
                 <use href="#${item.iconId}"></use> 
             </svg> 
         `;
 
         const arrowSvg = ` 
-            <svg class="icon arrow-svg ms-1" width="24" height="24" style="height:1em;width:1em"> 
+            <svg class="icon arrow-svg ms-1" width="24" height="24" aria-hidden="true"> 
                 <use href="#icon-arrow-right"></use> 
             </svg> 
         `;
@@ -178,152 +180,15 @@ function renderSocialLinks(socialLinks) {
 
     container.innerHTML = htmlContent;
 
-    // Observe newly added elements for animations
+    // Observe only elements below the fold
     container.querySelectorAll('.social-box').forEach(el => {
-        animationObserver.observe(el);
-    });
-}
-
-// ==================== DATE FORMATTING ====================
-function formatDate(startDateString, endDateString) {
-    if (!startDateString) return '';
-
-    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-
-    const parse = (str) => {
-        const d = new Date(str.replace(/-/g, '/'));
-        return {
-            day: d.getDate().toString().padStart(2, '0'),
-            month: months[d.getMonth()],
-            year: d.getFullYear()
-        };
-    };
-
-    const s = parse(startDateString);
-    if (!endDateString) return `${s.day} ${s.month} ${s.year}`;
-
-    const e = parse(endDateString);
-    return (s.month === e.month && s.year === e.year)
-        ? `${s.day}-${e.day} ${s.month} ${s.year}`
-        : `${s.day} ${s.month} ${s.year} - ${e.day} ${e.month} ${e.year}`;
-}
-
-// ==================== EVENT RENDERING ====================
-function renderEvents(eventData, containerId, filterUpcoming) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    // Create "today" at 00:00:00
-    const d = new Date();
-    const todayMS = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-
-    let finalHtml = '';
-    const isBootstrapRow = container.classList.contains('row');
-
-    const filteredEvents = eventData.filter(event => {
-        const toMS = (str) => {
-            if (!str) return null;
-            const datePart = str.split('T')[0].split(' ')[0].replace(/-/g, '/');
-            const parts = datePart.split('/');
-            return new Date(parts[0], parts[1] - 1, parts[2], 0, 0, 0).getTime();
-        };
-
-        const startMS = toMS(event.date);
-        const rawEndDate = event.end_date || event.endDate || null;
-        const endMS = rawEndDate ? toMS(rawEndDate) : startMS;
-
-        if (filterUpcoming) {
-            return endMS !== null && endMS >= todayMS;
+        const rect = el.getBoundingClientRect();
+        if (rect.top > window.innerHeight) {
+            animationObserver.observe(el);
         } else {
-            return endMS !== null && endMS < todayMS;
+            el.classList.add('show');
         }
     });
-
-    if (filteredEvents.length === 0) {
-        container.innerHTML = `<p class="text-center text-muted w-100" aria-live="polite">ไม่มีรายการในขณะนี้</p>`;
-        return;
-    }
-
-    filteredEvents.forEach(event => {
-        const formattedDate = formatDate(event.date, event.end_date);
-        const imageStyle = event.image_url ? `style="background-image: url('${event.image_url}')"` : '';
-        const specialClass = !filterUpcoming ? 'event-past' : '';
-        const locationHtml = event.location ? `<div class="ct-da"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-pin"></use></svg><p>${event.location}</p></div>` : '';
-        const liveHtml = event.live ? `<div class="ct-da text-danger"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-live"></use></svg><p>LIVE: ${event.live.toUpperCase()}</p></div>` : '';
-
-        const articleHtml = `
-            <article class="slide-right carded ${specialClass}" data-event-date="${event.date}" aria-label="${event.title}">
-                <div class="card__img" ${imageStyle} role="img" aria-label="ภาพปกกิจกรรม"></div>
-                <a href="${event.link}" class="card_link" target="_blank" rel="noopener noreferrer">
-                    <div class="card__img--hover" ${imageStyle}></div>
-                </a>
-                <div class="card__info">
-                    <a href="${event.link}" class="card_link" target="_blank" rel="noopener noreferrer">
-                        <div class="da-sp">
-                            <div class="h5">${event.title}</div>
-                            ${locationHtml}
-                            <div class="ct-da">
-                                <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-calendar"></use></svg>
-                                <p>${formattedDate}</p>
-                            </div>
-                            ${liveHtml}
-                        </div>
-                    </a>
-                </div>
-            </article>`;
-
-        finalHtml += isBootstrapRow ? `<div class="col d-flex justify-content-center">${articleHtml}</div>` : articleHtml;
-    });
-
-    container.innerHTML = finalHtml;
-
-    // Observe newly added elements for animations
-    container.querySelectorAll(".slide-right").forEach(el => {
-        animationObserver.observe(el);
-
-        // Add hover effects
-        el.addEventListener('mouseenter', function () {
-            this.style.transform = 'scale(1.02)';
-        });
-
-        el.addEventListener('mouseleave', function () {
-            this.style.transform = 'scale(1)';
-        });
-    });
-}
-
-// ==================== DATA FETCHING ====================
-async function fetchAndRenderSplitEvents() {
-    if (!_supabase) {
-        console.error("Supabase library not found!");
-        return;
-    }
-
-    try {
-        console.log("Fetching events from Supabase...");
-        const { data: eventData, error } = await _supabase
-            .from('event_data')
-            .select('*')
-            .order('date', { ascending: false });
-
-        if (error) throw error;
-
-        if (eventData) {
-            const upcomingContainer = document.getElementById('upcoming-events-container');
-            const pastContainer = document.getElementById('past-events-container');
-
-            if (upcomingContainer) {
-                renderEvents(eventData, 'upcoming-events-container', true);
-            }
-            if (pastContainer) {
-                renderEvents(eventData, 'past-events-container', false);
-            }
-        }
-    } catch (error) {
-        console.error('Error loading data from Supabase:', error.message);
-    }
 }
 
 // ==================== POPUP FUNCTIONS ====================
@@ -333,11 +198,9 @@ function openPopup() {
         overlay.style.display = 'flex';
         overlay.setAttribute('aria-hidden', 'false');
 
-        // Focus trap for accessibility
         const firstLink = overlay.querySelector('.social-link');
         if (firstLink) firstLink.focus();
 
-        // Prevent background scrolling
         document.body.style.overflow = 'hidden';
     }
 }
@@ -347,22 +210,30 @@ function closePopup() {
     if (overlay) {
         overlay.style.display = 'none';
         overlay.setAttribute('aria-hidden', 'true');
-
-        // Restore scrolling
         document.body.style.overflow = '';
 
-        // Return focus to the button that opened the popup
-        const openerBtn = document.getElementById('moreInfoBtn') || document.querySelector('[onclick*="openPopup"]');
+        const openerBtn = document.getElementById('moreInfoBtn') || 
+                         document.querySelector('[onclick*="openPopup"]');
         if (openerBtn) openerBtn.focus();
     }
 }
 
 // ==================== DOM READY ====================
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Page load progress indicator
+    // 1. Page load progress
     const progressBar = document.createElement('div');
     progressBar.id = 'page-load-progress';
     progressBar.setAttribute('aria-hidden', 'true');
+    progressBar.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: var(--c-primary);
+        z-index: 9999;
+        transition: width 0.3s, opacity 0.3s;
+    `;
     document.body.appendChild(progressBar);
 
     let progress = 0;
@@ -376,41 +247,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 progressBar.style.width = '100%';
                 setTimeout(() => {
                     progressBar.style.opacity = '0';
-                    setTimeout(() => {
-                        progressBar.remove();
-                    }, 300);
+                    setTimeout(() => progressBar.remove(), 300);
                 }, 200);
             }, 100);
         }
     }, 50);
 
-    // 2. Scroll to top button
-    const scrollToTopBtn = document.createElement('button');
-    scrollToTopBtn.id = 'scrollToTop';
-    scrollToTopBtn.innerHTML = '↑';
-    scrollToTopBtn.title = 'กลับสู่ด้านบน';
-    scrollToTopBtn.setAttribute('aria-label', 'Scroll to top');
-    scrollToTopBtn.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(scrollToTopBtn);
-
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            scrollToTopBtn.classList.add('show');
-            scrollToTopBtn.setAttribute('aria-hidden', 'false');
-        } else {
-            scrollToTopBtn.classList.remove('show');
-            scrollToTopBtn.setAttribute('aria-hidden', 'true');
-        }
-    });
-
-    scrollToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-
-    // 3. Smooth scrolling for anchor links
+    // 2. Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
@@ -423,15 +266,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     behavior: 'smooth',
                     block: 'start'
                 });
-
-                // Update URL hash without scrolling
                 history.pushState(null, null, href);
             }
         });
     });
 
-    // 4. Lazy load iframes
-    const lazyIframes = document.querySelectorAll('iframe[data-lazy-iframe]');
+    // 3. Lazy load iframes
     const lazyIframeObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -442,47 +282,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }, { rootMargin: '50px' });
 
-    lazyIframes.forEach(iframe => {
+    document.querySelectorAll('iframe[data-lazy-iframe]').forEach(iframe => {
         lazyIframeObserver.observe(iframe);
     });
 
-    // 5. Observe animation elements
+    // 4. Observe animation elements (only below fold)
     document.querySelectorAll(".slide-right, .fade-in, .social-box").forEach(el => {
-        animationObserver.observe(el);
-    });
-
-    // 6. Button tracking
-    const trackButtons = ['moreEventsBtn', 'moreGalleryBtn', 'moreInfoBtn'];
-    trackButtons.forEach(btnId => {
-        const btn = document.getElementById(btnId);
-        if (btn) {
-            btn.addEventListener('click', function () {
-                const action = btnId === 'moreEventsBtn' ? 'view_more_events' :
-                    btnId === 'moreGalleryBtn' ? 'view_more_gallery' :
-                        'view_more_info';
-                console.log(`User clicked: ${action}`);
-            });
+        const rect = el.getBoundingClientRect();
+        if (rect.top > window.innerHeight) {
+            animationObserver.observe(el);
+        } else {
+            el.classList.add('show');
         }
     });
 
-    // 7. Close popup with Escape key
+    // 5. Close popup with Escape key
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-            closePopup();
-        }
+        if (e.key === 'Escape') closePopup();
     });
 
-    // 8. Popup accessibility improvements
-    const closePopupBtn = document.getElementById('closePopupBtn');
-    if (closePopupBtn) {
-        closePopupBtn.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                closePopup();
-            }
-        });
-    }
-
-    // 9. Video handling
+    // 6. Video handling
     const video = document.querySelector('.video-bg');
     if (video) {
         video.addEventListener('loadeddata', function () {
@@ -502,12 +321,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 10. Performance monitoring
-    window.addEventListener('load', function () {
-        const loadTime = window.performance.timing.domContentLoadedEventEnd -
-            window.performance.timing.navigationStart;
-        console.log(`Page loaded in ${loadTime}ms`);
-        document.documentElement.classList.add('page-loaded');
+    // 7. Image loading
+    document.querySelectorAll('.img-box img').forEach(img => {
+        const box = img.closest('.img-box');
+        const reveal = () => {
+            requestAnimationFrame(() => {
+                box.classList.add('is-loaded');
+            });
+        };
+
+        if (img.complete) {
+            reveal();
+        } else {
+            img.addEventListener('load', reveal, { once: true });
+            img.addEventListener('error', reveal, { once: true });
+        }
     });
 });
 
@@ -518,26 +346,10 @@ document.addEventListener('DOMContentLoaded', safeInitSwitcher);
 // ==================== EXPORT FUNCTIONS ====================
 window.openPopup = openPopup;
 window.closePopup = closePopup;
-window.fetchAndRenderSplitEvents = fetchAndRenderSplitEvents;
 window.renderSocialLinks = renderSocialLinks;
 window.toSlug = toSlug;
-window.formatDate = formatDate;
 
-document.querySelectorAll('.img-box img').forEach(img => {
-    const box = img.closest('.img-box');
-
-    const reveal = () => {
-        // ใช้ requestAnimationFrame เพื่อให้ Class เพิ่มในจังหวะที่ Browser พร้อมวาดรูปพอดี
-        requestAnimationFrame(() => {
-            box.classList.add('is-loaded');            
-        });
-    };
-
-    if (img.complete) {
-        reveal();
-    } else {
-        img.addEventListener('load', reveal, { once: true });
-        // เพิ่ม Error handling เพื่อไม่ให้คอนเทนเนอร์ "ค้าง" ถ้าโหลดรูปไม่สำเร็จ
-        img.addEventListener('error', reveal, { once: true });
-    }
-});
+// ลบฟังก์ชันที่ไม่ได้ใช้ออก:
+// - fetchAndRenderSplitEvents (ใช้ Astro server-side แทน)
+// - renderEvents (ใช้ Astro server-side แทน)
+// - formatDate (ย้ายไปที่ dateUtils.ts)

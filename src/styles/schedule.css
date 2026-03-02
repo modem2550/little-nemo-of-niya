@@ -24,6 +24,11 @@ main.page-main {
     background: #fff;
     border-radius: var(--r-base);
     transition: all .4s cubic-bezier(.175,.885,0,1);
+    will-change: transform;
+}
+
+.carded:hover {
+    transform: translateY(-2px);
 }
 
 .carded:hover .card__info {
@@ -36,10 +41,10 @@ main.page-main {
 .card__img,
 .card__img--hover {
     width: 100%;
+    aspect-ratio: 1 / 1;
     background-size: cover;
     background-position: top;
     background-repeat: no-repeat;
-    transition: all .4s cubic-bezier(.175,.885,.32,1);
 }
 
 .card__img--hover {
@@ -48,6 +53,19 @@ main.page-main {
     height: 0;
     opacity: 0;
     padding-bottom: 100%;
+    transition: opacity .4s cubic-bezier(.175,.885,.32,1),
+                height .4s cubic-bezier(.175,.885,.32,1),
+                padding-bottom .4s cubic-bezier(.175,.885,.32,1);
+    will-change: opacity, height;
+}
+
+.card__img--hover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
+    opacity: 0;
+    transition: opacity .4s cubic-bezier(.175,.885,.32,1);
 }
 
 .carded:hover .card__img--hover {
@@ -56,12 +74,8 @@ main.page-main {
     opacity: 1;
 }
 
-.card__img--hover::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
-    border-radius: 16px;
+.carded:hover .card__img--hover::before {
+    opacity: 1;
 }
 
 /* ===============================
@@ -93,6 +107,7 @@ main.page-main {
     display: grid;
     grid-template-columns: var(--r-large) auto;
     align-items: center;
+    gap: 0.5rem;
 }
 
 .ct-da p {
@@ -108,7 +123,7 @@ main.page-main {
 }
 
 /* ===============================
-   Event Past (override เฉพาะที่จำเป็น)
+   Event Past (Compact Variant)
 ================================ */
 .event-past .carded {
     display: grid;
@@ -190,92 +205,4 @@ a {
     vertical-align: -.125em;
 }
 
-.card__img,.card__img--hover {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat
-}
-
-.card__img--hover {
-    position: absolute;
-    inset: 0;
-    height: 0;
-    padding-bottom: 100%;
-    opacity: 0;
-    transition: opacity .4s cubic-bezier(.175,.885,.32,1),height .4s cubic-bezier(.175,.885,.32,1),padding-bottom .4s cubic-bezier(.175,.885,.32,1)
-}
-
-.card__img--hover:before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: color-mix(in srgb,var(--c-glass) 36%,transparent);
-    opacity: 0;
-    transition: opacity .4s cubic-bezier(.175,.885,.32,1);
-    box-shadow: 0;
-}
-
-.carded:hover .card__img--hover {
-    height: 100%;
-    padding-bottom: 0;
-    opacity: 1
-}
-
-.carded:hover .card__img--hover:before {
-    opacity: 1
-}
-
-.carded {
-    will-change: transform;
-}
-
-.card__img--hover {
-    will-change: opacity,height;
-}
-
-.card__img,.card__img--hover {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat
-}
-
-.card__img--hover {
-    position: absolute;
-    inset: 0;
-    height: 0;
-    padding-bottom: 100%;
-    opacity: 0;
-    transition: opacity .4s cubic-bezier(.175,.885,.32,1),height .4s cubic-bezier(.175,.885,.32,1),padding-bottom .4s cubic-bezier(.175,.885,.32,1)
-}
-
-.card__img--hover:before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: color-mix(in srgb,var(--c-glass) 36%,transparent);
-    opacity: 0;
-    transition: opacity .4s cubic-bezier(.175,.885,.32,1);
-    box-shadow: 0;
-}
-
-.carded:hover .card__img--hover {
-    height: 100%;
-    padding-bottom: 0;
-    opacity: 1
-}
-
-.carded:hover .card__img--hover:before {
-    opacity: 1
-}
-
-.carded {
-    will-change: transform;
-}
-
-.card__img--hover {
-    will-change: opacity,height;
-}
+/* ลบส่วน duplicate ออกทั้งหมด */

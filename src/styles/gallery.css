@@ -1,10 +1,5 @@
-/* --- Container หลัก --- */
-body {
-    min-height: 100vh;
-}
-
 /* ===============================
-   Image Box Base Styles
+   Image Box Base Styles - START CLOSED
 ================================ */
 .img-box {
     box-sizing: border-box;
@@ -15,29 +10,25 @@ body {
     position: relative;
     cursor: pointer;
     
-    /* 🔥 IMPORTANT: ไม่ใส่ clip-path ที่นี่ - ให้ JavaScript จัดการ */
-    /* ใส่ transition ไว้ก่อนเพื่อให้พร้อม animate */
-    transition: clip-path 1.2s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-/* 🔥 NEW: State เริ่มต้นสำหรับ boxes ที่เพิ่งถูกสร้าง (ปิดม่าน) */
-.img-box:not(.is-loaded):not(.is-closing) {
+    /* 🔥 START CLOSED - ไม่แสดงจนกว่า scroll ไปถึง */
     clip-path: inset(100% 0 0 0);
+    opacity: 1;
+    transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* ✨ เมื่อกำลังปิดม่าน (จากล่างขึ้นบน) */
+/* ✨ Closing animation (slide down from bottom) */
 .img-box.is-closing {
-    clip-path: inset(0 0 100% 0) !important; /* ปิดจากล่างขึ้นบน */
-    transition: clip-path 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    clip-path: inset(0 0 100% 0) !important;
+    transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* ✨ เมื่อโหลดเสร็จ = เปิดม่าน (จากบนลงล่าง) */
+/* ✨ When scrolled into view - REVEAL UP */
 .img-box.is-loaded {
     clip-path: inset(0 0 0 0) !important;
-    transition: clip-path 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+    transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* --- รูปภาพ --- */
+/* --- Image --- */
 .img-box img {
     width: 100%;
     height: 100%;
@@ -48,30 +39,19 @@ body {
     opacity: 1;
 }
 
-/* แสดงรูปเมื่อโหลดเสร็จ */
-.img-box.is-loaded img {
-    opacity: 1;
-    transition: opacity 0.3s ease-in, transform 0.3s ease;
-}
-
-.img-box.is-closing img {
-    opacity: 1;
-    transition: opacity 0.3s ease-out;
-}
-
-/* Hover effect - ขยายรูป */
 .img-box:hover img { 
     transform: scale(1.1);
+    transition: transform 0.3s ease;
 }
 
-/* --- Layer สีดำโปร่งแสง --- */
+/* --- Dark overlay --- */
 .transparent-box {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     opacity: 0;
     transition: opacity 0.4s cubic-bezier(.175, .885, .32, 1);
     z-index: 1;
@@ -82,7 +62,7 @@ body {
     opacity: 1;
 }
 
-/* --- ส่วนคำบรรยาย (Caption) --- */
+/* --- Caption --- */
 .caption {
     position: absolute;
     padding: 12px;
@@ -104,40 +84,34 @@ body {
     color: var(--c-light, #ffffff);
 }
 
-.caption > p:nth-child(2) {
-    font-size: 0.8em;
-}
-
-/* เอฟเฟกต์ตอน Hover */
 .img-box:hover .caption {
     transform: translateY(0);
     opacity: 1;
 }
 
 /* ===============================
-   Group Header Animation
+   Group Header Animation - START CLOSED
 ================================ */
 .group-header {
+    align-items: stretch;
     border: var(--c-content) 0px solid;
     
-    /* ✨ Default: ปิดม่านไว้เสมอ */
+    /* 🔥 START CLOSED - ไม่แสดงจนกว่า scroll ไปถึง */
     clip-path: inset(100% 0 0 0);
-    opacity: 1;
-    
-    /* Transition สำหรับเปิดม่าน */
-    transition: clip-path 0.8s cubic-bezier(0.65, 0, 0.35, 1),
-                opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-/* ✨ เมื่อกำลังปิดม่าน header (จากล่างขึ้นบน) */
-.group-header.is-closing {
-    clip-path: inset(0 0 100% 0); /* ปิดจากล่างขึ้นบน */
     opacity: 1;
     transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1),
                 opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* ✨ เมื่อ header โหลดเสร็จ = เปิดม่าน */
+/* ✨ Closing animation (slide down) */
+.group-header.is-closing {
+    clip-path: inset(0 0 100% 0);
+    opacity: 1;
+    transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1),
+                opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ✨ When scrolled into view - REVEAL UP */
 .group-header.is-loaded {
     clip-path: inset(0 0 0 0);
     opacity: 1;
@@ -154,13 +128,13 @@ body {
     color: var(--c-content);
     font-weight: 700;
     margin: 0;
+    font-size: 80pt;
 }
 
 /* ===============================
    Form Controls
 ================================ */
 .form-select {
-    min-width: 200px;
     border-radius: var(--r-round, 12px);
 }
 
@@ -175,13 +149,13 @@ body {
 
 .ct-ga svg {
     fill: var(--c-light, #ffffff);
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 0.85rem;
+    height: 0.85rem;
 }
 
 .ct-ga p {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--c-light, #ffffff);
 }
@@ -191,6 +165,10 @@ body {
 ================================ */
 .opacity-low {
     opacity: 0.8;
+}
+
+.text-title {
+    font-size: clamp(35pt, 10vw, 80pt);
 }
 
 /* ===============================
@@ -203,29 +181,6 @@ body {
     
     .ct-ga p {
         font-size: 0.8rem;
-    }
-}
-
-/* ===============================
-   Loading State (Shimmer) - ใช้กับ box ที่ยังไม่โหลด
-================================ */
-.img-box:not(.is-loaded):not(.is-closing) {
-    background: linear-gradient(
-        90deg,
-        #f0f0f0 25%,
-        #e0e0e0 50%,
-        #f0f0f0 75%
-    );
-    background-size: 200% 100%;
-    /* clip-path: inset(100% 0 0 0); - ย้ายขึ้นไปด้านบนแล้ว */
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
     }
 }
 
@@ -245,7 +200,6 @@ body {
     outline-offset: 2px;
 }
 
-/* ปิด animation สำหรับผู้ที่เปิด reduce motion */
 @media (prefers-reduced-motion: reduce) {
     .img-box,
     .img-box img,
@@ -264,11 +218,5 @@ body {
     
     .img-box img {
         opacity: 1;
-    }
-}
-
-@media (max-width: 768px) {
-    .group-title {
-        font-size: 1.75rem;
     }
 }
