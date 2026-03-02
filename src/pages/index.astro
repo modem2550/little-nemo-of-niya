@@ -12,17 +12,15 @@ let upcomingData: any[] = [];
 let pageData: any = null;
 
 // ดึง page content จาก Supabase
-try {
-    const { data } = await supabase
-        .from("page_content")
-        .select("*")
-        .eq("page_name", "index")
-        .single();
-    
-    pageData = data || getDefaultContent();
-} catch (e) {
-    console.log("No content in DB, using defaults");
-    pageData = getDefaultContent();
+
+// ดึงข้อมูลจาก Supabase
+const { data: events, error } = await supabase
+  .from('event_data')
+  .select('*')
+  .order('date', { ascending: false });
+
+if (error) {
+  console.error('Error fetching events:', error);
 }
 
 function getDefaultContent() {
