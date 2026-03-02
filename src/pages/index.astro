@@ -369,7 +369,7 @@ const galleryCount = galleryData?.length || 0;
             </div>
         </div>
     </section>
-    <section id="library" data-astro-cid-j7pv25f6>
+    <section id="library">
         <div class="container" data-astro-cid-j7pv25f6>
             <div class="h-sec display-5 mb-1 fw-800 t-center" data-astro-cid-j7pv25f6>
                 Selected Highlights
@@ -517,51 +517,41 @@ const galleryCount = galleryData?.length || 0;
             <p class="fw-bold h5 text-center mb-5">
                 ช่องทางติดตามข่าวสารจากแฟนคลับ
             </p>
-            <div class="mb-4 row align-items-center">
-                <div class="text-center mt-3 mb-5">
-                    <a class="btn btn-primary btn-rounded fw-600 px-4" href="gallery" id="moreGalleryBtn">
-                        <div>
-                            <strong>More Photo</strong><svg class="icon arrow-svg ms-1" width="24" height="24"
-                                style="height:1em;width:1em">
-                                <use href="#icon-arrow-right"></use>
-                            </svg>
-                        </div>
-                    </a>
+            <div class="row">
+                <div class="slide-in col-12 col-lg-6">
+                    <img alt="Nemo and Niya Art" class="mb-4 img-fluid" loading="lazy" src="/img/lit-img.png"
+                        data-loading="lazy" />
                 </div>
-            </div>
-            <div class="slide-in col-12 col-lg-6">
-                <img alt="Nemo and Niya Art" class="mb-4 img-fluid" loading="lazy" src="/img/lit-img.png"
-                    data-loading="lazy" />
-            </div>
-            <div class="fade-right col-12 col-lg-6">
-                <h3 class="h1">Little Nemo of Niya</h3>
-                <p class="text-muted">แฟนด้อมที่มากกว่าการติดตาม</p>
-                <p>
-                    ไม่ใช่เพียงแค่การชื่นชมผลงานจากระยะไกล
-                    แต่คือการได้ก้าวเข้ามาเป็นส่วนหนึ่งในเส้นทางของ Niya
-                    อย่างแท้จริง คุณจะได้สัมผัสทุกเบื้องหลังของการสร้างสรรค์
-                    รับรู้ถึงหยดเหงื่อและความตั้งใจที่ซ่อนอยู่ในแต่ละรายละเอียด
-                    ร่วมเดินไปพร้อมกับทุกความท้าทายและทุกก้าวแห่งความสำเร็จ
-                </p>
-                <div class="row">
-                    <div class="col-12 col-lg-6 mb-3">
-                        <div class="fc-bt">
-                            <a href="https://line.me/ti/g2/YYQYpuFlsvlTQz6KyvKM7m0zmLJ39JlzdphDqA" class="fc-link">
-                                <div class="fw-bold h5 text-center mb-0">
-                                    เข้าร่วมพูดคุย
-                                </div>
-                            </a>
+                <div class="fade-right col-12 col-lg-6">
+                    <h3 class="h1">Little Nemo of Niya</h3>
+                    <p class="text-muted">แฟนด้อมที่มากกว่าการติดตาม</p>
+                    <p>
+                        ไม่ใช่เพียงแค่การชื่นชมผลงานจากระยะไกล
+                        แต่คือการได้ก้าวเข้ามาเป็นส่วนหนึ่งในเส้นทางของ Niya
+                        อย่างแท้จริง คุณจะได้สัมผัสทุกเบื้องหลังของการสร้างสรรค์
+                        รับรู้ถึงหยดเหงื่อและความตั้งใจที่ซ่อนอยู่ในแต่ละรายละเอียด
+                        ร่วมเดินไปพร้อมกับทุกความท้าทายและทุกก้าวแห่งความสำเร็จ
+                    </p>
+                    <div class="row">
+                        <div class="col-12 col-lg-6 mb-3">
+                            <div class="fc-bt">
+                                <a href="https://line.me/ti/g2/YYQYpuFlsvlTQz6KyvKM7m0zmLJ39JlzdphDqA" class="fc-link">
+                                    <div class="fw-bold h5 text-center mb-0">
+                                        เข้าร่วมพูดคุย
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-12 col-lg-6 mb-3">
-                        <div class="fc-bt">
-                            <button onclick="openPopup()"
-                                style="color: white;background: none;border: none;width: 100%;padding: 0;" class="fc-link"
-                                id="moreInfoBtn">
-                                <div class="fw-bold h5 text-center mb-0">
-                                    เพิ่มเติม
-                                </div>
-                            </button>
+                        <div class="col-12 col-lg-6 mb-3">
+                            <div class="fc-bt">
+                                <button onclick="openPopup()"
+                                    style="color: white;background: none;border: none;width: 100%;padding: 0;" class="fc-link"
+                                    id="moreInfoBtn">
+                                    <div class="fw-bold h5 text-center mb-0">
+                                        เพิ่มเติม
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
