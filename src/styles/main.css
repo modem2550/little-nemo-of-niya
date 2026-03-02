@@ -84,26 +84,6 @@ section {
     overflow: hidden;
 }
 
-.video-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;     /* กว้างแค่ไหนก็ได้ */
-    height: 100%;    /* แต่สูงต้องเต็ม */
-    object-fit: cover;   /* Vimeo iframe จะใช้วิธี crop */
-    z-index: 0;
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.2); /* Subtle dark tint to make Niya's name pop */
-    z-index: 1;
-}
-
 .ht-1 {
     position: relative;
     z-index: 2; /* Keeps text above the overlay and video */
@@ -134,26 +114,6 @@ section {
 .h-sec {
     margin-bottom: 1.5rem;
     text-align: center
-}
-
-.da-col {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(289.25px, 1fr));
-    gap: var(--r-large);
-    justify-content: center;
-    justify-items: center;
-    color: var(--c-content)
-}
-
-.da-sp {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column
-}
-
-.ct-da {
-    display: grid;
-    grid-template-columns: var(--r-large) auto
 }
 
 .ct-da svg {
@@ -644,6 +604,32 @@ a {
     /* ใช้ตัวแปร */
 }
 
+@media (min-width: 768px) {
+    .bg-video {
+        display: block !important;
+    }
+    
+    .bg-image {
+        display: none !important;
+    }
+}
+
+/* Mobile: ซ่อนวิดีโอ แสดงรูปภาพแทน */
+@media (max-width: 767.98px) {
+    .bg-video {
+        display: none !important;
+    }
+    
+    .bg-image {
+        display: block !important;
+    }
+    
+    .ht-2 {
+        font-size: calc(1.75rem + 3.5vw);
+        margin-bottom: 2rem;
+    }
+}
+
 @media (max-width:1200px) {
     .container {
         --bs-gutter-x: 0 !important;
@@ -714,16 +700,6 @@ a {
 
     .b-ce {
         width: 100% !important
-    }
-
-    .fc-tt {
-        font-size: 100%;
-        width: 100%
-    }
-
-    .fc-ac {
-        display: flex;
-        flex-direction: column
     }
 
     .popup-container {
@@ -874,16 +850,4 @@ a {
 #scrollToTop.show {
     opacity: 1;
     transform: translateY(0);
-}
-
-.group-title {
-    font-size: 3rem;
-    font-weight: 800;
-    line-height: 1;
-    margin: 0
-}
-
-.player .vp-video-wrapper video {
-    width: none !important;
-    height: none !important;
 }

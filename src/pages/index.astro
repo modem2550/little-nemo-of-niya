@@ -1,16 +1,63 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import EventCard from "../components/EventCard.astro";
-import GalleryCard from "../components/GalleryCard.astro";
 import { getSupabase } from "../lib/supabase.server";
 
 const supabase = getSupabase();
 
-// ✅ ดึง Social จาก Local JSON
+// ดึง Social จาก Local JSON
 import socialData from "../data/social.json";
 
 let upcomingData: any[] = [];
-let galleryData: any[] = [];
+let pageData: any = null;
+
+// ดึง page content จาก Supabase
+try {
+    const { data } = await supabase
+        .from("page_content")
+        .select("*")
+        .eq("page_name", "index")
+        .single();
+    
+    pageData = data || getDefaultContent();
+} catch (e) {
+    console.log("No content in DB, using defaults");
+    pageData = getDefaultContent();
+}
+
+function getDefaultContent() {
+    return {
+        hero_video: "/video/BG-video.mp4",
+        hero_image: "/img/BG-img.png",
+        hero_title_part1: "Niya",
+        hero_title_part2: "BNK48",
+        hero_subtitle: "Suvibha Laithomya",
+        
+        event_title: "Niya's event soon",
+        event_subtitle: "ติดตามผลงานนีญ่าได้ที่",
+        
+        info_title: "Niya - Suvibha Laithomya",
+        info_intro: "สวัสดีค่ะ ชื่อนีญ่า ชื่อจริง สุวิภาส์ ลายถมยา แปลว่า \"ผู้หญิงที่สวย\" ชอบกินไดฟูกุรสชาเขียว, แซลมอน, และของเค็มทุกชนิด ชอบสีพาสเทลทุกสีงานอดิเรก เล่นรูบิค, ฟัง The Ghost Radio ความสามารถพิเศษเล่นรูบิค, เล่นอูคูเลเล่",
+        
+        info_list_1: "ตำแหน่ง Center จากการเลือกตั้ง BNK48 & CGM48 Thai-Chinese Cultural Ambassador",
+        info_list_2: "ได้รับคัดเลือกให้เป็นเซ็มบัตสึในซิงเกิลที่ 20 ของ BNK48",
+        info_list_3: "ได้รับคัดเลือกเป็นเซ็มบัตสึในเพลงรอง",
+        info_list_4: "ตำแหน่ง Under Girls อันดับที่ 24",
+        info_list_5: "มีผลงานในฐานะเซ็มบัตสึในซิงเกิลและอัลบั้มต่าง ๆ ของ BNK48 อย่างต่อเนื่อง",
+        
+        social_title: "Social Media",
+        social_subtitle: "ช่องทางติดตามโซเชีลยลนีญ่า",
+        
+        library_title: "Selected Highlights",
+        library_subtitle: "ไฮไลต์ผลงานทที่โดดเด่นนีญ่า",
+        
+        fanclub_title: "Fans' Newsline",
+        fanclub_subtitle: "ช่องทางติดตามข่าวสารจากแฟนคลับ",
+        fanclub_heading: "Little Nemo of Niya",
+        fanclub_description: "แฟนด้อมที่มากกว่าการติดตาม",
+        fanclub_content: "ไม่ใช่เพียงแค่การชื่นชมผลงานจากระยะไกล แต่คือการได้ก้าวเข้ามาเป็นส่วนหนึ่งในเส้นทางของ Niya อย่างแท้จริง คุณจะได้สัมผัสทุกเบื้องหลังของการสร้างสรรค์ รับรู้ถึงหยดเหงื่อและความตั้งใจที่ซ่อนอยู่ในแต่ละรายละเอียด ร่วมเดินไปพร้อมกับทุกความท้าทายและทุกก้าวแห่งความสำเร็จ",
+    };
+}
 
 try {
     const upcomingRes = await supabase
@@ -23,22 +70,9 @@ try {
     console.error("Upcoming error:", e);
 }
 
-try {
-    const galleryRes = await supabase
-        .from("event_gallery")
-        .select("*")
-        .order("Date-At", { ascending: false })
-        .limit(3);
-
-    galleryData = galleryRes.data ?? [];
-} catch (e) {
-    console.error("Gallery error:", e);
-}
-
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// แยกประเภทงานและเรียงลำดับให้ถูกต้อง
 let upcomingEvents: any[] = [];
 let pastEvents: any[] = [];
 
@@ -54,12 +88,10 @@ if (upcomingData) {
                 pastEvents.push(event);
             }
         } catch (e) {
-            // หากไม่สามารถแปลงวันที่ได้ ให้ถือว่าเป็น past event
             pastEvents.push(event);
         }
     });
 
-    // เรียงลำดับ upcomingEvents จากใกล้ถึงไกล (ascending)
     upcomingEvents.sort((a, b) => {
         try {
             const dateA = new Date(a.date.replace(/-/g, "/"));
@@ -70,7 +102,6 @@ if (upcomingData) {
         }
     });
 
-    // เรียงลำดับ pastEvents จากใหม่ไปเก่า (descending)
     pastEvents.sort((a, b) => {
         try {
             const dateA = new Date(a.date.replace(/-/g, "/"));
@@ -91,14 +122,10 @@ function toSlug(text) {
         .replace(/[^a-z0-9-]/g, "");
 }
 
-// จำนวนกิจกรรมที่แสดง
 const upcomingCount = upcomingEvents.length;
-const pastCount = pastEvents.length;
-const galleryCount = galleryData?.length || 0;
 ---
 
 <style>
-    /* CSS นี้จะทำงานเฉพาะในหน้า index.astro เท่านั้น */
     .img-box {
         border-radius: var(--r-base);
     }
@@ -106,33 +133,32 @@ const galleryCount = galleryData?.length || 0;
 
 <MainLayout title="Niya BNK48 - Fan Website">
     <section id="home">
-        <div class="video-container">
-            <iframe
-                class="video-bg"
-                src="https://www.youtube.com/embed/WBFFMdxCCjs?autoplay=1&mute=1&loop=1&playlist=WBFFMdxCCjs
-                &controls=0
-                &rel=0
-                &playsinline=1
-                &modestbranding=1"
-                allow="autoplay; encrypted-media"
-            >
-            </iframe>
+        <div class="video-container d-flex align-items-center justify-content-center position-relative" id="heroSection">
+            <video autoplay muted loop playsinline class="bg-video w-100 h-100 position-absolute top-0 start-0 d-none d-md-block" style="object-fit: cover;" id="heroVideo">
+                <source src={pageData.hero_video} type="video/mp4" />
+            </video>
+            <img 
+                src={pageData.hero_image}
+                alt="Background" 
+                class="bg-image w-100 h-100 position-absolute top-0 start-0 d-md-none" 
+                style="object-fit: cover;"
+            />
+            <div class="overlay position-absolute top-0 start-0 w-100 h-100"></div>
 
-            <div class="overlay"></div>
-
-            <div class="ht-1">
+            <div class="ht-1 position-relative" style="z-index: 10;">
                 <div class="ht-2">
-                    <strong>Niya</strong> BNK48
-                    <p class="h3">Suvibha Laithomya</p>
+                    <strong>{pageData.hero_title_part1}</strong> {pageData.hero_title_part2}
+                    <p class="h3">{pageData.hero_subtitle}</p>
                 </div>
             </div>
         </div>
     </section>
+    
     <section id="event">
         <div>
             <div class="mb-4 text-center">
-                <h2 class="fw-bold">Niya's event soon</h2>
-                <p class="text-muted">ติดตามผลงานนีญ่าได้ที่</p>
+                <h2 class="fw-bold">{pageData.event_title}</h2>
+                <p class="text-muted">{pageData.event_subtitle}</p>
             </div>
         </div>
         <section id="upcoming-events-section" style="padding: 0;">
@@ -176,6 +202,7 @@ const galleryCount = galleryData?.length || 0;
             </a>
         </div>
     </section>
+    
     <section id="info">
         <div class="container bd-info">
             <img
@@ -195,47 +222,41 @@ const galleryCount = galleryData?.length || 0;
                 />
             </div>
             <div class="slide-right br-i">
-                <div class="fw-bold h3">Niya - Suvibha Laithomya</div>
+                <div class="fw-bold h3">{pageData.info_title}</div>
                 <p>
-                    สวัสดีค่ะ ชื่อนีญ่า ชื่อจริง สุวิภาส์ ลายถมยา แปลว่า
-                    "ผู้หญิงที่สวย" ชอบกินไดฟูกุรสชาเขียว, แซลมอน,
-                    และของเค็มทุกชนิด ชอบสีพาสเทลทุกสีงานอดิเรก เล่นรูบิค, ฟัง
-                    The Ghost Radio ความสามารถพิเศษเล่นรูบิค, เล่นอูคูเลเล่
+                    {pageData.info_intro}
                 </p>
                 <ul>
                     <li>
-                        ตำแหน่ง Center จากการเลือกตั้ง BNK48 & CGM48
-                        Thai-Chinese Cultural Ambassador
+                        {pageData.info_list_1}
                     </li>
                     <li>
-                        ได้รับคัดเลือกให้เป็นเซ็มบัตสึในซิงเกิลที่ 20 ของ BNK48 <a
+                        {pageData.info_list_2} <a
                             href="https://music.apple.com/th/album/masaka-no-confession-%E0%B8%84%E0%B8%B3%E0%B8%AA%E0%B8%B2%E0%B8%A3%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%97-%E0%B9%84%E0%B8%A1-%E0%B8%84%E0%B8%B2%E0%B8%94%E0%B8%9F-%E0%B8%99/1846837749?i=1846837864"
                             class="highlight-link">Masaka No Confession</a>
                     </li>
                     <li>
-                        ได้รับคัดเลือกเป็นเซ็มบัตสึในเพลงรอง <a
+                        {pageData.info_list_3} <a
                             href="https://music.apple.com/th/album/saikyou-twintail-%E0%B8%97%E0%B8%A7-%E0%B8%99%E0%B9%80%E0%B8%97%E0%B8%A5-%E0%B8%AA-%E0%B8%94%E0%B8%A2%E0%B8%AD%E0%B8%94%E0%B9%80%E0%B8%A5%E0%B8%A2/1801922410?i=1801922635"
                             class="highlight-link">Saikyou Twintail</a>
                     </li>
                     <li>
-                        ตำแหน่ง Under Girls อันดับที่ 24 <sup>th</sup
-                        >จากการเลือกตั้ง BNK48 & CGM48 Senbatsu General Election
-                        2025
+                        {pageData.info_list_4} <sup>th</sup>จากการเลือกตั้ง BNK48 & CGM48 Senbatsu General Election 2025
                     </li>
                     <li>
-                        มีผลงานในฐานะเซ็มบัตสึในซิงเกิลและอัลบั้มต่าง ๆ ของ <a
+                        {pageData.info_list_5} <a
                             href="https://tpop.fandom.com/wiki/Niya"
-                            class="highlight-link">BNK48</a
-                        > อย่างต่อเนื่อง
+                            class="highlight-link">BNK48</a>
                     </li>
                 </ul>
             </div>
         </div>
     </section>
+    
     <section id="social">
         <div class="container">
-            <h2 class="h-sec display-5 mb-1 fw-800 t-center">Social Media</h2>
-            <p class="fw-bold h5 mb-5 t-center">ช่องทางติดตามโซเชีลยลนีญ่า</p>
+            <h2 class="h-sec display-5 mb-1 fw-800 t-center">{pageData.social_title}</h2>
+            <p class="fw-bold h5 mb-5 t-center">{pageData.social_subtitle}</p>
             <div class="embed-row">
                 <div class="slide-right embed" data-embed-type="instagram">
                     <a
@@ -518,16 +539,17 @@ const galleryCount = galleryData?.length || 0;
             </div>
         </div>
     </section>
+    
     <section id="library" data-astro-cid-j7pv25f6>
         <div class="container" data-astro-cid-j7pv25f6>
             <div
                 class="h-sec display-5 mb-1 fw-800 t-center"
                 data-astro-cid-j7pv25f6
             >
-                Selected Highlights
+                {pageData.library_title}
             </div>
             <p class="fw-bold h5 text-center mb-5" data-astro-cid-j7pv25f6>
-                ไฮไลต์ผลงานทที่โดดเด่นนีญ่า
+                {pageData.library_subtitle}
             </p>
             <div
                 class="slide-right mb-4 youtube-block"
@@ -769,10 +791,10 @@ const galleryCount = galleryData?.length || 0;
     <section id="fanclub">
         <div class="container">
             <h2 class="fw-bold text-center display-5 h-sec mb-1">
-                Fans' Newsline
+                {pageData.fanclub_title}
             </h2>
             <p class="fw-bold h5 text-center mb-5">
-                ช่องทางติดตามข่าวสารจากแฟนคลับ
+                {pageData.fanclub_subtitle}
             </p>
             <div class="mb-4 row align-items-center">      
                 <div class="slide-in col-12 col-lg-6">
@@ -785,14 +807,10 @@ const galleryCount = galleryData?.length || 0;
                     />
                 </div>
                 <div class="fade-right col-12 col-lg-6">
-                    <h3 class="h1">Little Nemo of Niya</h3>
-                    <p class="text-muted">แฟนด้อมที่มากกว่าการติดตาม</p>
+                    <h3 class="h1">{pageData.fanclub_heading}</h3>
+                    <p class="text-muted">{pageData.fanclub_description}</p>
                     <p>
-                        ไม่ใช่เพียงแค่การชื่นชมผลงานจากระยะไกล
-                        แต่คือการได้ก้าวเข้ามาเป็นส่วนหนึ่งในเส้นทางของ Niya
-                        อย่างแท้จริง คุณจะได้สัมผัสทุกเบื้องหลังของการสร้างสรรค์
-                        รับรู้ถึงหยดเหงื่อและความตั้งใจที่ซ่อนอยู่ในแต่ละรายละเอียด
-                        ร่วมเดินไปพร้อมกับทุกความท้าทายและทุกก้าวแห่งความสำเร็จ
+                        {pageData.fanclub_content}
                     </p>
                     <div class="row">
                         <div class="col-12 col-lg-6 mb-3">
@@ -849,7 +867,7 @@ const galleryCount = galleryData?.length || 0;
                                 stroke-linejoin="round"></g>
                             <g id="SVGRepo_iconCarrier">
                                 <path
-                                    d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55 c-4.127,0-8.08,1.639-10.993,4.55l-171.138,171.14L59.25,4.565c-2.913-2.911-6.866-4.55-10.993-4.55 c-4.126,0-8.08,1.639-10.992,4.55L4.558,37.284c-6.077,6.075-6.077,15.909,0,21.986l171.138,171.128L4.575,401.505 c-6.074,6.077-6.074,15.911,0,21.986l32.709,32.719c2.911,2.911,6.865,4.55,10.992,4.55c4.127,0,8.08-1.639,10.994-4.55 l171.117-171.12l171.118,171.12c2.913,2.911,6.866,4.55,10.993,4.55c4.128,0,8.081-1.639,10.992-4.55l32.709-32.719 c6.074-6.075,6.074-15.909,0-21.986L285.08,230.397z"
+                                    d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55c-4.127,0-8.08,1.639-10.993,4.55l-171.138,171.14L59.25,4.565c-2.913-2.911-6.866-4.55-10.993-4.55c-4.126,0-8.08,1.639-10.992,4.55L4.558,37.284c-6.077,6.075-6.077,15.909,0,21.986l171.138,171.128L4.575,401.505c-6.074,6.077-6.074,15.911,0,21.986l32.709,32.719c2.911,2.911,6.865,4.55,10.992,4.55c4.127,0,8.08-1.639,10.994-4.55l171.117-171.12l171.118,171.12c2.913,2.911,6.866,4.55,10.993,4.55c4.128,0,8.081-1.639,10.992-4.55l32.709-32.719c6.074-6.075,6.074-15.909,0-21.986L285.08,230.397z"
                                 >
                                 </path>
                             </g>
