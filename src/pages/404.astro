@@ -1,0 +1,365 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout title="404 - Not Found">
+    <main>
+        <div class="wrap">
+            <div class="info">
+                <h1 class="fs-12 fw-400 mb-2">404 PAGE NOT FOUND</h1>
+                <p class="fw-700 mb-3">
+                    อุ๊ปสสส เหมือนหน้านี้จะไม่มีนะ <br
+                    />งั้นพักสิ่งที่น่าสนใจสักครู่ 😝
+                </p>
+                <a
+                    class="btn btn-sm btn-outline-light btn-rounded fs-12 fw-500 d-inline-block me-1"
+                    href="/"
+                    ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 448 512"
+                        fill="currentColor"
+                        class="me-2 speaker-svg"
+                        ><path
+                            d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"
+                        ></path></svg
+                    >back to home</a
+                >
+                <button
+                    class="btn btn-sm btn-outline-light btn-rounded fs-12 fw-500 d-inline-block ms-1"
+                    id="muteButton"
+                    >play with sound<svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 512"
+                        fill="currentColor"
+                        width="16"
+                        height="16"
+                        class="ms-2 speaker-svg"
+                        ><path
+                            d="M533.6 32.5C598.5 85.2 640 165.8 640 256s-41.5 170.7-106.4 223.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C557.5 398.2 592 331.2 592 256s-34.5-142.2-88.7-186.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64l0 384c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352 64 352c-35.3 0-64-28.7-64-64l0-64c0-35.3 28.7-64 64-64l67.8 0L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"
+                        ></path></svg
+                    ></button
+                >
+            </div>
+            <div class="video-wrap">
+                <video
+                    id="myVideo"
+                    width="720"
+                    height="1080"
+                    playsinline=""
+                    autoplay=""
+                    loop=""
+                    muted=""
+                >
+                    <source src="/video/404-Video-naya.mp4" type="video/mp4" />
+                </video>
+            </div>
+        </div>
+    </main>
+    <footer class="text-center py-4" style="opacity: 0.7;">
+        <p class="text-white mb-0">
+            inspyration From
+            <a
+                href="https://emmafans.vercel.app/"
+                class="text-white fw-bold opacity-75-hover"
+            >
+                emmafans By withmywish*
+            </a>
+        </p>
+    </footer>
+    <script>
+        const video = document.getElementById("myVideo") as HTMLVideoElement;
+        const muteButton = document.getElementById(
+            "muteButton",
+        ) as HTMLButtonElement | null;
+
+        function toggleMute() {
+            if (!video || !muteButton) return;
+
+            video.muted = !video.muted;
+
+            // Update button text and icon
+            if (video.muted) {
+                muteButton.innerHTML =
+                    'play with sound<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor" width="16" height="16" class="ms-2 speaker-svg"><path d="M533.6 32.5C598.5 85.2 640 165.8 640 256s-41.5 170.7-106.4 223.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C557.5 398.2 592 331.2 592 256s-34.5-142.2-88.7-186.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64l0 384c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352 64 352c-35.3 0-64-28.7-64-64l0-64c0-35.3 28.7-64 64-64l67.8 0L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"/></svg>';
+            } else {
+                if (video.paused) {
+                    video.play();
+                }
+                muteButton.innerHTML =
+                    'mute sound<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor" width="16" height="16" class="ms-2 speaker-svg"><path d="M301.1 34.8C312.6 40 320 51.4 320 64l0 384c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352 64 352c-35.3 0-64-28.7-64-64l0-64c0-35.3 28.7-64 64-64l67.8 0L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/></svg>';
+            }
+        }
+
+        if (muteButton) {
+            muteButton.addEventListener("click", toggleMute);
+        }
+    </script>
+    <!-- Bootstrap -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <!-- Nav -->
+    <script type="module">
+        document.addEventListener(
+            "click",
+            function (e) {
+                var s = document.querySelector(".w-toggle"),
+                    t = document.querySelector(".w-menu");
+                (e.target.closest(".w-toggle") &&
+                    (e.target.classList.contains("active")
+                        ? (s.classList.remove("active"),
+                          t.classList.remove("active"),
+                          document.body.classList.remove("show-nav"))
+                        : (s.classList.add("active"),
+                          t.classList.add("active"),
+                          document.body.classList.add("show-nav"))),
+                    e.target.matches(".w-menu a") &&
+                        (e.target.getAttribute("href") == "#"
+                            ? e.target.parentNode.classList.contains("active")
+                                ? e.target.parentNode.classList.remove("active")
+                                : e.target.parentNode.classList.add("active")
+                            : (s.classList.remove("active"),
+                              t.classList.remove("active"),
+                              document.body.classList.remove("show-nav"))),
+                    e.target.matches(".w-backdrop") &&
+                        (s.classList.remove("active"),
+                        t.classList.remove("active"),
+                        document.body.classList.remove("show-nav")));
+            },
+            !1,
+        );
+        const a = document.querySelector(".site-header");
+        if (a) {
+            const e = a.offsetHeight,
+                s = () => a.classList.add("active"),
+                t = () => a.classList.remove("active");
+            let c = window.scrollY;
+            window.addEventListener("scroll", function () {
+                ((c = window.scrollY), c >= e ? s() : t());
+            });
+        }
+    </script>
+    <vercel-analytics data-props="{}" data-params="{}" data-pathname="/404/"
+    ></vercel-analytics>
+    <script type="module">
+        var f = "@vercel/analytics",
+            l = "1.5.0",
+            w = () => {
+                window.va ||
+                    (window.va = function (...r) {
+                        (window.vaq = window.vaq || []).push(r);
+                    });
+            };
+        function d() {
+            return typeof window < "u";
+        }
+        function u() {
+            try {
+                const e = "production";
+            } catch {}
+            return "production";
+        }
+        function v(e = "auto") {
+            if (e === "auto") {
+                window.vam = u();
+                return;
+            }
+            window.vam = e;
+        }
+        function m() {
+            return (d() ? window.vam : u()) || "production";
+        }
+        function c() {
+            return m() === "development";
+        }
+        function b(e, r) {
+            if (!e || !r) return e;
+            let n = e;
+            try {
+                const t = Object.entries(r);
+                for (const [a, i] of t)
+                    if (!Array.isArray(i)) {
+                        const o = s(i);
+                        o.test(n) && (n = n.replace(o, `/[${a}]`));
+                    }
+                for (const [a, i] of t)
+                    if (Array.isArray(i)) {
+                        const o = s(i.join("/"));
+                        o.test(n) && (n = n.replace(o, `/[...${a}]`));
+                    }
+                return n;
+            } catch {
+                return e;
+            }
+        }
+        function s(e) {
+            return new RegExp(`/${h(e)}(?=[/?#]|$)`);
+        }
+        function h(e) {
+            return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+        function y(e) {
+            return e.scriptSrc
+                ? e.scriptSrc
+                : c()
+                  ? "https://va.vercel-scripts.com/v1/script.debug.js"
+                  : e.basePath
+                    ? `${e.basePath}/insights/script.js`
+                    : "/_vercel/insights/script.js";
+        }
+        function g(
+            e = {
+                debug: !0,
+            },
+        ) {
+            var r;
+            if (!d()) return;
+            (v(e.mode),
+                w(),
+                e.beforeSend &&
+                    ((r = window.va) == null ||
+                        r.call(window, "beforeSend", e.beforeSend)));
+            const n = y(e);
+            if (document.head.querySelector(`script[src*="${n}"]`)) return;
+            const t = document.createElement("script");
+            ((t.src = n),
+                (t.defer = !0),
+                (t.dataset.sdkn = f + (e.framework ? `/${e.framework}` : "")),
+                (t.dataset.sdkv = l),
+                e.disableAutoTrack && (t.dataset.disableAutoTrack = "1"),
+                e.endpoint
+                    ? (t.dataset.endpoint = e.endpoint)
+                    : e.basePath &&
+                      (t.dataset.endpoint = `${e.basePath}/insights`),
+                e.dsn && (t.dataset.dsn = e.dsn),
+                (t.onerror = () => {
+                    const a = c()
+                        ? "Please check if any ad blockers are enabled and try again."
+                        : "Be sure to enable Web Analytics for your project and deploy again. See https://vercel.com/docs/analytics/quickstart for more information.";
+                    console.log(
+                        `[Vercel Web Analytics] Failed to load script from ${n}. ${a}`,
+                    );
+                }),
+                c() && e.debug === !1 && (t.dataset.debug = "false"),
+                document.head.appendChild(t));
+        }
+        function p({ route: e, path: r }) {
+            var n;
+            (n = window.va) == null ||
+                n.call(window, "pageview", {
+                    route: e,
+                    path: r,
+                });
+        }
+        function k() {
+            try {
+                return;
+            } catch {}
+        }
+        customElements.define(
+            "vercel-analytics",
+            class extends HTMLElement {
+                constructor() {
+                    super();
+                    try {
+                        const r = JSON.parse(this.dataset.props ?? "{}"),
+                            n = JSON.parse(this.dataset.params ?? "{}");
+                        g({
+                            ...r,
+                            disableAutoTrack: !0,
+                            framework: "astro",
+                            basePath: k(),
+                            beforeSend: window.webAnalyticsBeforeSend,
+                        });
+                        const t = this.dataset.pathname;
+                        p({
+                            route: b(t ?? "", n),
+                            path: t,
+                        });
+                    } catch (r) {
+                        throw new Error(
+                            `Failed to parse WebAnalytics properties: ${r}`,
+                        );
+                    }
+                }
+            },
+        );
+    </script>
+</MainLayout>
+<style is:global>
+    body {
+        background-color: #000;
+    }
+    /* ทำให้ header transparent เฉพาะหน้า 404 */
+    header {
+        display: none;
+    }
+
+
+    .wrap {
+        width: auto;
+        height: 100vh;
+        min-height: 600px;
+        position: relative;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    @supports (-webkit-touch-callout: none) {
+        .wrap {
+            height: -webkit-fill-available;
+        }
+    }
+
+    .info {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        padding: 36px 24px 64px;
+        text-align: center;
+        color: #fff;
+        text-shadow: 0px 0px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .video-wrap {
+        width: 100%;
+        height: 100%;
+        font-size: 0;
+    }
+
+    .video-wrap video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .speaker-svg {
+        width: 16px;
+        height: 16px;
+        margin-top: -2px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    @media (min-width: 576px) {
+        .wrap {
+            aspect-ratio: 9/16;
+            margin: 48px auto;
+            height: calc(100vh - 96px);
+            border-radius: 8px;
+        }
+    }
+
+    .song {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 24px;
+        text-align: center;
+        color: #fff;
+    }
+</style>

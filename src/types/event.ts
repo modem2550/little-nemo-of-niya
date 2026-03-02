@@ -1,12 +1,11 @@
-/**
- * Event Types
- * กำหนด types สำหรับข้อมูลอีเวนต์
- */
+// ./types/event.ts
 
 export interface ImageUrls {
   small: string;
   medium: string;
   large: string;
+  image_slug?: string; 
+  image_url?: string;
 }
 
 export interface Event {
@@ -21,6 +20,8 @@ export interface Event {
   image_urls?: ImageUrls | null;
   created_at?: string;
   updated_at?: string;
+  // ✅ เพิ่มบรรทัดนี้ เพื่อรับค่า URL สวยๆ ที่เราสร้างขึ้น
+  generated_slug?: string; 
 }
 
 export interface EventCardProps {

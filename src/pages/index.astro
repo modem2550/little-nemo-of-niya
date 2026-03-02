@@ -1,15 +1,14 @@
 ---
+// ./pages/index.astro
 import MainLayout from "../layouts/MainLayout.astro";
 import EventCard from "../components/EventCard.astro";
 import { getSupabase } from "../lib/supabase.server";
+import socialData from "../data/social.json";
+import type { Event } from "../types/event";
 
 const supabase = getSupabase();
 
-// ✅ ดึง Social จาก Local JSON
-import socialData from "../data/social.json";
-
-let upcomingData: any[] = [];
-let galleryData: any[] = [];
+let upcomingData: Event[] = [];
 
 try {
     const upcomingRes = await supabase
@@ -22,24 +21,11 @@ try {
     console.error("Upcoming error:", e);
 }
 
-try {
-    const galleryRes = await supabase
-        .from("event_gallery")
-        .select("*")
-        .order("Date-At", { ascending: false })
-        .limit(3);
-
-    galleryData = galleryRes.data ?? [];
-} catch (e) {
-    console.error("Gallery error:", e);
-}
-
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// แยกประเภทงานและเรียงลำดับให้ถูกต้อง
-let upcomingEvents: any[] = [];
-let pastEvents: any[] = [];
+let upcomingEvents: Event[] = [];
+let pastEvents: Event[] = [];
 
 if (upcomingData) {
     upcomingData.forEach((event) => {
@@ -53,35 +39,26 @@ if (upcomingData) {
                 pastEvents.push(event);
             }
         } catch (e) {
-            // หากไม่สามารถแปลงวันที่ได้ ให้ถือว่าเป็น past event
             pastEvents.push(event);
         }
     });
 
-    // เรียงลำดับ upcomingEvents จากใกล้ถึงไกล (ascending)
     upcomingEvents.sort((a, b) => {
         try {
-            const dateA = new Date(a.date.replace(/-/g, "/"));
-            const dateB = new Date(b.date.replace(/-/g, "/"));
-            return dateA.getTime() - dateB.getTime();
-        } catch (e) {
-            return 0;
-        }
+            return new Date(a.date.replace(/-/g, "/")).getTime() - new Date(b.date.replace(/-/g, "/")).getTime();
+        } catch (e) { return 0; }
     });
 
-    // เรียงลำดับ pastEvents จากใหม่ไปเก่า (descending)
     pastEvents.sort((a, b) => {
         try {
-            const dateA = new Date(a.date.replace(/-/g, "/"));
-            const dateB = new Date(b.date.replace(/-/g, "/"));
-            return dateB.getTime() - dateA.getTime();
-        } catch (e) {
-            return 0;
-        }
+            return new Date(b.date.replace(/-/g, "/")).getTime() - new Date(a.date.replace(/-/g, "/")).getTime();
+        } catch (e) { return 0; }
     });
 }
 
-function toSlug(text) {
+// ✅ ฟังก์ชันแปลงชื่อเป็น Slug
+function toSlug(text: string) {
+    if (!text) return "event";
     return text
         .toLowerCase()
         .trim()
@@ -90,18 +67,26 @@ function toSlug(text) {
         .replace(/[^a-z0-9-]/g, "");
 }
 
-// จำนวนกิจกรรมที่แสดง
-const upcomingCount = upcomingEvents.length;
-const pastCount = pastEvents.length;
-const galleryCount = galleryData?.length || 0;
----
+// ✅ ฟังก์ชันปั้นชื่อ URL ให้ Component (ใช้ชื่อ + 8 ตัวแรกของ ID เพื่อกันซ้ำ)
+function generateEventSlug(event: any) {
+    const titleSlug = toSlug(event.title || 'event');
+    return `${titleSlug}-${event.id}`; // ส่ง ID ทั้งหมดไปเลย ไม่ต้อง substring
+}
 
-<style>
-    /* CSS นี้จะทำงานเฉพาะในหน้า index.astro เท่านั้น */
-    .img-box {
-        border-radius: var(--r-base);
-    }
-</style>
+// แปรรูปข้อมูลก่อนส่งไปแสดงผล
+const processedUpcoming = upcomingEvents.map(event => ({
+    ...event,
+    generated_slug: generateEventSlug(event)
+}));
+
+const processedPast = pastEvents.map(event => ({
+    ...event,
+    generated_slug: generateEventSlug(event)
+}));
+
+const upcomingCount = processedUpcoming.length;
+const pastCount = processedPast.length;
+---
 
 <MainLayout title="Niya BNK48 - Fan Website">
     <section id="home">
@@ -137,7 +122,9 @@ const galleryCount = galleryData?.length || 0;
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
                 {
                 upcomingCount > 0 ? (
-                upcomingEvents.map((eventItem) => (
+                // ❌ เดิม: upcomingEvents.map
+                // ✅ แก้เป็น: processedUpcoming.map
+                processedUpcoming.map((eventItem) => (
                 <div class="col d-flex justify-content-center" data-event-date={eventItem.date}>
                     <EventCard event={eventItem} />
                 </div>
@@ -178,29 +165,11 @@ const galleryCount = galleryData?.length || 0;
                     The Ghost Radio ความสามารถพิเศษเล่นรูบิค, เล่นอูคูเลเล่
                 </p>
                 <ul>
-                    <li>
-                        ตำแหน่ง Center จากการเลือกตั้ง BNK48 & CGM48
-                        Thai-Chinese Cultural Ambassador
-                    </li>
-                    <li>
-                        ได้รับคัดเลือกให้เป็นเซ็มบัตสึในซิงเกิลที่ 20 ของ BNK48 <a
-                            href="https://music.apple.com/th/album/masaka-no-confession-%E0%B8%84%E0%B8%B3%E0%B8%AA%E0%B8%B2%E0%B8%A3%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%97-%E0%B9%84%E0%B8%A1-%E0%B8%84%E0%B8%B2%E0%B8%94%E0%B8%9F-%E0%B8%99/1846837749?i=1846837864"
-                            class="highlight-link">Masaka No Confession</a>
-                    </li>
-                    <li>
-                        ได้รับคัดเลือกเป็นเซ็มบัตสึในเพลงรอง <a
-                            href="https://music.apple.com/th/album/saikyou-twintail-%E0%B8%97%E0%B8%A7-%E0%B8%99%E0%B9%80%E0%B8%97%E0%B8%A5-%E0%B8%AA-%E0%B8%94%E0%B8%A2%E0%B8%AD%E0%B8%94%E0%B9%80%E0%B8%A5%E0%B8%A2/1801922410?i=1801922635"
-                            class="highlight-link">Saikyou Twintail</a>
-                    </li>
-                    <li>
-                        ตำแหน่ง Under Girls อันดับที่ 24 <sup>th</sup>จากการเลือกตั้ง BNK48 & CGM48 Senbatsu General
-                        Election
-                        2025
-                    </li>
-                    <li>
-                        มีผลงานในฐานะเซ็มบัตสึในซิงเกิลและอัลบั้มต่าง ๆ ของ <a href="https://tpop.fandom.com/wiki/Niya"
-                            class="highlight-link">BNK48</a> อย่างต่อเนื่อง
-                    </li>
+                    <li>ตำแหน่ง Center จากการเลือกตั้ง BNK48 & CGM48 Thai-Chinese Cultural Ambassador ในเพลง <a href="https://music.apple.com/th/album/sky-lantern-wish-single/1870195856">Sky Lantern Wish</a></li>
+                    <li>ได้รับคัดเลือกให้เป็นเซ็มบัตสึในซิงเกิลที่ 20 ของ BNK48 <a href="https://music.apple.com/th/album/masaka-no-confession-%E0%B8%84%E0%B8%B3%E0%B8%AA%E0%B8%B2%E0%B8%A3%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%97-%E0%B9%84%E0%B8%A1-%E0%B8%84%E0%B8%B2%E0%B8%94%E0%B8%9F-%E0%B8%99/1846837749?i=1846837864" class="highlight-link">Masaka No Confession</a></li>
+                    <li>ได้รับคัดเลือกเป็นเซ็มบัตสึในเพลงรอง <a href="https://music.apple.com/th/album/saikyou-twintail-%E0%B8%97%E0%B8%A7-%E0%B8%99%E0%B9%80%E0%B8%97%E0%B8%A5-%E0%B8%AA-%E0%B8%94%E0%B8%A2%E0%B8%AD%E0%B8%94%E0%B9%80%E0%B8%A5%E0%B8%A2/1801922410?i=1801922635" class="highlight-link">Saikyou Twintail</a></li>
+                    <li>ตำแหน่ง Under Girls อันดับที่ 24 <sup>th</sup>จากการเลือกตั้ง BNK48 & CGM48 Senbatsu General Election 2025 </li>
+                    <li>มีผลงานในฐานะเซ็มบัตสึในซิงเกิลและอัลบั้มต่าง ๆ ของ <a href="https://tpop.fandom.com/wiki/Niya" class="highlight-link">BNK48</a> อย่างต่อเนื่อง </li>
                 </ul>
             </div>
         </div>

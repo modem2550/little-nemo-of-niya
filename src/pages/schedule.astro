@@ -17,8 +17,24 @@ if (error) {
   console.error('Error fetching events:', error);
 }
 
-// แยกประเภทงานโดยใช้ utility function
-const { upcoming, past } = categorizeEvents(events || []);
+function toSlug(text: string) {
+    return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[()]/g, '').replace(/[^a-z0-9-]/g, '');
+}
+
+function generateEventSlug(event: any) {
+    const titleSlug = toSlug(event.title || 'event');
+    const safeId = String(event.id || '0000'); 
+    return `${titleSlug}-${safeId.substring(0, 8)}`;
+}
+
+// 2. แปรรูปข้อมูล "ก่อน" ที่จะส่งไปแยกประเภท
+const eventsWithSlug = (events || []).map(event => ({
+    ...event,
+    generated_slug: generateEventSlug(event)
+}));
+
+// 3. ส่งข้อมูลที่มี slug แล้วไปแยกประเภท
+const { upcoming, past } = categorizeEvents(eventsWithSlug);
 
 // นับจำนวนกิจกรรม
 const upcomingCount = upcoming.length;

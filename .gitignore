@@ -4,3 +4,4 @@ node_modules
 dist
 .DS_Store
 isolate-0xc03400000-4812-v8.log
+.env*.local
