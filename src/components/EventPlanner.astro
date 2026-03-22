@@ -1,0 +1,897 @@
+---
+// src/components/EventPlanner.astro
+import '../styles/event.css';
+import type { ActivityConfig, DayConfig, PriceConfig, ScheduleEntry } from '../lib/planner';
+
+interface MemberRow {
+    id: number;
+    name: string;
+    brand: string;
+    gen: string;
+    team: string;
+    profile_image_url?: string | null;
+}
+
+interface Props {
+    eventSlug:    string;
+    eventName:    string;
+    pageTitle?:   string;
+    officialLink: string;
+    storageKey:   string;
+    heroImage:    string;
+    primaryColor: string;
+    primaryHover: string;
+    prices:       PriceConfig;
+    days:         DayConfig[];
+    activities:   ActivityConfig[];
+    members:      MemberRow[];
+    schedule:     ScheduleEntry[];
+}
+
+const {
+    eventName, officialLink, storageKey, heroImage,
+    prices, days, activities, members, schedule,
+} = Astro.props;
+
+const TEAM_COLOR: Record<string, string> = {
+    "Team BIII": "#cb96c2",
+    "Team NV":   "#cb96c2",
+    "Team C":    "#3CC2B1",
+    "Trainee":   "#93001d",
+};
+
+const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
+---
+
+    <div class="sf-hero" style={{ backgroundImage: `url('${heroImage}')`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat', padding: '110px 20px 20px'}}>
+        <div class="container pb-3 text-center">
+            <p class="fw-bold h5 text-white-muted mb-1">BNK48 & CGM48</p>
+            <h2 class="h-sec display-6 fw-bolder mb-0" style="color:var(--c-primary-hover)">{eventName}</h2>
+            <span class="text-white-muted" style="font-size:13px">รายละเอียด&nbsp;:&nbsp;
+                <a href={officialLink} style="color:var(--c-primary)">BNK48 & CGM48 Official</a>
+            </span>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="container px-3">
+        <div class="sf-tabs-wrap">
+            <div class="sf-tabs d-flex justify-content-center overflow-auto">
+                {[
+                    { id: 'members', icon: 'fa-user-group', label: 'Members' },
+                    { id: 'planner', icon: 'fa-calendar',   label: 'Planner' },
+                    { id: 'summary', icon: 'fa-list-check',  label: 'Summary' },
+                ].map(({ id, icon, label }) => (
+                    <button class={`sf-tab${id === 'members' ? ' active' : ''}`} data-tab={id}>
+                        <i class={`fa-solid ${icon}`}></i>{label}
+                        {id === 'summary' && <span class="tab-badge" id="summaryBadge" style="display:none">0</span>}
+                    </button>
+                ))}
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: MEMBERS -->
+    <div class="sf-panel active" id="panel-members">
+        <div class="sf-section mx-auto">
+            <div class="filter-bar mb-4 mx-auto">
+                <div class="row g-2" id="mBrandGroup">
+                    {[
+                        { v: 'all',   label: 'All',   cls: 'ftab--all active' },
+                        { v: 'BNK48', label: 'BNK48', cls: 'ftab--bnk' },
+                        { v: 'CGM48', label: 'CGM48', cls: 'ftab--cgm' },
+                    ].map(({ v, label, cls }) => (
+                        <div class="col-4">
+                            <button class={`ftab ${cls} w-100`} data-mf="brand" data-mv={v}>{label}</button>
+                        </div>
+                    ))}
+                </div>
+                <hr class="filter-divider" />
+                <div id="mGenGroup"></div>
+                <hr class="filter-divider d-none" id="mGenDivider" />
+                <div id="mTeamGroup"></div>
+            </div>
+            <div class="member-cards-grid" id="memberCardsGrid">
+                {members.map((m) => {
+                    const isBNK = m.brand === "BNK48";
+                    const tc = TEAM_COLOR[m.team] ?? "#9b90b8";
+                    return (
+                        <div class="member-card"
+                            data-name={m.name} data-brand={m.brand}
+                            data-gen={m.gen} data-team={m.team}
+                            data-img={m.profile_image_url ?? ""}>
+                            <div class="member-card__img-wrap" style={`border-color:${tc}`}>
+                                {m.profile_image_url ? (
+                                    <img src={m.profile_image_url} alt={m.name}
+                                        class="member-card__img" loading="lazy"
+                                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                                ) : null}
+                                <div class={`member-card__fallback ${isBNK ? "av--bnk" : "av--cgm"}`}
+                                    style={m.profile_image_url ? "display:none" : ""}>
+                                    {m.name[0]}
+                                </div>
+                            </div>
+                            <div class="member-card__info p-2">
+                                <div class="member-card__name">{m.name}</div>
+                                <div class="d-flex align-items-center gap-1 mb-1">
+                                    <span class={`brand-badge ${isBNK ? "bb--bnk" : "bb--cgm"}`}>{m.brand}</span>
+                                    <span class="gen-text">{m.gen}</span>
+                                </div>
+                                <div class="member-card__team" style={`color:${tc}`}>{m.team}</div>
+                            </div>
+                            <button class="member-card__select-btn" data-name={m.name}
+                                onclick="toggleFromMembersTab(this)" type="button">
+                                <i class="fa-solid fa-circle-plus"></i> Add to Planner
+                            </button>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: PLANNER -->
+    <div class="sf-panel" id="panel-planner">
+        <div class="sf-section mx-auto">
+            <div class="panel-empty text-center py-5 flex-column align-items-center" id="plannerEmpty">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor"
+                    viewBox="0 0 16 16" style="opacity:.3" class="mb-3">
+                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+                </svg>
+                <p class="fw-bold mb-1" style="color:var(--c-content)">ยังไม่ได้เลือก Member</p>
+                <p class="mb-3" style="font-size:13px;color:#b0a8c4">ไปที่ Tab Members เพื่อเลือก Member ที่ต้องการ</p>
+                <button class="btn-outline-sf" onclick="APP.switchTab('members')">ไปที่ Members</button>
+            </div>
+            <div id="plannerContent" style="display:none">
+                <div class="filter-bar mx-auto">
+                    <div class="row g-2 mb-0" id="dayFilterRow">
+                        <div class="col-6 col-sm-3">
+                            <button class="day-ftab active w-100" data-day="all">All Days</button>
+                        </div>
+                        {days.map((d) => (
+                            <div class="col-6 col-sm-3">
+                                <button class={`day-ftab day-ftab--${d.key} w-100`} data-day={d.key}>
+                                    {d.label}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    <hr class="filter-divider" />
+                    <div class="row g-2 align-items-stretch mb-3" id="actNameFilterRow"></div>
+                    <div class="d-flex flex-wrap gap-2 mb-3" id="selectedMembersStrip"></div>
+                    <div id="scheduleBlocks"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: SUMMARY -->
+    <div class="sf-panel" id="panel-summary">
+        <div class="sf-section mx-auto">
+            <div class="panel-empty text-center py-5 flex-column align-items-center" id="summaryEmpty">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor"
+                    viewBox="0 0 16 16" style="opacity:.3" class="mb-3">
+                    <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 2h-4v3h4zm0 4h-4v3h4zm0 4h-4v3h3a1 1 0 0 0 1-1zm-5 3v-3H6v3zm-5 0v-3H1v2a1 1 0 0 0 1 1zm-4-4h4V8H1zm0-4h4V4H1zm5-3v3h4V4zm4 4H6v3h4z"/>
+                </svg>
+                <p class="fw-bold mb-1" style="font-size:16px;color:var(--c-content)">ยังไม่มี Round ที่เลือก</p>
+                <p class="mb-3" style="font-size:13px;color:#b0a8c4">กลับไปที่ Planner เพื่อเลือก Round</p>
+                <button class="btn-outline-sf" onclick="APP.switchTab('planner')">ไปที่ Planner</button>
+            </div>
+            <div id="summaryContent" style="display:none">
+                <div class="stat-grid mb-3" id="statGrid"></div>
+                <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+                    <div class="d-flex gap-2 flex-wrap flex-1" id="summaryDayTabs">
+                        <button class="day-tab active" data-day="all">All Days</button>
+                        {days.map((d) => (
+                            <button class={`day-tab day-tab--${d.key}`} data-day={d.key}>{d.short}</button>
+                        ))}
+                    </div>
+                    <div class="position-relative flex-shrink-0" id="sortDropdownWrap">
+                        <button class="sort-toggle-btn" id="sortToggleBtn" onclick="APP.toggleSortMenu()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3.5 3.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 12.293zm4 .5a.5.5 0 0 1 0-1h1a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h3a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h5a.5.5 0 0 1 0 1zM7 12.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5"/>
+                            </svg>
+                            Sort <span class="sort-active-label" id="sortActiveLabel">Day Time ↑</span>
+                        </button>
+                        <div class="sort-menu" id="sortMenu"></div>
+                    </div>
+                </div>
+                <div class="table-responsive rounded mb-3">
+                    <table class="sf-table w-100">
+                        <thead>
+                            <tr>
+                                <th>Member</th><th>Activity</th><th>Day</th>
+                                <th>Time</th><th>Round</th><th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryTbody"></tbody>
+                    </table>
+                </div>
+                <div class="summary-footer" id="summaryFooter"></div>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                    <button class="btn-action btn-action--danger" onclick="APP.resetAll()">
+                        <i class="fa-solid fa-rotate-left"></i>Reset All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="sf-disclaimer">
+        <hr class="filter-divider">
+        <div class="sf-section mx-auto">
+            <div class="sf-disclaimer__title">
+                <i class="fa-solid fa-circle-info"></i> หมายเหตุ
+            </div>
+            <ul class="sf-disclaimer__list">
+                <li>กิจกรรมอาจมีการปรับรูปแบบหรือเลื่อนเวลาตามความเหมาะสม บริษัทฯ ขอสงวนสิทธิ์เปลี่ยนแปลงโดยไม่แจ้งล่วงหน้า — โปรดติดตามข้อมูลจาก <a href={officialLink} target="_blank"><strong>BNK48 & CGM48 Official</strong></a></li>
+                <li>เวลาที่แสดงใช้เพื่อประกอบการวางแผนเท่านั้น <strong>กรุณาบริหารการใช้บัตรกิจกรรมด้วยตัวท่านเอง</strong></li>
+                <li>ข้อมูลการวางแผนบันทึกไว้ใน localStorage หากมีการอัปเดต ผู้ใช้งานต้องตรวจสอบและแก้ไขด้วยตนเอง</li>
+            </ul>
+            <br />
+            <div class="sf-disclaimer__title">
+                <i class="fa-solid fa-circle-info"></i> <strong>Disclaimer</strong>
+            </div>
+            <ul class="sf-disclaimer__list">
+                <li>เว็บไซต์นี้จัดทำโดยแฟนคลับเพื่อช่วยวางแผนการเข้าร่วมกิจกรรมเท่านั้น ไม่เกี่ยวข้องกับ BNK48 และ CGM48 อย่างเป็นทางการ — <a href="https://www.facebook.com/profile.php?id=61556940780361"><strong>little nemo of Niya</strong> (Niya BNK48 Thailand Fanclub)</a></li>
+            </ul>
+        </div>
+    </div>
+
+<div class="sf-toast" id="sfToast"></div>
+
+<script define:vars={{ cfg }}>
+    // ── Bootstrap ────────────────────────────────────────────────────────────
+    const { activities: ACTIVITIES, days: DAYS, storageKey: STORAGE_KEY,
+            schedule: SCHEDULE, prices: PRICES } = JSON.parse(cfg);
+
+    // ── Schedule map ─────────────────────────────────────────────────────────
+    const MEMBER_SCHEDULE_MAP = new Map();
+    for (const { activitySlug, slots } of SCHEDULE) {
+        const actName = ACTIVITIES.find((a) => a.slug === activitySlug)?.name ?? activitySlug;
+        for (const { day, time, members } of slots) {
+            const slotId = `${activitySlug}__${day}__${time}`;
+            for (const m of members) {
+                const rows = MEMBER_SCHEDULE_MAP.get(m) ?? [];
+                rows.push({
+                    member_name:      m,
+                    activity_slug:    activitySlug,
+                    activity_name:    actName,
+                    activity_icon:    "",
+                    tickets_required: null,
+                    is_merch:         false,
+                    slot_id:          slotId,
+                    day,
+                    time_range:       time,
+                    slot_members:     members,
+                });
+                MEMBER_SCHEDULE_MAP.set(m, rows);
+            }
+        }
+    }
+
+    const DAY_SHORT = Object.fromEntries(DAYS.map((d) => [d.key, d.short]));
+    const DAY_KEYS  = DAYS.map((d) => d.key);
+    const DAY_ORDER = Object.fromEntries(DAYS.map((d, i) => [d.key, i]));
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function findAct(name, slug) {
+        const n = name ?? "", s = slug ?? "";
+        return ACTIVITIES.find((a) =>
+            a.slug === s ||
+            (a.match ?? []).some((k) =>
+                n.toLowerCase().includes(k.toLowerCase()) ||
+                s.toLowerCase().includes(k.toLowerCase())
+            )
+        ) ?? { icon: "fa-solid fa-ticket", color: "#8b5cf6", desc: "", slug: s };
+    }
+
+    function actType(name, slug) {
+        return findAct(name, slug).type ?? "normal";
+    }
+
+    function ticketsFor(type, name, slug, override) {
+        if (type === "merch" || type === "hub") return 0;
+        return override ?? findAct(name, slug).tickets ?? 1;
+    }
+
+    function priceFor(type, name, slug, override) {
+        if (type === "merch") return 0;
+        if (type === "hub")   return PRICES.hub;
+        return ticketsFor(type, name, slug, override) * PRICES.ticket;
+    }
+
+    // ── State ────────────────────────────────────────────────────────────────
+    const state = {
+        selectedMembers: new Set(),
+        memberCache:     new Map(),
+        cart:            new Map(),
+        plannerDay:      "all",
+        plannerActNames: new Set(),
+        summaryDay:      "all",
+        summarySort:     "day",
+        summarySortDir:  "asc",
+        mFilterBrand:    "all",
+        mFilterGen:      "all",
+        mFilterTeam:     "all",
+    };
+
+    // ── Storage ──────────────────────────────────────────────────────────────
+    const STATE_KEYS = ["plannerDay","summaryDay","summarySort","summarySortDir",
+                        "mFilterBrand","mFilterGen","mFilterTeam"];
+
+    function saveToStorage() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                ...Object.fromEntries(STATE_KEYS.map((k) => [k, state[k]])),
+                cart:            [...state.cart.entries()].map(([sid, item]) => ({ sid, item })),
+                selectedMembers: [...state.selectedMembers],
+                plannerActNames: [...state.plannerActNames],
+            }));
+        } catch {}
+    }
+
+    // ── Icons ────────────────────────────────────────────────────────────────
+    const ICON_ADD   = `<i class="fa-solid fa-circle-plus"></i>`;
+    const ICON_CHECK = `<i class="fa-solid fa-check"></i>`;
+    const ICON_DEL   = `<i class="fa-solid fa-minus"></i>`;
+
+    const memberCard  = (n) => document.querySelector(`.member-card[data-name="${n}"]`);
+    const memberImg   = (n) => memberCard(n)?.dataset.img ?? "";
+    const memberMeta  = (n) => ({ brand: memberCard(n)?.dataset.brand ?? "CGM48" });
+
+    function showToast(msg) {
+        const t = document.getElementById("sfToast");
+        t.textContent = msg; t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 2500);
+    }
+
+    function fetchSchedule(name) {
+        if (state.memberCache.has(name)) return state.memberCache.get(name);
+        const rows = MEMBER_SCHEDULE_MAP.get(name) ?? [];
+        state.memberCache.set(name, rows);
+        return rows;
+    }
+
+    // ── Cart ─────────────────────────────────────────────────────────────────
+    function setRounds(item, newRounds) {
+        if (newRounds <= 0) {
+            state.cart.delete(item.sid);
+        } else {
+            const existing = state.cart.get(item.sid);
+            state.cart.set(item.sid, { ...item, rounds: newRounds });
+            if (existing) {
+                const input = document.querySelector(`.ticket-qty[data-sid="${item.sid}"]`);
+                if (input) {
+                    input.value = String(newRounds);
+                    input.previousElementSibling?.toggleAttribute("disabled", newRounds === 0);
+                    input.closest(".slot-row")?.classList.toggle("has-rounds", newRounds > 0);
+                }
+                updateSummaryBadge();
+                saveToStorage();
+                return;
+            }
+        }
+        renderPlannerSchedule();
+        updateSummaryBadge();
+        saveToStorage();
+    }
+
+    // ── Tabs ─────────────────────────────────────────────────────────────────
+    function switchTab(tabId) {
+        document.querySelectorAll(".sf-tab").forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".sf-panel").forEach((p) => p.classList.remove("active"));
+        document.querySelector(`.sf-tab[data-tab="${tabId}"]`)?.classList.add("active");
+        document.getElementById(`panel-${tabId}`)?.classList.add("active");
+        if (tabId === "summary") renderSummaryTab();
+    }
+    document.querySelectorAll(".sf-tab").forEach((btn) =>
+        btn.addEventListener("click", () => switchTab(btn.dataset.tab))
+    );
+
+    // ── Member filter ─────────────────────────────────────────────────────────
+    function buildMemberPageChips() {
+        const cards = Array.from(document.querySelectorAll(".member-card"));
+        const gens = new Set(), teams = new Set();
+        cards.forEach((c) => {
+            if (state.mFilterBrand === "all" || c.dataset.brand === state.mFilterBrand) {
+                if (c.dataset.gen)  gens.add(c.dataset.gen);
+                if (c.dataset.team) teams.add(c.dataset.team);
+            }
+        });
+        const genOrder  = ["Gen 2","Gen 3","Gen 4","Gen 5","Gen 6","Unknown"];
+        const teamOrder = ["Team BIII","Team NV","Team C","Trainee"];
+        const sGens  = [...gens].sort((a,b)  => genOrder.indexOf(a)  - genOrder.indexOf(b));
+        const sTeams = [...teams].sort((a,b) => teamOrder.indexOf(a) - teamOrder.indexOf(b));
+
+        function renderChips(id, items, allLabel, cur, fk) {
+            const el = document.getElementById(id);
+            if (!items.length) { el.innerHTML = ""; return; }
+            const all = [{ v: "all", label: allLabel }, ...items.map((v) => ({ v, label: v }))];
+            el.innerHTML = `<div class="row g-2">${all.map(({ v, label }) =>
+                `<div class="col-auto col-sm-2"><button class="ftab chip ${cur === v ? "active" : ""} w-100" data-mf="${fk}" data-mv="${v}">${label}</button></div>`
+            ).join("")}</div>`;
+        }
+        renderChips("mGenGroup",  sGens,  "All Gen",  state.mFilterGen,  "gen");
+        renderChips("mTeamGroup", sTeams, "All Team", state.mFilterTeam, "team");
+        document.getElementById("mGenDivider")?.classList.toggle("d-none", !(sGens.length && sTeams.length));
+
+        document.querySelectorAll("#mGenGroup .ftab, #mTeamGroup .ftab").forEach((btn) =>
+            btn.addEventListener("click", () => {
+                const type = btn.dataset.mf, val = btn.dataset.mv;
+                if (type === "gen") { state.mFilterGen = val; state.mFilterTeam = "all"; }
+                else state.mFilterTeam = val;
+                buildMemberPageChips();
+                applyMemberCardFilter();
+                saveToStorage();
+            })
+        );
+    }
+
+    function applyMemberCardFilter() {
+        document.querySelectorAll(".member-card").forEach((c) => {
+            const ok = (state.mFilterBrand === "all" || c.dataset.brand === state.mFilterBrand)
+                    && (state.mFilterGen   === "all" || c.dataset.gen   === state.mFilterGen)
+                    && (state.mFilterTeam  === "all" || c.dataset.team  === state.mFilterTeam);
+            c.toggleAttribute("data-hidden", !ok);
+        });
+    }
+
+    document.getElementById("mBrandGroup")?.addEventListener("click", (e) => {
+        const btn = e.target.closest(".ftab");
+        if (!btn) return;
+        document.querySelectorAll("#mBrandGroup .ftab").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.mFilterBrand = btn.dataset.mv;
+        state.mFilterGen   = "all";
+        state.mFilterTeam  = "all";
+        buildMemberPageChips();
+        applyMemberCardFilter();
+        saveToStorage();
+    });
+
+    buildMemberPageChips();
+
+    // ── Planner day filter ────────────────────────────────────────────────────
+    document.getElementById("dayFilterRow")?.addEventListener("click", (e) => {
+        const btn = e.target.closest(".day-ftab");
+        if (!btn) return;
+        document.querySelectorAll("#dayFilterRow .day-ftab").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.plannerDay = btn.dataset.day;
+        renderPlannerSchedule();
+        saveToStorage();
+    });
+
+    // ── Activity name filter ──────────────────────────────────────────────────
+    function buildActNameFilter() {
+        const allNames = new Map();
+        state.selectedMembers.forEach((name) =>
+            (state.memberCache.get(name) ?? [])
+                .filter((r) => r.member_name === name)
+                .forEach((r) => { if (!allNames.has(r.activity_slug)) allNames.set(r.activity_slug, r.activity_name); })
+        );
+        state.plannerActNames.forEach((slug) => { if (!allNames.has(slug)) state.plannerActNames.delete(slug); });
+        const container = document.getElementById("actNameFilterRow");
+        if (!allNames.size) { container.innerHTML = ""; return; }
+        container.innerHTML = [...allNames.entries()].map(([slug, name]) => {
+            const cfg = findAct(name, slug);
+            return `<div class="col-3 d-flex"><button class="ftab chip act-chip ${state.plannerActNames.has(slug) ? "active" : ""} w-100 h-100" style="--chip-color:${cfg.color}" data-act-name="${slug}"><i class="${cfg.icon}" style="font-size:14px"></i><span>${name}</span></button></div>`;
+        }).join("");
+    }
+
+    document.getElementById("actNameFilterRow")?.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-act-name]");
+        if (!btn) return;
+        const slug = btn.dataset.actName;
+        const alreadyActive = state.plannerActNames.has(slug);
+        state.plannerActNames.clear();
+        document.querySelectorAll("#actNameFilterRow [data-act-name]").forEach((b) => b.classList.remove("active"));
+        if (!alreadyActive) { state.plannerActNames.add(slug); btn.classList.add("active"); }
+        renderPlannerSchedule();
+        saveToStorage();
+    });
+
+    // ── Member selection ──────────────────────────────────────────────────────
+    function toggleMember(btn) {
+        const name = btn.dataset.name;
+        if (state.selectedMembers.has(name)) {
+            state.selectedMembers.delete(name);
+            if (!state.selectedMembers.size) state.plannerActNames.clear();
+            btn.classList.remove("active");
+            btn.innerHTML = ICON_ADD + " Add to Planner";
+            state.cart.forEach((_, sid) => { if (sid.endsWith(`__${name}`)) state.cart.delete(sid); });
+        } else {
+            state.selectedMembers.add(name);
+            btn.classList.add("active");
+            btn.innerHTML = ICON_CHECK + " Added";
+            fetchSchedule(name);
+        }
+        renderSelectedMembersStrip();
+        renderPlannerSchedule();
+        updateSummaryBadge();
+        saveToStorage();
+    }
+
+    function removeMemberFromPlanner(name) {
+        state.selectedMembers.delete(name);
+        state.cart.forEach((_, sid) => { if (sid.endsWith(`__${name}`)) state.cart.delete(sid); });
+        const cardBtn = document.querySelector(`.member-card__select-btn[data-name="${name}"]`);
+        if (cardBtn) { cardBtn.classList.remove("active"); cardBtn.innerHTML = ICON_ADD + " Add to Planner"; }
+        renderSelectedMembersStrip();
+        renderPlannerSchedule();
+        updateSummaryBadge();
+        saveToStorage();
+    }
+
+    function renderSelectedMembersStrip() {
+        document.getElementById("selectedMembersStrip").innerHTML = [...state.selectedMembers].map((name) => {
+            const img = memberImg(name);
+            const imgEl = img
+                ? `<img src="${img}" alt="${name}" class="sel-pill__img" onerror="this.style.display='none'">`
+                : `<span class="sel-pill__img" style="display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;background:rgba(255,255,255,.25)">${name[0]}</span>`;
+            return `<div class="sel-pill">${imgEl}${name}<button class="sel-pill__rm" onclick="APP.removeMember('${name}')" title="Remove">${ICON_DEL}</button></div>`;
+        }).join("");
+    }
+
+    // ── Planner render ────────────────────────────────────────────────────────
+    function buildGrouped() {
+        const grouped = {};
+        state.selectedMembers.forEach((name) =>
+            (state.memberCache.get(name) ?? [])
+                .filter((r) => r.member_name === name)
+                .forEach((r) => {
+                    if (state.plannerActNames.size > 0 && !state.plannerActNames.has(r.activity_slug)) return;
+                    const k = String(r.slot_id);
+                    grouped[r.day] ??= {};
+                    grouped[r.day][r.activity_slug] ??= {};
+                    grouped[r.day][r.activity_slug][k] ??= { row: { ...r, forMember: name }, members: [] };
+                    const e = grouped[r.day][r.activity_slug][k];
+                    if (!e.members.includes(name)) e.members.push(name);
+                })
+        );
+        return grouped;
+    }
+
+    function buildSlotRowHTML(actSlug, slotId, day, entry, firstRow, aType) {
+        return entry.members.map((memberName) => {
+            const sid = `${actSlug}__${slotId}__${memberName}`;
+            const qty = state.cart.get(sid)?.rounds ?? 0;
+            const cfg = findAct(firstRow.activity_name, actSlug);
+            const p = [
+                `'${sid}'`, `'${actSlug}'`, `'${slotId}'`, `'${memberName}'`,
+                `'${encodeURIComponent(firstRow.activity_name)}'`, `'${day}'`,
+                `'${encodeURIComponent(entry.row.time_range)}'`, `'${encodeURIComponent(aType)}'`,
+                firstRow.tickets_required ?? "null",
+                `'${encodeURIComponent((entry.row.slot_members ?? []).join(","))}'`,
+            ].join(",");
+            return `<div class="slot-row ${qty > 0 ? "has-rounds" : ""}" style="--act-color:${cfg.color}">
+                <div class="slot-left">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="slot-time">${entry.row.time_range}</span>
+                        <span style="background:var(--c-primary);color:#fff;border-radius:100px;padding:1px 8px;font-size:11px;font-weight:700">${memberName}</span>
+                    </div>
+                </div>
+                <div class="slot-right">
+                    <div class="ticket-form">
+                        <button type="button" class="ticket-btn" ${qty === 0 ? "disabled" : ""} onclick="APP.changeRounds(${p},-1)"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" class="ticket-qty" value="${qty}" min="0" inputmode="numeric"
+                            data-sid="${sid}" data-actslug="${actSlug}" data-slotid="${slotId}"
+                            data-member="${memberName}" data-actname="${encodeURIComponent(firstRow.activity_name)}"
+                            data-day="${day}" data-time="${encodeURIComponent(entry.row.time_range)}"
+                            data-atype="${encodeURIComponent(aType)}"
+                            data-ticketsreq="${firstRow.tickets_required ?? "null"}"
+                            data-slotmembers="${encodeURIComponent((entry.row.slot_members ?? []).join(","))}"
+                            onchange="APP.setRoundsFromInput(this)">
+                        <button type="button" class="ticket-btn" onclick="APP.changeRounds(${p},1)"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>`;
+        }).join("");
+    }
+
+    function buildActBlockHTML(actSlug, slots, day) {
+        const firstRow = Object.values(slots)[0].row;
+        const aType    = actType(firstRow.activity_name, actSlug);
+        const cfg      = findAct(firstRow.activity_name, actSlug);
+
+        let infoHTML = "";
+        if (cfg.desc || cfg.warning) {
+            const warnIcon = cfg.warningLevel === "danger"
+                ? `<i class="fa-solid fa-ban"></i>`
+                : `<i class="fa-solid fa-triangle-exclamation"></i>`;
+            infoHTML = `<div class="act-info-bar">
+                ${cfg.desc    ? `<div class="act-info-desc">${cfg.desc}</div>` : ""}
+                ${cfg.warning ? `<div class="act-warn act-warn--${cfg.warningLevel ?? "warn"}">${warnIcon}${cfg.warning}</div>` : ""}
+            </div>`;
+        }
+
+        const slotRows = Object.entries(slots)
+            .sort(([,a],[,b]) => a.row.time_range.localeCompare(b.row.time_range))
+            .map(([slotId, entry]) => buildSlotRowHTML(actSlug, slotId, day, entry, firstRow, aType))
+            .join("");
+
+        return `<div class="act-block">
+            <div class="act-block__header">
+                <div class="act-block__left">
+                    <div class="act-block__icon" style="background:${cfg.color}"><i class="${cfg.icon}"></i></div>
+                    <span class="act-block__name">${firstRow.activity_name}</span>
+                </div>
+            </div>
+            ${infoHTML}${slotRows}
+        </div>`;
+    }
+
+    async function renderPlannerSchedule() {
+        const empty   = document.getElementById("plannerEmpty");
+        const content = document.getElementById("plannerContent");
+        if (!state.selectedMembers.size) { empty.style.display = "flex"; content.style.display = "none"; return; }
+        empty.style.display = "none"; content.style.display = "block";
+        [...state.selectedMembers]
+            .filter((n) => !state.memberCache.has(n))
+            .forEach((n) => fetchSchedule(n));
+        buildActNameFilter();
+        const grouped    = buildGrouped();
+        const activeDays = DAY_KEYS.filter((d) => state.plannerDay === "all" || d === state.plannerDay);
+        const html = activeDays
+            .filter((d) => grouped[d])
+            .map((day) =>
+                `<div class="sched-day-block">
+                    <div class="sched-day-header ${day}">${DAY_SHORT[day]}</div>
+                    ${Object.entries(grouped[day]).map(([slug, slots]) => buildActBlockHTML(slug, slots, day)).join("")}
+                </div>`
+            ).join("");
+        document.getElementById("scheduleBlocks").innerHTML =
+            html || `<div class="text-center py-4" style="color:#b0a8c4;font-size:13px">ไม่มีรอบในวันที่เลือก</div>`;
+    }
+
+    // ── Round controls ────────────────────────────────────────────────────────
+    function changeRounds(sid, actSlug, slotId, memberName, actNameEnc, day, timeEnc, aTypeEnc, ticketsRawStr, slotMembersEnc, delta) {
+        const actName     = decodeURIComponent(actNameEnc);
+        const time        = decodeURIComponent(timeEnc);
+        const aType       = decodeURIComponent(aTypeEnc);
+        const slotMembers = decodeURIComponent(slotMembersEnc).split(",").filter(Boolean);
+        const ticketsReq  = ticketsRawStr === "null" || ticketsRawStr === null ? null : parseInt(String(ticketsRawStr)) || null;
+        const current     = state.cart.get(sid)?.rounds ?? 0;
+        const realActSlug = sid.split("__")[0];
+        setRounds(
+            { sid, member: memberName, actSlug: realActSlug, actName, actType: aType,
+              day, dayLabel: DAY_SHORT[day] ?? day, time, members: slotMembers, ticketsReq },
+            Math.max(0, current + delta)
+        );
+    }
+
+    function setRoundsFromInput(input) {
+        const val = Math.max(0, parseInt(input.value) || 0);
+        input.value = String(val);
+        const d = input.dataset, current = state.cart.get(d.sid)?.rounds ?? 0;
+        changeRounds(d.sid, d.sid.split("__")[0], d.slotid, d.member, d.actname, d.day, d.time, d.atype, d.ticketsreq, d.slotmembers, val - current);
+    }
+
+    function updateSummaryBadge() {
+        const badge = document.getElementById("summaryBadge");
+        let total = 0;
+        state.cart.forEach((c) => { total += c.rounds; });
+        badge.textContent = String(total);
+        badge.style.display = total > 0 ? "inline" : "none";
+    }
+
+    // ── Summary ───────────────────────────────────────────────────────────────
+    const SORT_OPTIONS = [
+        { key: "day",      label: "Time" },
+        { key: "member",   label: "Member" },
+        { key: "activity", label: "Activity" },
+        { key: "round",    label: "Round" },
+        { key: "price",    label: "Price" },
+    ];
+
+    function buildSortBar() {
+        const menu = document.getElementById("sortMenu");
+        if (!menu) return;
+        menu.innerHTML = SORT_OPTIONS.map((o) => {
+            const active = state.summarySort === o.key;
+            const arrow  = active ? (state.summarySortDir === "asc" ? "↑" : "↓") : "";
+            return `<button class="sort-menu-item ${active ? "active" : ""}" onclick="APP.setSort('${o.key}')"><span>${o.label}</span><span class="sort-menu-item__arrow">${arrow}</span></button>`;
+        }).join("");
+        const lbl = document.getElementById("sortActiveLabel");
+        if (lbl) lbl.textContent = `${SORT_OPTIONS.find((o) => o.key === state.summarySort)?.label} ${state.summarySortDir === "asc" ? "↑" : "↓"}`;
+    }
+
+    function toggleSortMenu() {
+        const open = document.getElementById("sortMenu").classList.toggle("open");
+        document.getElementById("sortToggleBtn").classList.toggle("open", open);
+    }
+
+    document.addEventListener("click", (e) => {
+        const wrap = document.getElementById("sortDropdownWrap");
+        if (wrap && !wrap.contains(e.target)) {
+            document.getElementById("sortMenu")?.classList.remove("open");
+            document.getElementById("sortToggleBtn")?.classList.remove("open");
+        }
+    });
+
+    function setSort(key) {
+        state.summarySortDir = state.summarySort === key
+            ? (state.summarySortDir === "asc" ? "desc" : "asc")
+            : "asc";
+        state.summarySort = key;
+        document.getElementById("sortMenu")?.classList.remove("open");
+        document.getElementById("sortToggleBtn")?.classList.remove("open");
+        buildSortBar();
+        renderSummaryTable();
+        saveToStorage();
+    }
+
+    function renderSummaryTab() {
+        const empty   = document.getElementById("summaryEmpty");
+        const content = document.getElementById("summaryContent");
+        if (!state.cart.size) { empty.style.display = "flex"; content.style.display = "none"; return; }
+        empty.style.display = "none"; content.style.display = "block";
+        let totalRounds = 0, totalTix = 0, totalPrice = 0;
+        const memberSet = new Set();
+        state.cart.forEach((c) => {
+            if (!c.actSlug) c.actSlug = c.sid.split("__")[0];
+            totalRounds += c.rounds;
+            totalTix    += ticketsFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
+            totalPrice  += priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
+            memberSet.add(c.member);
+        });
+        document.getElementById("statGrid").innerHTML = [
+            { label: "Rounds",  value: totalRounds,                       unit: "Round" },
+            { label: "Members", value: memberSet.size,                    unit: "คน" },
+            { label: "Tickets", value: totalTix,                          unit: "ใบ" },
+            { label: "Total",   value: `฿${totalPrice.toLocaleString()}`, unit: "Bath" },
+        ].map((s) => `<div class="stat-card"><div class="stat-card__label">${s.label}</div><div class="stat-card__value">${s.value}</div><div class="stat-card__unit">${s.unit}</div></div>`).join("");
+        buildSortBar();
+        renderSummaryTable();
+        renderSummaryFooter();
+    }
+
+    function removeFromCart(sid) {
+        state.cart.delete(sid);
+        updateSummaryBadge();
+        saveToStorage();
+        renderSummaryTab();
+        renderPlannerSchedule();
+    }
+
+    function renderSummaryTable() {
+        const filtered = [...state.cart.values()]
+            .filter((c) => state.summaryDay === "all" || c.day === state.summaryDay)
+            .sort((a, b) => {
+                let cmp = 0;
+                switch (state.summarySort) {
+                    case "day":      cmp = (DAY_ORDER[a.day] ?? 0) - (DAY_ORDER[b.day] ?? 0); if (!cmp) cmp = a.time.localeCompare(b.time); break;
+                    case "member":   cmp = a.member.localeCompare(b.member, "th");   break;
+                    case "activity": cmp = a.actName.localeCompare(b.actName, "th"); break;
+                    case "round":    cmp = a.rounds - b.rounds;                      break;
+                    case "price":    cmp = priceFor(a.actType, a.actName, a.actSlug, a.ticketsReq) * a.rounds
+                                        - priceFor(b.actType, b.actName, b.actSlug, b.ticketsReq) * b.rounds; break;
+                }
+                return state.summarySortDir === "asc" ? cmp : -cmp;
+            });
+        const tbody = document.getElementById("summaryTbody");
+        if (!filtered.length) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4" style="color:#b0a8c4;font-size:13px">ไม่มี Round ในวันนี้</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = filtered.map((c) => {
+            if (!c.actSlug) c.actSlug = c.sid.split("__")[0];
+            const isBNK    = memberMeta(c.member).brand === "BNK48";
+            const img      = memberImg(c.member);
+            const avHTML   = img
+                ? `<img src="${img}" alt="${c.member}" class="tbl-av" loading="lazy" onerror="this.outerHTML='<div class=\\'tbl-av-fallback ${isBNK ? "av--bnk" : "av--cgm"}\\'>${c.member[0]}</div>'">`
+                : `<div class="tbl-av-fallback ${isBNK ? "av--bnk" : "av--cgm"}">${c.member[0]}</div>`;
+            const tix      = ticketsFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
+            const price    = priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
+            const priceStr = price > 0 ? `฿${price.toLocaleString()}` : "—";
+            const cfg      = findAct(c.actName, c.actSlug);
+            return `<tr>
+                <td><div class="tbl-member-cell">${avHTML}<span class="tbl-name">${c.member}</span></div></td>
+                <td><div class="d-flex align-items-center gap-2" style="font-size:12px"><span style="width:20px;height:20px;border-radius:6px;background:${cfg.color};display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${cfg.icon}" style="font-size:9px;color:#fff"></i></span>${c.actName}</div></td>
+                <td style="text-align:center"><span class="day-chip ${c.day}">${c.dayLabel}</span></td>
+                <td style="font-variant-numeric:tabular-nums;font-size:12px;text-align:center">${c.time}</td>
+                <td class="text-center"><span class="tbl-ticket-badge">${c.rounds}</span>${tix > 0 ? `<div style="font-size:10px;color:#b0a8c4;margin-top:2px">${tix} Ticket</div>` : ""}</td>
+                <td class="text-end"><div class="d-flex align-items-center justify-content-end gap-2"><span style="font-weight:700;color:var(--c-primary)">${priceStr}</span><button class="tbl-del-btn" onclick="APP.removeFromCart('${c.sid}')" title="Remove"><i class="fa-solid fa-xmark"></i></button></div></td>
+            </tr>`;
+        }).join("");
+    }
+
+    function renderSummaryFooter() {
+        const memberTotals = new Map();
+        state.cart.forEach((c) => {
+            if (!c.actSlug) c.actSlug = c.sid.split("__")[0];
+            const t = memberTotals.get(c.member) ?? { rounds: 0, tix: 0, price: 0 };
+            memberTotals.set(c.member, {
+                rounds: t.rounds + c.rounds,
+                tix:    t.tix   + ticketsFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds,
+                price:  t.price + priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq)   * c.rounds,
+            });
+        });
+        const rows = [...memberTotals.entries()]
+            .map(([name, t]) => `<div class="sfooter-member-row"><span class="sfooter-name">${name}</span><span class="sfooter-slots">${t.rounds} Round · ${t.tix} Ticket</span><span class="sfooter-price">฿${t.price.toLocaleString()}</span></div>`)
+            .join("");
+        let grand = 0, grandTix = 0, grandRounds = 0;
+        memberTotals.forEach((t) => { grand += t.price; grandTix += t.tix; grandRounds += t.rounds; });
+        document.getElementById("summaryFooter").innerHTML =
+            `<div>${rows}</div><div class="sfooter-grand"><div><div class="sfooter-grand-label">Grand Total</div><div style="font-size:12px;color:#b0a8c4;margin-top:2px">${grandTix} Ticket · ${grandRounds} Round</div></div><div class="d-flex align-items-baseline gap-1"><div class="sfooter-grand-val">${grand.toLocaleString()}</div><div class="sfooter-grand-unit">บาท</div></div></div>`;
+    }
+
+    document.getElementById("summaryDayTabs")?.addEventListener("click", (e) => {
+        const btn = e.target.closest(".day-tab");
+        if (!btn) return;
+        document.querySelectorAll(".day-tab").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.summaryDay = btn.dataset.day;
+        renderSummaryTable();
+        saveToStorage();
+    });
+
+    // ── Reset ─────────────────────────────────────────────────────────────────
+    function resetAll() {
+        if (!confirm("Reset ทั้งหมด?")) return;
+        state.cart.clear();
+        state.selectedMembers.forEach((name) => {
+            const btn = document.querySelector(`.member-card__select-btn[data-name="${name}"]`);
+            if (btn) { btn.classList.remove("active"); btn.innerHTML = ICON_ADD + " Add to Planner"; }
+        });
+        state.selectedMembers.clear();
+        state.plannerActNames.clear();
+        localStorage.removeItem(STORAGE_KEY);
+        renderSelectedMembersStrip();
+        renderPlannerSchedule();
+        updateSummaryBadge();
+        renderSummaryTab();
+        showToast("Reset แล้ว");
+    }
+
+    // ── Load from storage ─────────────────────────────────────────────────────
+    async function loadFromStorage() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const p = JSON.parse(raw);
+            STATE_KEYS.forEach((k) => { if (p[k] != null) state[k] = p[k]; });
+            const firstSlug = (p.plannerActNames ?? [])[0];
+            if (firstSlug) state.plannerActNames.add(firstSlug);
+            await Promise.all(
+                (p.selectedMembers ?? []).map(async (name) => {
+                    state.selectedMembers.add(name);
+                    const btn = document.querySelector(`.member-card__select-btn[data-name="${name}"]`);
+                    if (btn) { btn.classList.add("active"); btn.innerHTML = ICON_CHECK + " Added"; }
+                    fetchSchedule(name);
+                })
+            );
+            (p.cart ?? []).forEach(({ sid, item }) => {
+                if (!item.actSlug) item.actSlug = sid.split("__")[0];
+                state.cart.set(sid, item);
+            });
+            applyMemberCardFilter();
+            document.querySelectorAll("#mBrandGroup .ftab").forEach((b) => b.classList.toggle("active", b.dataset.mv === state.mFilterBrand));
+            buildMemberPageChips();
+            document.querySelectorAll("#dayFilterRow .day-ftab").forEach((b) => b.classList.toggle("active", b.dataset.day === state.plannerDay));
+            document.querySelectorAll(".day-tab").forEach((b) => b.classList.toggle("active", b.dataset.day === state.summaryDay));
+            renderSelectedMembersStrip();
+            renderPlannerSchedule();
+            updateSummaryBadge();
+        } catch {}
+    }
+
+    // ── Public API ────────────────────────────────────────────────────────────
+    const APP = {
+        switchTab,
+        toggleMember,
+        removeMember: removeMemberFromPlanner,
+        changeRounds,
+        setRoundsFromInput,
+        resetAll,
+        removeFromCart,
+        setSort,
+        toggleSortMenu,
+    };
+    window.APP = APP;
+    window.toggleFromMembersTab = (btn) => APP.toggleMember(btn);
+
+    loadFromStorage();
+</script>

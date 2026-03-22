@@ -1,0 +1,12 @@
+node_modules
+.vercel
+.astro
+dist
+.DS_Store
+.env*.local
+.env
+path.tree
+halloween.astro
+Untitled-1.html
+public/video/output.mp4
+public/video/BG-video.mp4

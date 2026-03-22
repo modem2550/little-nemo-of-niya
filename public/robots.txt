@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://little-nemo-of-niya.vercel.app/sitemap.xml 

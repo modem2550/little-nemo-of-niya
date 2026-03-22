@@ -1,0 +1,38 @@
+[
+    {
+        "platform": "Line",
+        "username": "Niya BNK48 Thailand Fanclub",
+        "url": "https://line.me/ti/g2/YYQYpuFlsvlTQz6KyvKM7m0zmLJ39JlzdphDqA?utm_",
+        "iconId": "icon-line"
+    },
+    {
+        "platform": "Instagram",
+        "username": "niyabnk48_thfc",
+        "url": "https://www.instagram.com/niyabnk48_thfc/",
+        "iconId": "icon-instagram"
+    },
+    {
+        "platform": "Facebook",
+        "username": "Niya BNK48 Thailand Fanclub",
+        "url": "https://www.facebook.com/profile.php?id=61556940780361",
+        "iconId": "icon-facebook"
+    },
+    {
+        "platform": "TikTok",
+        "username": "niya.bnk48.thfc",
+        "url": "https://www.tiktok.com/@niya.bnk48.thfc",
+        "iconId": "icon-tiktok"
+    },
+    {
+        "platform": "X (Twitter)",
+        "username": "niya_bnk48",
+        "url": "https://x.com/niyabnk48_thfc",
+        "iconId": "icon-x-twitter"
+    },
+    {
+        "platform": "YouTube",
+        "username": "Niya BNK48 Thailand Fanclub",
+        "url": "https://www.youtube.com/@NiyaBNK48ThailandFanclub",
+        "iconId": "icon-youtube"
+    }
+]

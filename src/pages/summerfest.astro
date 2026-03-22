@@ -1,0 +1,133 @@
+---
+// src/pages/summerfest.astro
+import MainLayout from "../layouts/MainLayout.astro";
+import EventPlanner from "../components/EventPlanner.astro";
+import { getSupabase } from "../lib/supabase.server";
+import { SUMMERFEST_2026_SCHEDULE } from "../data/summerfest-2026.schedule";
+
+const supabase = getSupabase();
+const { data: membersData } = await supabase
+    .from("members")
+    .select("id,name,brand,gen,team,profile_image_url")
+    .is("graduated_at", null)
+    .order("name");
+
+const members = (membersData ?? []).map((m) => ({
+    ...m,
+    brand: m.brand ?? "CGM48",
+    gen:   m.gen   ?? "Unknown",
+    team:  m.team  ?? "Trainee",
+}));
+---
+
+<MainLayout title="BNK48 & CGM48 Siam-Nippon Summer Fest 2026 - Niya BNK48's">
+    <EventPlanner
+        eventSlug="summerfest-2026"
+        eventName="Siam-Nippon Summer Fest 2026 Planner"
+        pageTitle="BNK48 & CGM48 Siam-Nippon Summer Fest 2026 - Niya BNK48's"
+        officialLink="https://www.facebook.com/share/p/1GR7kdRe8Q/"
+        storageKey="sf2026_planner"
+        heroImage="https://img2.pic.in.th/Untitled-1656a008758cf5461.png"
+        primaryColor="#292848"
+        primaryHover="#d5efff"
+        prices={{ ticket: 250, hub: 200 }}
+        {members}
+        schedule={SUMMERFEST_2026_SCHEDULE}
+        days={[
+            { key: "fri", label: "FRI 27 Mar", short: "FRI 27" },
+            { key: "sat", label: "SAT 28 Mar", short: "SAT 28" },
+            { key: "sun", label: "SUN 29 Mar", short: "SUN 29" },
+        ]}
+        activities={[
+            {
+                slug: "mai_prom",
+                name: "(ไม่)พร้อมค่ะ",
+                match: ["(ไม่)พร้อมka","ไม่พร้อม","mai_prom"],
+                icon: "fa-solid fa-paintbrush",
+                color: "#ff2e63",
+                tickets: 1,
+                desc: "เมมเบอร์จะแต่งหน้าท่านด้วยดินสอพอง · หลังร่วมกิจกรรมรับ Photo 1 ใบ (ใบละ 58 บาท) · 1 Ticket",
+            },
+            {
+                slug: "du_plaek",
+                name: "ดูแปลกนะคะ",
+                match: ["ดูแปลกนะคะ","ดูแปลก","du_plaek"],
+                icon: "fa-solid fa-eye",
+                color: "#7b2ff7",
+                tickets: 1,
+                desc: "เดินชมสิ่งมหัศจรรย์ของโลกกับเมมเบอร์ · หลังร่วมกิจกรรมรับ Photo 1 ใบ · Mobile Photo & Video OK! · 1 Ticket",
+                warning: "ระวังทรัพย์สินของท่านให้ดี / ระวังเปียก",
+                warningLevel: "warn",
+            },
+            {
+                slug: "shoot_sisters",
+                name: "The Shoot Sister",
+                match: ["The Shoot Sister","Shoot Sister","shoot_sisters"],
+                icon: "fa-solid fa-gun",
+                color: "#00c2ff",
+                tickets: 1,
+                desc: "ยิงเป้าบอลวางบนแก้วแข่งกับเมมเบอร์ ภายใน 10 วินาที · ชนะรับ Hi-Touch · หลังร่วมกิจกรรมรับ Photo 1 ใบ · 1 Ticket",
+            },
+            {
+                slug: "don_non_tok",
+                name: "โดนนนนตก",
+                match: ["โดนนนนตก","โดนตก","don_non_tok"],
+                icon: "fa-solid fa-baseball",
+                color: "#ff3b3b",
+                tickets: 2,
+                desc: "รับลูกบอล 3 ลูก · ปาด 0 = Photo+หยิบเอง · ปาด 1 = Photo จากสตาฟ · ปาด 2 = Photo จากเมมเบอร์ · ปาด 3 = Hi-Touch+Photo · 2 Tickets",
+            },
+            {
+                slug: "shot_me_girls",
+                name: "Shot me GIRLS",
+                match: ["Shot me Girl","Shot me","shot_me_girls"],
+                icon: "fa-solid fa-bolt",
+                color: "#ff4fd8",
+                tickets: 5,
+                desc: "ถ่ายรูป Selfie-Shot กับเมมเบอร์ด้วยมือถือของท่านเอง · หลังร่วมกิจกรรมรับ Photo 1 ใบ · 5 Tickets",
+            },
+            {
+                slug: "hachi_cha",
+                name: "Hachi Cha",
+                match: ["ฮาจิฉะ","hachicha","hachi_cha","Hachi Cha"],
+                icon: "fa-solid fa-mug-hot",
+                color: "#0f766e",
+                type: "merch",
+                desc: "กิจกรรมพิเศษ ฮาจิฉะ",
+            },
+            {
+                slug: "hub_kwan",
+                name: "ฮับขวัญ ฯ",
+                match: ["ฮับขวัญ","ฮับขวัญได้","hub_kwan"],
+                icon: "fa-solid fa-gifts",
+                color: "#00d1b2",
+                type: "hub",
+                desc: "กิจกรรมรับขวัญ CGM48 5th Generation · ซื้อเข็มกลัด + เชือกรับขวัญจาก Official Merchandise นำมามอบให้เมมเบอร์ · 200 บาท/Set",
+            },
+            {
+                slug: "merchandise",
+                name: "Merchandise",
+                match: ["merchandise","merch"],
+                icon: "fa-solid fa-bag-shopping",
+                color: "#ff9ecd",
+                type: "merch",
+                desc: "Official Merchandise จากงาน Siam-Nippon Summer Fest 2026",
+                warning: "กิจกรรมนี้ใช้ระบบเข้าแถวรวม โปรดตรวจสอบรูปแบบที่หน้างานอีกครั้ง",
+                warningLevel: "warn",
+            },
+        ]}
+    />
+
+    <style is:global>
+        :root {
+            --c-primary:       #292848;
+            --c-primary-hover: #d5efff;
+            --c-bg:            #ffffff;
+            --c-surface:       #ffffff;
+            --c-surface-alt:   #f6f4fb;
+            --c-border:        #ede9f7;
+            --c-content:       #222233;
+            --c-text-muted:    #000000;
+        }
+    </style>
+</MainLayout>
