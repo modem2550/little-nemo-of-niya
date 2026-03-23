@@ -1,4 +1,4 @@
-node_modules
+node_modulescat .github/workflows/deploy.yml
 .vercel
 .astro
 dist
@@ -10,3 +10,4 @@ halloween.astro
 Untitled-1.html
 public/video/output.mp4
 public/video/BG-video.mp4
+node_modules

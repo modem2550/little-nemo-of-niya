@@ -237,16 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
-// Type-safe image resolution
-function resolveImages(event: Event): { bg: string; hover: string } {
-  if (event.id) {
-    const proxy = `/JJjayda/${event.id}`;
-    return { bg: proxy, hover: proxy };
-  }
-  const medium = event.image_urls?.medium ?? event.image_url ?? '/img/placeholder.jpg';
-  return { bg: medium, hover: event.image_urls?.large ?? medium };
-}
 // ==================== INIT ====================
 
 document.addEventListener('astro:page-load', safeInitSwitcher);
