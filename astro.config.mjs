@@ -33,7 +33,7 @@ export default defineConfig({
       rollupOptions: {
         output: {
           manualChunks: {
-            'supabase': ['@supabase/supabase-js'],
+              // แยก vendor libraries ออกมาเป็น chunk แยก
           },
         },
       },
