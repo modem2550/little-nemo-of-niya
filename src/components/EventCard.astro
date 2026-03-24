@@ -4,82 +4,68 @@ import { formatEventDate } from '../lib/dateUtils';
 import type { Event } from '../types/event';
 
 interface Props {
-  event: Event;
-  isPast?: boolean;
-  variant?: 'default' | 'compact';
+event: Event;
+isPast?: boolean;
+variant?: 'default' | 'compact';
 }
 
 const { event, isPast = false, variant = 'default' } = Astro.props;
 
 function resolveImages(event: Event) {
-  if (event.id) {
-    const proxy = `/JJjayda/${event.id}`;
-    return { bg: proxy, hover: proxy };
-  }
-  const medium = event.image_urls?.medium ?? event.image_url ?? '/img/placeholder.jpg';
-  return { bg: medium, hover: event.image_urls?.large ?? medium };
+if (event.id) {
+const proxy = `/JJjayda/${event.id}`;
+return { bg: proxy, hover: proxy };
+}
+const medium = event.image_urls?.medium ?? event.image_url ?? '/img/placeholder.jpg';
+return { bg: medium, hover: event.image_urls?.large ?? medium };
 }
 
 const { bg: backgroundImage, hover: hoverImage } = resolveImages(event);
 const formattedDate = formatEventDate(event.date, event.end_date);
 
-const cardClasses = ['event-card', 'carded', isPast && 'event-past', variant === 'compact' && 'event-compact']
-  .filter(Boolean).join(' ');
+const cardClasses = [
+'event-card-wrapper',
+isPast && 'is-past-event',
+variant === 'compact' && 'is-compact',
+].filter(Boolean).join(' ');
 
 const statusLabel = isPast ? 'อีเวนต์ที่ผ่านมา' : 'อีเวนต์ที่กำลังจะมา';
 ---
 
-<article
-  class={cardClasses}
-  data-event-id={event.id}
-  aria-label={`${statusLabel}: ${event.title}`}
->
-  <!-- ดัน height ให้ card รู้ว่าต้องสูงแค่ไหน แต่ซ่อนไว้ด้วย visibility:hidden -->
-  <div
-    class="card__img"
-    style={`background-image:url('${backgroundImage}')`}
-    role="img"
-    aria-label={`ภาพปกอีเวนต์: ${event.title}`}
-  ></div>
+<article class={cardClasses} data-event-id={event.id} aria-label={`${statusLabel}: ${event.title}`}>
+  <!-- ภาพปกหลัก -->
+   <a href={event.link} class="card-detail-link" target="_blank" rel="noopener noreferrer"
+      aria-label={`ดูรายละเอียดเพิ่มเติม: ${event.title} (เปิดในหน้าต่างใหม่)`}>
+  <div class="card-cover-img" style={`background-image:url('${backgroundImage}')`} role="img" aria-label={`ภาพปกอีเวนต์:
+    ${event.title}`}></div>
 
-  <!-- Hover overlay — absolute ทับบน card__img ขยายลงถึง card__info ตอน hover -->
-  <div
-    class="card__img--hover"
-    style={`background-image:url('${hoverImage}')`}
-    aria-hidden="true"
-  ></div>
+  <!-- Hover overlay — ขยายลงถึง card-info ตอน hover -->
+  <div class="card-cover-img--hover" style={`background-image:url('${hoverImage}')`} aria-hidden="true"></div>
 
-  <!-- Info -->
-  <div class="card__info">
-    <a
-      href={event.link}
-      class="card_link"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`ดูรายละเอียดเพิ่มเติม: ${event.title} (เปิดในหน้าต่างใหม่)`}
-    >
-      <div class="da-sp">
+  <!-- ข้อมูลอีเวนต์ -->
+  <div class="card-info">
+      <div class="card-content">
         <h3 class="h5 event-title">{event.title}</h3>
 
         {event.location && (
-          <div class="ct-da">
-            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-            <p><span class="visually-hidden">สถานที่: </span>{event.location}</p>
-          </div>
+        <div class="card-meta-row">
+          <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+          <p><span class="visually-hidden">สถานที่: </span>{event.location}</p>
+        </div>
         )}
 
-        <div class="ct-da">
+        <div class="card-meta-row">
           <i class="fa-solid fa-calendar" aria-hidden="true"></i>
           <p><span class="visually-hidden">วันที่: </span>{formattedDate}</p>
         </div>
 
         {event.live && (
-          <div class="ct-da text-danger">
-            <i class="fa-solid fa-play" aria-hidden="true"></i>
-            <p><span class="visually-hidden">ถ่ายทอดสด: </span>{event.live}</p>
-          </div>
+        <div class="card-meta-row text-danger">
+          <i class="fa-solid fa-play" aria-hidden="true"></i>
+          <p><span class="visually-hidden">ถ่ายทอดสด: </span>{event.live}</p>
+        </div>
         )}
       </div>
-    </a>
-  </div>
+    </div>
+  </a>
 </article>

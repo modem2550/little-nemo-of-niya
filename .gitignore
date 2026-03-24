@@ -4,7 +4,7 @@ node_modulescat .github/workflows/deploy.yml
 dist
 .DS_Store
 .env*.local
-.env
+.envcat src/lib/global.js
 path.tree
 halloween.astro
 Untitled-1.html

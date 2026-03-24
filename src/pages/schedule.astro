@@ -3,6 +3,7 @@ import MainLayout from '../layouts/MainLayout.astro';
 import EventCard from '../components/EventCard.astro';
 import { getSupabase } from '../lib/supabase.server';
 import { categorizeEvents } from '../lib/dateUtils';
+import '../styles/schedule.css';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -28,6 +29,7 @@ const { upcoming, past } = categorizeEvents(eventsWithSlug);
 ---
 
 <MainLayout title="Schedule - Niya BNK48's">
+
   <!-- Header -->
   <div class="schedule-header">
     <h1 class="text-center fw-800 h1"><strong>Niya BNK48's Schedule</strong></h1>
@@ -35,9 +37,10 @@ const { upcoming, past } = categorizeEvents(eventsWithSlug);
   </div>
 
   <main class="page-main">
+
     <!-- Upcoming -->
     <section id="upcoming-events-section" class="events-section" aria-labelledby="upcoming-heading">
-      <h2 id="upcoming-heading" class="h1 text-center fw-800 h-sec mb-0"><strong>Upcoming Events</strong></h2>
+      <h2 id="upcoming-heading" class="h1 text-center fw-800 section-heading mb-0"><strong>Upcoming Events</strong></h2>
       <p class="text-center mb-5 text-muted">
         กิจกรรมที่จะถึง
         {upcoming.length > 0 && <span class="event-count">({upcoming.length})</span>}
@@ -63,13 +66,13 @@ const { upcoming, past } = categorizeEvents(eventsWithSlug);
     <div class="text-center my-5">
       <a class="btn btn-primary btn-rounded fw-600 px-4" href="/">
         <strong>กลับหน้าหลัก</strong>
-        <i class="fa-solid fa-arrow-right arrow-svg ms-1"></i>
+        <i class="fa-solid fa-arrow-right arrow-icon ms-1"></i>
       </a>
     </div>
 
     <!-- Past -->
     <section id="past-events-section" class="events-section" aria-labelledby="past-heading">
-      <h2 id="past-heading" class="h-sec h1 text-center mb-0">Past Events</h2>
+      <h2 id="past-heading" class="section-heading h1 text-center mb-0">Past Events</h2>
       <p class="text-center mb-5 text-muted">
         กิจกรรมที่จัดไปแล้ว
         {past.length > 0 && <span class="event-count">({past.length})</span>}
@@ -89,6 +92,7 @@ const { upcoming, past } = categorizeEvents(eventsWithSlug);
         </div>
       )}
     </section>
+
   </main>
 </MainLayout>
 
@@ -100,20 +104,21 @@ const { upcoming, past } = categorizeEvents(eventsWithSlug);
     color: white;
   }
 
-  .subtitle { font-size: 18px; }
-  .events-section { padding: 2rem 0; }
-  .event-count { opacity: 0.7; font-size: 0.9em; }
+  .subtitle      { font-size: 18px; }
+  .events-section { padding: 2rem 0; background-color: #fff;}
+  .event-count   { opacity: 0.7; font-size: 0.9em; }
 
   .empty-state {
     text-align: center;
     padding: 4rem 0;
   }
+
   .empty-state .icon {
     opacity: 0.3;
     margin-bottom: 1rem;
   }
 
-  .arrow-svg {
+  .arrow-icon {
     transform: rotate(-45deg);
     height: 1em;
     vertical-align: -0.125em;
@@ -122,21 +127,22 @@ const { upcoming, past } = categorizeEvents(eventsWithSlug);
 
 <script>
   // Scroll-to-top button
-  const btn = Object.assign(document.createElement('button'), {
-    id:        'scrollToTop',
+  const scrollToTopBtn = Object.assign(document.createElement('button'), {
+    id:        'scroll-to-top',
     className: 'btn btn-outline-secondary btn-sm',
     innerHTML: '↑',
     title:     'กลับสู่ด้านบน',
   });
-  btn.setAttribute('aria-label', 'กลับสู่ด้านบน');
-  btn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none';
-  document.body.appendChild(btn);
+  scrollToTopBtn.setAttribute('aria-label', 'กลับสู่ด้านบน');
+  scrollToTopBtn.style.cssText =
+    'position:fixed;bottom:20px;right:20px;z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none';
+  document.body.appendChild(scrollToTopBtn);
 
-  const setVisible = (v: boolean) => {
-    btn.style.opacity       = v ? '1' : '0';
-    btn.style.pointerEvents = v ? 'auto' : 'none';
+  const setVisible = (visible: boolean) => {
+    scrollToTopBtn.style.opacity       = visible ? '1' : '0';
+    scrollToTopBtn.style.pointerEvents = visible ? 'auto' : 'none';
   };
 
   window.addEventListener('scroll', () => setVisible(window.scrollY > 300));
-  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 </script>

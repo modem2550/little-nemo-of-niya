@@ -21,9 +21,28 @@ export default defineConfig({
       'p-u.popcdn.net',
       'encrypted-tbn0.gstatic.com'
     ],
-    // แนะนำให้กำหนด remotePatterns แทน domains ในเวอร์ชันใหม่เพื่อความปลอดภัย
   },
 
-  // ถ้าใช้สไตล์ Apple-style มักจะมีไฟล์ขนาดใหญ่ แนะนำให้บีบอัดไฟล์ตอน build
   compressHTML: true,
+
+  vite: {
+    build: {
+      // minify JS ด้วย esbuild (เร็วกว่า terser)
+      minify: 'esbuild',
+      // แยก chunk ให้ browser cache ได้ดีขึ้น
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'supabase': ['@supabase/supabase-js'],
+          },
+        },
+      },
+      // กำหนด target ให้เหมาะกับ modern browsers
+      target: 'es2020',
+    },
+    // minify CSS ตอน build
+    css: {
+      devSourcemap: false,
+    },
+  },
 });

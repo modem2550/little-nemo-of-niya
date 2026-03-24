@@ -3,6 +3,17 @@
 const toSlug = (text) =>
   text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/--+/g, '-').trim();
 
+// ==================== ANIMATION CONFIG ====================
+
+const ANIM = {
+  staggerStep:   80,   // ms ระหว่าง element ใน group เดียวกัน
+  sectionDelay:  60,   // ms base delay เพิ่มตาม section index
+  offsetX:       60,   // px สำหรับ slide-right
+  offsetY:       30,   // px สำหรับ fade-in / slide-up
+  duration:     500,   // ms ความเร็ว transition
+  easing:    'cubic-bezier(0.22, 1, 0.36, 1)',
+};
+
 // ==================== SWITCHER ====================
 
 function initSwitcher() {
@@ -104,15 +115,57 @@ const safeInitSwitcher = () => { if (!switcherInitialized) { switcherInitialized
 
 // ==================== ANIMATION ====================
 
+/**
+ * กำหนด CSS custom properties สำหรับ offset และ delay ลงใน element
+ * แต่ละ element จะได้:
+ *   --anim-delay    : stagger delay ตามลำดับใน group
+ *   --anim-offset-x : ระยะเลื่อนแนวนอน (px)
+ *   --anim-offset-y : ระยะเลื่อนแนวตั้ง (px)
+ *   --anim-duration : ความเร็ว transition (ms)
+ *
+ * @param {NodeList|Element[]} els    - elements ใน group เดียวกัน
+ * @param {object}             opts
+ *   sectionIndex  {number}  - ลำดับ section (เพิ่ม base delay ให้แต่ละ section)
+ *   staggerStep   {number}  - ms ระหว่าง element
+ *   offsetX       {number}  - override offset X
+ *   offsetY       {number}  - override offset Y
+ */
+function assignAnimVars(els, opts = {}) {
+  const {
+    sectionIndex = 0,
+    staggerStep  = ANIM.staggerStep,
+    offsetX      = ANIM.offsetX,
+    offsetY      = ANIM.offsetY,
+    duration     = ANIM.duration,
+  } = opts;
+
+  const baseDelay = sectionIndex * ANIM.sectionDelay;
+
+  Array.from(els).forEach((el, i) => {
+    el.style.setProperty('--anim-delay',    `${baseDelay + i * staggerStep}ms`);
+    el.style.setProperty('--anim-offset-x', `${offsetX}px`);
+    el.style.setProperty('--anim-offset-y', `${offsetY}px`);
+    el.style.setProperty('--anim-duration', `${duration}ms`);
+  });
+}
+
 const animationObserver = new IntersectionObserver(
   (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('show'); }),
-  { threshold: 0.2 }
+  { threshold: 0.12 }
 );
 
-function observeWhenBelow(els) {
+/**
+ * observe elements ที่อยู่ต่ำกว่า viewport
+ * elements ที่อยู่ใน viewport แล้วให้ show ทันที (ไม่ delay)
+ */
+function observeWhenBelow(els, opts = {}) {
   const vh = window.innerHeight;
-  els.forEach((el) => {
-    el.getBoundingClientRect().top > vh ? animationObserver.observe(el) : el.classList.add('show');
+  assignAnimVars(els, opts);
+
+  Array.from(els).forEach((el) => {
+    el.getBoundingClientRect().top > vh
+      ? animationObserver.observe(el)
+      : el.classList.add('show');
   });
 }
 
@@ -199,17 +252,63 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Lazy iframes
+  // Lazy iframes — swap data-src → src เมื่อ enter viewport
   const lazyObserver = new IntersectionObserver(
     (entries) => entries.forEach((entry) => {
-      if (entry.isIntersecting) { entry.target.style.background = 'transparent'; lazyObserver.unobserve(entry.target); }
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        if (el.dataset.src) {
+          el.src = el.dataset.src;
+          delete el.dataset.src;
+        }
+        el.style.background = 'transparent';
+        lazyObserver.unobserve(el);
+      }
     }),
-    { rootMargin: '50px' }
+    { rootMargin: '200px' }
   );
   document.querySelectorAll('iframe[data-lazy-iframe]').forEach((el) => lazyObserver.observe(el));
 
-  // Animate on scroll
-  observeWhenBelow(document.querySelectorAll('.slide-right, .fade-in, .social-box'));
+  // ── Animate on scroll — แยกตาม section เพื่อให้ sectionDelay ทำงาน ──
+
+  // Section: event cards — stagger เร็ว เพราะ element เล็ก
+  observeWhenBelow(
+    document.querySelectorAll('#event .slide-right, #event .fade-in'),
+    { sectionIndex: 0, staggerStep: 70 }
+  );
+
+  // Section: info (bio box + half-body img)
+  observeWhenBelow(
+    document.querySelectorAll('#info .slide-right, #info .fade-in'),
+    { sectionIndex: 1, staggerStep: 100, offsetX: 80, offsetY: 40 }
+  );
+
+  // Section: social — embed blocks + social boxes แยกกัน
+  observeWhenBelow(
+    document.querySelectorAll('#social .embed-block'),
+    { sectionIndex: 2, staggerStep: 120, offsetX: 50 }
+  );
+  observeWhenBelow(
+    document.querySelectorAll('#social .social-box'),
+    { sectionIndex: 2, staggerStep: 60, offsetX: 40, offsetY: 20 }
+  );
+
+  // Section: library — youtube blocks
+  observeWhenBelow(
+    document.querySelectorAll('#library .slide-right'),
+    { sectionIndex: 3, staggerStep: 90 }
+  );
+
+  // Section: fanclub
+  observeWhenBelow(
+    document.querySelectorAll('#fanclub .slide-in, #fanclub .fade-right, #fanclub .fade-in'),
+    { sectionIndex: 4, staggerStep: 80, offsetY: 35 }
+  );
+
+  // Fallback: elements ที่ไม่ได้อยู่ใน section ที่กำหนด
+  observeWhenBelow(
+    document.querySelectorAll('.slide-right:not(#event *, #info *, #social *, #library *, #fanclub *), .fade-in:not(#event *, #info *, #social *, #library *, #fanclub *)')
+  );
 
   // Escape closes popup
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePopup(); });
@@ -242,7 +341,8 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('astro:page-load', safeInitSwitcher);
 document.addEventListener('DOMContentLoaded', safeInitSwitcher);
 
-window.openPopup       = openPopup;
-window.closePopup      = closePopup;
+window.openPopup         = openPopup;
+window.closePopup        = closePopup;
 window.renderSocialLinks = renderSocialLinks;
-window.toSlug          = toSlug;
+window.toSlug            = toSlug;
+window.observeWhenBelow  = observeWhenBelow;  // export เผื่อ component อื่นใช้

@@ -1,44 +1,116 @@
-/* -------------------------------------
- * MAIN STYLESHEET
- * ------------------------------------- */
+/* =============================================================================
+   CSS CUSTOM PROPERTIES
+   ============================================================================= */
 
 :root {
-    --c-glass: #bbbbbc;
-    --c-light: #fff;
-    --c-dark: #000;
-    --c-content: #222233;
-    --c-primary: #fc809f;
-    --c-primary-hover: #fb4774;
-    --c-bnk: #cb96c2;
-    --c-cgm: #3CC2B1;
-    --c-biii: #97886b;
-    --c-nv: #ec248e;
-    --c-c: #44bfad;
-    --c-trainee: #93001d;
-    --c-fri: #0ea5e9;
-    --c-sat: #8b5cf6;
-    --c-sun: #ef4444;
-    --t-duration: 0.3s;
-    --t-ease-smooth: 0.3s ease;
-    --r-base: 12px;
-    --r-large: 24px;
-    --r-round: 1000px;
-    --op-back-hover: .3;
-    --c-section-text: var(--c-primary);
-    --glass-reflex-dark: 1;
-    --glass-reflex-light: 1;
-    --saturation: 150%;
-    --bg-ig: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
-    --glass-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
-        inset 1.8px 3px 0 -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent),
-        inset -2px -2px 0 -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent),
-        inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent),
-        inset -.3px -1px 4px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent),
-        inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent),
-        inset 0 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent),
-        inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0 1px 5px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0 6px 16px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
+  /* Colors */
+  --c-glass:         #bbbbbc;
+  --c-light:         #fff;
+  --c-dark:          #000;
+  --c-content:       #222233;
+  --c-primary:       #fc809f;
+  --c-primary-hover: #fb4774;
+
+  /* Backgrounds */
+  --c-bg:            #F7F7F8;
+  --c-surface:       #f4ebef;
+  --c-surface-alt:   #e7e7e7;
+  --c-border:        #D8D8DA;
+
+  /* Text hierarchy */
+  --c-content-secondary: #55556A;
+  --c-content-muted:     #888899;
+
+  /* Group colors */
+  --c-bnk:     #cb96c2;
+  --c-cgm:     #3CC2B1;
+  --c-biii:    #97886b;
+  --c-nv:      #ec248e;
+  --c-c:       #44bfad;
+  --c-trainee: #93001d;
+
+  /* Day-of-week colors */
+  --c-fri: #0ea5e9;
+  --c-sat: #8b5cf6;
+  --c-sun: #ef4444;
+
+  /* Transitions */
+  --t-duration:    0.3s;
+  --t-ease-smooth: 0.3s ease;
+
+  /* Border radius */
+  --r-base:  12px;
+  --r-large: 24px;
+  --r-round: 1000px;
+
+  /* Glass effect */
+  --op-hover-back:       0.3;
+  --glass-reflex-dark:   1;
+  --glass-reflex-light:  1;
+  --saturation:          150%;
+
+  /* Backgrounds */
+  --bg-instagram: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+
+  /* Section heading */
+  --c-section-text: var(--c-primary);
+
+  /* Glass shadow — composite inset + drop shadow */
+  --glass-shadow:
+    inset 0 0 0 1px
+      color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+    inset 1.8px 3px 0 -2px
+      color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent),
+    inset -2px -2px 0 -2px
+      color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent),
+    inset -3px -8px 1px -6px
+      color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent),
+    inset -0.3px -1px 4px 0
+      color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent),
+    inset -1.5px 2.5px 0 -2px
+      color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent),
+    inset 0 3px 4px -2px
+      color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent),
+    inset 2px -6.5px 1px -4px
+      color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent),
+    0 1px 5px 0
+      color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent),
+    0 6px 16px 0
+      color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
+
+  /* ─── Golden Ratio Type Scale (φ = 1.618, base = 16px) ───────────────────
+     --fs-display : 16 × φ⁴  = 67.77px  → hero display
+     --fs-h1      : 16 × φ³  = 41.89px  → section hero / bio name
+     --fs-h2      : 16 × φ²  = 25.89px  → section heading
+     --fs-h3      : 16 × φ^1.5 ≈ 20.36px → card/video title
+     --fs-h4      : 16 × φ^1.25 ≈ 18.89px → sub-title / badge
+     --fs-h5      : 16 × φ    = 18px (ปัด) → lead / eyebrow
+     --fs-body    : 16px (base φ⁰)
+     --fs-small   : 16 ÷ φ    = 9.89px → 10px  caption / label
+     --fs-xs      : 16 ÷ φ²   = 6.11px → 9.89px  → clamp(9px, ...) footer-license
+     ─────────────────────────────────────────────────────────────────────── */
+  --fs-display: clamp(2.6rem, 5.5vw + 1rem, 4.235rem);  /* fluid hero */
+  --fs-h1:      2.618rem;   /* 41.89px */
+  --fs-h2:      1.618rem;   /* 25.89px */
+  --fs-h3:      1.272rem;   /* 20.36px */
+  --fs-h4:      1.18rem;    /* 18.88px */
+  --fs-h5:      1.125rem;   /* 18px    */
+  --fs-body:    1rem;       /* 16px    */
+  --fs-small:   0.618rem;   /* 9.89px → browser clamp ต่ำสุด 10px */
+  --fs-xs:      0.618rem;   /* alias สำหรับ footer-license */
+
+  /* ─── Animation defaults (JS จะ override ด้วย inline style) ─── */
+  --anim-delay:    0ms;
+  --anim-offset-x: 60px;
+  --anim-offset-y: 30px;
+  --anim-duration: 500ms;
+  --anim-easing:   cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+
+/* =============================================================================
+   BASE RESET & TYPOGRAPHY
+   ============================================================================= */
 
 html,
 body {
@@ -54,132 +126,115 @@ body {
 }
 
 a {
-    text-decoration: none !important
+    text-decoration: none !important;
 }
+
+
+/* =============================================================================
+   TYPOGRAPHY — GOLDEN RATIO SCALE
+   Override Bootstrap .h1–.h6, .display-1–.6, p, small
+   ============================================================================= */
+
+
+
+.lead { font-size: var(--fs-h5) !important; }
+
+
+/* =============================================================================
+   SECTION LAYOUT
+   ============================================================================= */
 
 section {
     padding: 80px var(--r-large);
-    background-color: #fffcff
+    background-color: var(--c-bg);
 }
 
-#home {
-    padding: 0;
-    height: 100lvh;
-    background-color: #fff0
-}
-
-#event {
-    min-height: 562px;
-}
-
-#info {
-    padding: 0 var(--r-large);
-    background-color: #fdf2f6
-}
-
-#library {
-    background-color: #fdf2f6
-}
-
-.h-sec {
+.section-heading {
     color: var(--c-section-text) !important;
-    font-weight: 700 !important
+    font-weight: 700 !important;
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
-.t-center {
-    text-align: center !important
-}
+/* Individual sections */
+#home    { padding: 0; height: 100lvh; background-color: transparent; }
+#event   { min-height: 562px; }
+#info    { padding: 0 var(--r-large); background-color: var(--c-surface); }
+#library { background-color: var(--c-surface); }
+
+
+/* =============================================================================
+   HERO SECTION
+   ============================================================================= */
 
 .video-container {
     position: relative;
     width: 100%;
     height: 100vh;
-    /* สูงเต็มจอ */
     overflow: hidden;
 }
 
-.ht-1 {
+.hero-text-wrapper {
     position: relative;
     z-index: 2;
-    /* Keeps text above the overlay and video */
     display: flex;
     justify-content: center;
     align-items: flex-end;
     height: 100%;
 }
 
-.ht-2 {
-    font-size: calc(2.25rem + 4.5vw);
+.hero-title {
+    font-size: var(--fs-display);
     color: var(--c-light);
     margin-bottom: 4rem;
     text-align: center;
-    font-weight: 400 !important
+    font-weight: 400 !important;
 }
 
-.ht-2 strong {
-    font-weight: 700 !important
+.hero-title strong { font-weight: 700 !important; }
+.hero-title h2,
+.hero-title p     { margin: 0; font-weight: 400; letter-spacing: 0.25rem; }
+
+/* Gradient fade at bottom of hero */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, #f191ac, transparent 40% 100%);
 }
 
-.ht-2 h2,
-.ht-2 p {
-    margin: 0;
-    font-weight: 400
-}
 
-.h-sec {
-    margin-bottom: 1.5rem;
-    text-align: center
-}
+/* =============================================================================
+   BIO / INFO SECTION
+   ============================================================================= */
 
-.ct-da svg {
-    fill: var(--c-content);
-    width: 1.1rem
-}
-
-.ct-da p {
-    margin: 0;
-    font-size: .95rem;
-    font-weight: 600;
-    color: var(--c-content)
-}
-
-.da-sp .h5 {
-    color: var(--c-content);
-    font-weight: 800
-}
-
-.h-body {
+.hero-half-body-img {
     max-height: 720px;
     height: 100vh;
 }
 
-.br-i {
-    font-size: 1.16rem;
+.bio-info-box {
+    font-size: var(--fs-body);
     padding: 50px;
     border-radius: var(--r-large);
-    background-color: #fffcff;
+    background-color: var(--c-light);
     box-shadow: var(--glass-shadow);
 }
 
-.br-i ul {
-    text-align: start;
+.bio-info-box ul           { text-align: start; }
+.bio-info-box ul li a      { color: var(--c-section-text); text-decoration: none; }
+.bio-info-box ul li a:hover { color: var(--c-primary-hover) !important; }
+
+.bio-section-inner.container {
+    display: flex;
+    align-items: center;
 }
 
-.br-i ul li a {
-    color: var(--c-section-text);
-    text-decoration: none
-}
-
-.br-i ul li a:hover {
-    color: var(--c-primary-hover) !important;
-    text-decoration: none;
-}
-
-.pc {
-    z-index: 1
-}
-
-.p-body {
+.profile {
+    z-index: 1;
     display: none;
     width: 150px;
     height: 150px;
@@ -187,22 +242,22 @@ section {
     border-radius: 50%;
     margin: 0 auto;
     max-width: none !important;
-    box-shadow: 0 10px 20px rgb(0 0 0 / .1)
+    box-shadow: 0 10px 20px rgb(0 0 0 / 0.1);
 }
 
-.bd-info.container {
-    display: flex;
-    align-items: center;
-}
+
+/* =============================================================================
+   SOCIAL SECTION — EMBED BANNERS
+   ============================================================================= */
 
 .ig-banner {
     padding: var(--r-large);
-    background: var(--bg-ig);
+    background: var(--bg-instagram);
     width: 100%;
     border-top-left-radius: var(--r-base);
     border-top-right-radius: var(--r-base);
     overflow: hidden;
-    position: relative
+    position: relative;
 }
 
 .tiktok-banner {
@@ -211,15 +266,22 @@ section {
     width: 100%;
     border-top-left-radius: var(--r-base);
     border-top-right-radius: var(--r-base);
-    overflow: hidden
+    overflow: hidden;
 }
 
 .ig-banner div,
 .tiktok-banner div {
     margin: 0;
-    color: var(--c-light)
+    color: var(--c-light);
 }
 
+.ig-banner:hover,
+.tiktok-banner:hover {
+    opacity: 0.9;
+    transition: var(--t-ease-smooth);
+}
+
+/* Embed row */
 .embed-row {
     margin: 0 auto;
     width: 100%;
@@ -227,181 +289,53 @@ section {
     padding: 15px 0;
     gap: 25px;
     overflow: hidden;
-    display: flex
+    display: flex;
 }
 
-.embed {
+.embed-block {
     width: 50%;
     margin-bottom: 20px;
     background-color: var(--c-light);
-    border-radius: var(--r-base)
+    border-radius: var(--r-base);
 }
+
+.embed-ig iframe { min-width: 0 !important; }
+
+.embed-ig,
+.embed-tiktok { width: 100%; }
 
 .instagram-media {
     border-radius: 0 0 var(--r-base) var(--r-base) !important;
     display: block;
     width: 100%;
-    max-height: 478px
+    max-height: 478px;
 }
 
-.embed-ig,
-.embed-tiktok {
-    width: 100%
-}
 
-.embed-ig iframe {
-    min-width: 0 !important
-}
-
-.arrow-svg {
-    transform: rotate(-45deg);
-    height: 1em;
-}
-
-.icon-svg {
-    height: 1em;
-    fill: var(--c-light);
-    transition: all var(--t-ease-smooth)
-        /* ใช้ตัวแปร */
-}
-
-.icon-svg.back,
-.svg-inline--fa.back {
-    position: absolute;
-    opacity: 0;
-    z-index: 0
-}
-
-.icon-svg.front,
-.svg-inline--fa.front {
-    position: relative;
-    z-index: 1
-}
-
-.ig-banner:hover,
-.tiktok-banner:hover {
-    opacity: .9;
-    transition: var(--t-ease-smooth)
-        /* ใช้ตัวแปร */
-}
-
-/* -------------------------------------
- * SOCIAL ICON HOVER (OPTIMIZED GROUP)
- * ------------------------------------- */
-
-.social-box:hover .svg-inline--fa.back,
-.social-box:hover .fa-iam48.back,
-.social-box:hover .fa-iam48.back.live,
-.ig-banner:hover .icon-svg.back,
-.tiktok-banner:hover .icon-svg.back {
-    opacity: var(--op-back-hover);
-    /* ใช้ตัวแปร */
-    transition: var(--t-ease-smooth);
-    /* ใช้ตัวแปร */
-}
-
-/* Transform Rules (แยกมาเพื่อให้โค้ดสั้นลง) */
-.social-box:hover .svg-inline--fa.back {
-    transform: scale(2) rotate(15deg) translateX(9.5rem) translateY(-1.9rem);
-}
-
-.social-box:hover .fa-iam48.back {
-    transform: scale(2) rotate(30deg) translateX(8.5rem) translateY(-3.7rem);
-}
-
-.ig-banner:hover .icon-svg.back,
-.tiktok-banner:hover .icon-svg.back {
-    transform: scale(5.6) rotate(15deg) translateX(5.5rem) translateY(-.8rem);
-}
-
-.social-box:hover .fa-iam48.back.live {
-    transform: scale(2) rotate(30deg) translateX(14.5rem) translateY(-7.4rem);
-}
-
-@media (max-width:1400px) {
-
-    .ig-banner:hover .icon-svg.back,
-    .tiktok-banner:hover .icon-svg.back {
-        transform: scale(5.6) rotate(15deg) translateX(4.5rem) translateY(-.7rem)
-    }
-
-    .social-box:hover .svg-inline--fa.back {
-        transform: scale(2) rotate(15deg) translateX(8.5rem) translateY(-1.7rem)
-    }
-
-    .social-box:hover .fa-iam48.back {
-        transform: scale(2) rotate(30deg) translateX(7.5rem) translateY(-3.4rem)
-    }
-
-    .social-box:hover .fa-iam48.back.live {
-        transform: scale(2) rotate(30deg) translateX(12.5rem) translateY(-6.4rem)
-    }
-}
-
-.social-box.-instagram {
-    --bg: linear-gradient(45deg, rgba(240, 148, 51, .15) 0%, rgba(230, 104, 60, .15) 25%, rgba(220, 39, 67, .15) 50%, rgba(204, 35, 102, .15) 75%, rgba(188, 24, 136, .15) 100%);
-    --text: #dc2743;
-    --bg-hover: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-    --text-hover: #fff;
-}
-
-.social-box.-facebook {
-    --bg: #1877f226;
-    --text: #1877F2;
-    --bg-hover: #1877F2;
-    --text-hover: #fff
-}
-
-.social-box.-iam48 {
-    --bg: linear-gradient(45deg, rgba(203, 150, 194, .15) 0%, rgba(104, 190, 177, .15) 100%);
-    --text: rgb(203, 150, 194);
-    --bg-hover: linear-gradient(45deg, rgba(203, 150, 194) 0%, rgba(104, 190, 177) 100%);
-    --text-hover: #fff
-}
-
-.social-box.-tiktok,
-.social-box.-twitter {
-    --bg: #ebebeb;
-    --text: #000;
-    --bg-hover: #000;
-    --text-hover: #fff
-}
-
-.social-box.-youtube {
-    --bg: #FF000026;
-    --text: #FF0000;
-    --bg-hover: #FF0000;
-    --text-hover: #fff
-}
-
-.social-box.-line {
-    --bg: linear-gradient(45deg, rgba(0, 211, 200, .15) 0%, rgba(0, 208, 173, .15) 14.28%, rgba(0, 204, 137, .15) 28.56%, rgba(0, 200, 107, .15) 42.84%, rgba(0, 197, 83, .15) 57.12%, rgba(0, 195, 67, .15) 71.4%, rgba(0, 194, 57, .15) 85.68%, rgba(0, 194, 54, .15) 99.96%);
-    --text: rgb(3, 104, 114);
-    --bg-hover: linear-gradient(45deg, rgba(0, 211, 200, 1) 0%, rgba(0, 208, 173, 1) 14.28%, rgba(0, 204, 137, 1) 28.56%, rgba(0, 200, 107, 1) 42.84%, rgba(0, 197, 83, 1) 57.12%, rgba(0, 195, 67, 1) 71.4%, rgba(0, 194, 57, 1) 85.68%, rgba(0, 194, 54, 1) 99.96%);
-    --text-hover: #fff
-}
+/* =============================================================================
+   SOCIAL SECTION — SOCIAL BOXES
+   ============================================================================= */
 
 .social-box {
-    --bg: #f6f7fa;
-    --text: #000;
-    --bg-hover: #000;
-    --text-hover: #fff;
+    --bg:         #f6f7fa;
+    --text:       var(--c-dark);
+    --bg-hover:   var(--c-dark);
+    --text-hover: var(--c-light);
+
     padding: 15px 20px;
     border-radius: var(--r-round);
-    /* ใช้ตัวแปร */
     background: var(--bg);
     color: var(--text);
     fill: var(--text);
-    font-size: 1.125rem;
+    font-size: var(--fs-h5);
     display: flex;
     gap: 15px;
     align-items: center;
     font-weight: 700;
     margin-bottom: 1rem;
     transition: var(--t-duration);
-    /* ใช้ตัวแปร */
     position: relative;
-    overflow: hidden
+    overflow: hidden;
 }
 
 .social-box:hover {
@@ -416,385 +350,374 @@ section {
     transition: var(--t-duration);
 }
 
-a:hover {
-    color: var(--w-accent-hover);
-    text-decoration: underline
-}
-
 .social-box svg {
     width: 48px;
     height: 48px;
 }
+
+.social-box .social-label { margin-bottom: 0 !important; }
+
+/* Platform color themes */
+.social-box.-instagram {
+    --bg:         linear-gradient(45deg, rgba(240,148,51,.15) 0%, rgba(230,104,60,.15) 25%, rgba(220,39,67,.15) 50%, rgba(204,35,102,.15) 75%, rgba(188,24,136,.15) 100%);
+    --text:       #dc2743;
+    --bg-hover:   linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    --text-hover: var(--c-light);
+}
+
+.social-box.-facebook {
+    --bg:         #1877f226;
+    --text:       #1877F2;
+    --bg-hover:   #1877F2;
+    --text-hover: var(--c-light);
+}
+
+.social-box.-iam48 {
+    --bg:         linear-gradient(45deg, rgba(203,150,194,.15) 0%, rgba(104,190,177,.15) 100%);
+    --text:       rgb(203,150,194);
+    --bg-hover:   linear-gradient(45deg, rgba(203,150,194,1) 0%, rgba(104,190,177,1) 100%);
+    --text-hover: var(--c-light);
+}
+
+.social-box.-tiktok,
+.social-box.-twitter {
+    --bg:         #ebebeb;
+    --text:       var(--c-dark);
+    --bg-hover:   var(--c-dark);
+    --text-hover: var(--c-light);
+}
+
+.social-box.-youtube {
+    --bg:         #FF000026;
+    --text:       #FF0000;
+    --bg-hover:   #FF0000;
+    --text-hover: var(--c-light);
+}
+
+.social-box.-line {
+    --bg:
+        linear-gradient(45deg,
+        rgba(0,211,200,.15)  0%,   rgba(0,208,173,.15) 14.28%,
+        rgba(0,204,137,.15) 28.56%, rgba(0,200,107,.15) 42.84%,
+        rgba(0,197,83,.15)  57.12%, rgba(0,195,67,.15)  71.4%,
+        rgba(0,194,57,.15)  85.68%, rgba(0,194,54,.15)  99.96%);
+    --text: rgb(3,104,114);
+    --bg-hover:
+        linear-gradient(45deg,
+        rgba(0,211,200,1)  0%,   rgba(0,208,173,1) 14.28%,
+        rgba(0,204,137,1) 28.56%, rgba(0,200,107,1) 42.84%,
+        rgba(0,197,83,1)  57.12%, rgba(0,195,67,1)  71.4%,
+        rgba(0,194,57,1)  85.68%, rgba(0,194,54,1)  99.96%);
+    --text-hover: var(--c-light);
+}
+
+/* iAM48 icon color follows social-box theme */
+.social-box.-iam48 svg path        { fill: var(--text); transition: var(--t-duration); }
+.social-box.-iam48:hover svg path  { fill: var(--text-hover); }
+
+
+/* =============================================================================
+   ICONS — INLINE SVG HELPERS
+   ============================================================================= */
 
 .svg-inline--fa {
     box-sizing: content-box;
     display: var(--fa-display, inline-block);
     height: 1em;
     overflow: visible;
-    width: var(--fa-width, 1.25em)
+    width: var(--fa-width, 1.25em);
 }
 
-.social-box.-iam48 svg path {
-    fill: var(--text);
-    transition: var(--t-duration)
-        /* ใช้ตัวแปร */
+.arrow-icon {
+    transform: rotate(-45deg);
+    height: 1em;
 }
 
-.social-box.-iam48:hover svg path {
-    fill: var(--text-hover)
+.platform-icon {
+    height: 1em;
+    fill: var(--c-light);
+    transition: all var(--t-ease-smooth);
 }
 
-.social-margin {
-    margin-bottom: 0 !important
+/* Back-layer icons (decorative hover effect) */
+.platform-icon.back,
+.svg-inline--fa.back { position: absolute; opacity: 0; z-index: 0; }
+.platform-icon.front,
+.svg-inline--fa.front { position: relative; z-index: 1; }
+
+
+/* =============================================================================
+   HOVER BACK-ICON ANIMATIONS
+   ============================================================================= */
+
+/* Trigger visibility */
+.social-box:hover .svg-inline--fa.back,
+.social-box:hover .fa-iam48.back,
+.social-box:hover .fa-iam48.back.live,
+.ig-banner:hover .platform-icon.back,
+.tiktok-banner:hover .platform-icon.back {
+        opacity: var(--op-hover-back);
+        transition: var(--t-ease-smooth);
 }
 
-.b-ce {
-    margin: auto
-}
+/* Transform positions — desktop */
+.social-box:hover .svg-inline--fa.back        { transform: scale(2) rotate(15deg) translateX(9.5rem) translateY(-1.9rem); }
+.social-box:hover .fa-iam48.back              { transform: scale(2) rotate(30deg) translateX(8.5rem) translateY(-3.7rem); }
+.social-box:hover .fa-iam48.back.live         { transform: scale(2) rotate(30deg) translateX(14.5rem) translateY(-7.4rem); }
+.ig-banner:hover .platform-icon.back,
+.tiktok-banner:hover .platform-icon.back      { transform: scale(5.6) rotate(15deg) translateX(5.5rem) translateY(-0.8rem); }
 
-.embed-tiktok .tiktok-embed {
-    margin: 0 !important;
-}
+
+/* =============================================================================
+   LIBRARY / YOUTUBE SECTION
+   ============================================================================= */
 
 .youtube-block {
     border-radius: var(--r-base);
-    /* ใช้ตัวแปร */
     overflow: hidden;
-    background-color: #fff
-}
-
-.fw-700 {
-    font-weight: 700 !important
+    background-color: var(--c-light);
 }
 
 .bnk48-color {
-    fill: #cb96c2 !important;
-    color: #cb96c2 !important
+    fill: var(--c-bnk) !important;
+    color: var(--c-bnk) !important;
 }
 
-.slide-right {
-    opacity: 0;
-    transform: translateX(100px);
-    transition: var(--t-ease-smooth)
-        /* ใช้ตัวแปร */
-}
 
-.slide-right.show {
-    opacity: 1;
-    transform: translateX(0)
-}
+/* =============================================================================
+   FANCLUB SECTION
+   ============================================================================= */
 
-.fade-in {
-    opacity: 0;
-    transform: translateX(0px);
-    transition: var(--t-ease-smooth)
-        /* ใช้ตัวแปร */
-}
-
-.fade-in.show {
-    opacity: 1;
-    transform: translateX(0)
-}
-
-.fc-bt.line {
-    position: relative;
-    z-index: 1;
+.fanclub-btn {
+    border: none;
     padding: 15px;
+    background: var(--c-primary);
+    color: var(--bs-body-bg);
     width: 100%;
     border-radius: 100px;
-    border: none;
+}
+
+.fanclub-btn:hover {
+    background-color: var(--c-primary-hover) !important;
+    transition: var(--t-ease-smooth);
+}
+
+.fanclub-btn.line {
+    position: relative;
+    z-index: 1;
     cursor: pointer;
     overflow: hidden;
     color: var(--bs-body-bg);
-
-    /* Initial Gradient (Lower Opacity) */
-    background: linear-gradient(45deg, rgba(0, 211, 200, .65) 0%, rgba(0, 208, 173, .65) 14.28%, rgba(0, 204, 137, .65) 28.56%, rgba(0, 200, 107, .65) 42.84%, rgba(0, 197, 83, .65) 57.12%, rgba(0, 195, 67, .65) 71.4%, rgba(0, 194, 57, .65) 85.68%, rgba(0, 194, 54, .65) 99.96%);
+    background: linear-gradient(45deg,
+        rgba(0,211,200,.65)  0%,   rgba(0,208,173,.65) 14.28%,
+        rgba(0,204,137,.65) 28.56%, rgba(0,200,107,.65) 42.84%,
+        rgba(0,197,83,.65)  57.12%, rgba(0,195,67,.65)  71.4%,
+        rgba(0,194,57,.65)  85.68%, rgba(0,194,54,.65)  99.96%);
     transition: var(--t-ease-smooth);
 }
 
-/* Create the hover state as an overlay for a smooth fade */
-.fc-bt.line::after {
-    content: "";
+.fanclub-btn.line::after {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     z-index: -1;
-    background: linear-gradient(45deg, rgba(0, 211, 200, 1) 0%, rgba(0, 208, 173, 1) 14.28%, rgba(0, 204, 137, 1) 28.56%, rgba(0, 200, 107, 1) 42.84%, rgba(0, 197, 83, 1) 57.12%, rgba(0, 195, 67, 1) 71.4%, rgba(0, 194, 57, 1) 85.68%, rgba(0, 194, 54, 1) 99.96%);
+    background: linear-gradient(45deg,
+        rgba(0,211,200,1)  0%,   rgba(0,208,173,1) 14.28%,
+        rgba(0,204,137,1) 28.56%, rgba(0,200,107,1) 42.84%,
+        rgba(0,197,83,1)  57.12%, rgba(0,195,67,1)  71.4%,
+        rgba(0,194,57,1)  85.68%, rgba(0,194,54,1)  99.96%);
     opacity: 0;
     transition: var(--t-ease-smooth);
 }
 
-.fc-bt.line:hover::after {
-    opacity: 1;
-}
+.fanclub-btn.line:hover::after { opacity: 1; }
 
-.fc-bt {
-    padding: 15px;
-    background: var(--c-primary);
-    /* ใช้ตัวแปร */
-    color: var(--bs-body-bg);
-    width: 100%;
-    border-radius: 100px
-}
+.fanclub-btn a { color: var(--bs-body-bg); }
+.slide-left img { border-radius: var(--r-base); }
 
-.fc-bt:hover {
-    background-color: var(--c-primary-hover) !important;
-    /* ใช้ตัวแปร */
-    ;
-    transition: var(--t-ease-smooth)
-        /* ใช้ตัวแปร */
-}
+.block-center { margin: auto; }
 
-.slide-left img {
-    border-radius: var(--r-base)
-        /* ใช้ตัวแปร */
-}
 
-.fc-bt a {
-    color: var(--bs-body-bg)
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(0deg, #f191ac, #0000 40% 100%);
-}
+/* =============================================================================
+   POPUP OVERLAY
+   ============================================================================= */
 
 #popup-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgb(0 0 0 / .5);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgb(0 0 0 / 0.5);
     justify-content: center;
     align-items: center;
-
     inset: 0;
     display: none;
-
     overflow-y: auto;
-    /* ⭐ ให้ scroll ใน overlay */
     overscroll-behavior: contain;
-    /* ⭐ กัน wheel ทะลุไป body */
     -webkit-overflow-scrolling: touch;
-
     z-index: 9999;
 }
 
-#popup-overlay.active {
-    display: flex;
-}
+#popup-overlay.active { display: flex; }
 
 .popup-container {
     position: relative;
     width: 100%;
     max-width: 600px;
-
-    background: #fff;
+    background: var(--c-light);
     border-radius: var(--r-large);
     padding: 30px;
-
     overflow: auto;
-
     animation: fadeInOpacity 0.3s ease-in;
 }
 
 @keyframes fadeInOpacity {
-    0% {
-        opacity: 0
-    }
-
-    100% {
-        opacity: 1
-    }
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 .popup-close {
     position: absolute;
-    top: 25px;
-    right: 25px;
+    top: 25px; right: 25px;
     background: none;
     border: none;
     cursor: pointer;
-    transition: transform var(--t-ease-smooth)
-        /* ใช้ตัวแปร */
+    transition: transform var(--t-ease-smooth);
 }
 
-.popup-close:hover {
-    transform: rotate(90deg)
+.popup-close:hover { transform: rotate(90deg); }
+
+
+/* =============================================================================
+   SCROLL ANIMATIONS
+   ─────────────────────────────────────────────────────────────────────────────
+   ระบบนี้ทำงานร่วมกับ JS (assignAnimVars) ที่ inject:
+     --anim-delay    : stagger delay ตามลำดับ element
+     --anim-offset-x : ระยะเลื่อนแนวนอน (px)
+     --anim-offset-y : ระยะเลื่อนแนวตั้ง (px)
+     --anim-duration : ความเร็ว transition
+
+   CSS ตั้ง default ไว้ใน :root และจะถูก override โดย JS inline style
+
+   Static classes (ไม่ต้องมี JS):
+     .stagger-1 … .stagger-6  — delay 80ms–480ms (CSS-only stagger)
+     .delay-s1 … .delay-s4    — section delay 60ms–240ms
+     .offset-sm / .offset-lg  — override offset distance
+   ============================================================================= */
+
+/* ── Base states — hidden ── */
+
+.slide-right {
+    opacity: 0;
+    transform: translateX(var(--anim-offset-x, 60px));
+    transition:
+        opacity   var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22,1,0.36,1)) var(--anim-delay, 0ms),
+        transform var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22,1,0.36,1)) var(--anim-delay, 0ms);
+    will-change: opacity, transform;
 }
 
-.btn {
-    --bs-btn-border-radius: var(--r-round) !important;
-    /* ใช้ตัวแปร */
+.fade-in {
+    opacity: 0;
+    transform: translateY(var(--anim-offset-y, 30px));
+    transition:
+        opacity   var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22,1,0.36,1)) var(--anim-delay, 0ms),
+        transform var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22,1,0.36,1)) var(--anim-delay, 0ms);
+    will-change: opacity, transform;
 }
 
-.btn-primary,
-a {
-    --bs-btn-color: #fff !important;
-    --bs-btn-bg: var(--c-primary) !important;
-    /* ใช้ตัวแปร */
-    --bs-btn-border-color: var(--c-primary) !important;
-    /* ใช้ตัวแปร */
-    --bs-btn-hover-color: #fff !important;
-    --bs-btn-hover-bg: var(--c-primary-hover) !important;
-    /* ใช้ตัวแปร */
-    --bs-btn-hover-border-color: #fa3164 !important;
-    --bs-btn-focus-shadow-rgb: 252, 128, 159 !important;
-    --bs-btn-active-color: #fff !important;
-    --bs-btn-active-bg: #fa3164 !important;
-    --bs-btn-active-border-color: #f91c53 !important;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
-    --bs-btn-disabled-color: #fff !important;
-    --bs-btn-disabled-bg: var(--c-primary) !important;
-    /* ใช้ตัวแปร */
-    --bs-btn-disabled-border-color: var(--c-primary) !important;
-    /* ใช้ตัวแปร */
+/* slide-left (reverse direction) */
+.slide-left {
+    opacity: 0;
+    transform: translateX(calc(var(--anim-offset-x, 60px) * -1));
+    transition:
+        opacity   var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22,1,0.36,1)) var(--anim-delay, 0ms),
+        transform var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22,1,0.36,1)) var(--anim-delay, 0ms);
+    will-change: opacity, transform;
 }
 
-@media (min-width: 768px) {
-    .bg-video {
-        display: block !important;
-    }
-
-    .bg-image {
-        display: none !important;
-    }
+/* slide-up (alias สำหรับ element ที่ขึ้นมาจากล่าง) */
+.slide-up {
+    opacity: 0;
+    transform: translateY(var(--anim-offset-y, 30px));
+    transition:
+        opacity   var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22,1,0.36,1)) var(--anim-delay, 0ms),
+        transform var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22,1,0.36,1)) var(--anim-delay, 0ms);
+    will-change: opacity, transform;
 }
 
-/* Mobile: ซ่อนวิดีโอ แสดงรูปภาพแทน */
-@media (max-width: 767.98px) {
-    .bg-video {
-        display: none !important;
-    }
+/* ── Visible state ── */
 
-    .bg-image {
-        display: block !important;
-    }
-
-    .ht-2 {
-        font-size: calc(1.75rem + 3.5vw);
-        margin-bottom: 2rem;
-    }
-
-    .popup-container {
-        max-width: 100%;
-        height: 100%;
-        background: #fff;
-        padding: 50px 20px 50px;
-        border-radius: 0;
-        overflow-x: scroll
-    }
+.slide-right.show,
+.slide-left.show,
+.fade-in.show,
+.slide-up.show {
+    opacity: 1;
+    transform: translate(0, 0);
 }
 
-@media (max-width:1200px) {
-    .container {
-        --bs-gutter-x: 0 !important;
-    }
+/* ── CSS-only static stagger — ใช้เมื่อไม่มี JS หรือ element ใน loop ที่ตายตัว ──
+   ใช้: <div class="slide-right stagger-2">
+   ระยะ: 80ms × n
+   ─────────────────────────────────────────────────────────────────────────── */
 
-    .col-lg-6 {
-        width: 100% !important
-    }
+.stagger-1 { --anim-delay:  80ms; }
+.stagger-2 { --anim-delay: 160ms; }
+.stagger-3 { --anim-delay: 240ms; }
+.stagger-4 { --anim-delay: 320ms; }
+.stagger-5 { --anim-delay: 400ms; }
+.stagger-6 { --anim-delay: 480ms; }
 
-    #info {
-        padding: 80px 20px
-    }
+/* ── CSS-only section delay — เพิ่ม base delay ตาม section ──
+   ใช้: <section class="delay-s2"> แล้ว element ข้างในจะมี delay เพิ่มขึ้น 120ms
+   ─────────────────────────────────────────────────────────────────────────── */
 
-    .bd-info.container {
-        flex-direction: column;
-        margin: 0 auto;
-        border-radius: var(--r-base);
-        /* ใช้ตัวแปร */
-        text-align: center
-    }
+.delay-s1 { --anim-delay:  60ms; }
+.delay-s2 { --anim-delay: 120ms; }
+.delay-s3 { --anim-delay: 180ms; }
+.delay-s4 { --anim-delay: 240ms; }
 
-    .container {
-        max-width: 720px !important
-    }
+/* ── CSS-only offset override ──
+   ใช้: <div class="slide-right offset-sm"> หรือ .offset-lg
+   ─────────────────────────────────────────────────────────────────────────── */
 
-    .h-body {
-        display: none;
-    }
+.offset-sm { --anim-offset-x: 30px; --anim-offset-y: 15px; }
+.offset-lg { --anim-offset-x: 100px; --anim-offset-y: 50px; }
 
-    .br-i {
-        padding: 90px 25px 50px !important;
-        margin-top: -75px
-    }
+/* ── Duration override ── */
+.duration-fast   { --anim-duration: 300ms; }
+.duration-slow   { --anim-duration: 700ms; }
 
-    .p-body {
-        display: block !important;
-    }
 
-    .embed-row {
-        flex-direction: column
-    }
+/* =============================================================================
+   SCROLL-TO-TOP BUTTON
+   ============================================================================= */
 
-    .embed,
-    .col-lg-4 {
-        width: 100% !important
-    }
-
-    .social-box:hover .svg-inline--fa.back {
-        transform: scale(2) rotate(15deg) translateX(17rem) translateY(-3.9rem)
-    }
-
-    .social-box:hover .fa-iam48.back {
-        transform: scale(2) rotate(30deg) translateX(16rem) translateY(-8.3rem)
-    }
-
-    .ig-banner:hover .icon-svg.back,
-    .tiktok-banner:hover .icon-svg.back {
-        transform: scale(5.6) rotate(15deg) translateX(6rem) translateY(-1.1rem)
-    }
-
-    .social-box:hover .fa-iam48.back.live {
-        transform: scale(2) rotate(30deg) translateX(16rem) translateY(-8.3rem)
-    }
-
-    .col-custom-3 {
-        width: 100% !important
-    }
-
-    .b-ce {
-        width: 100% !important
-    }
+#scroll-to-top {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    background: var(--c-primary);
+    color: var(--c-light);
+    border: none;
+    border-radius: 50%;
+    width: 50px; height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 1000;
 }
 
-.collaboration {
-    text-align: center;
-    padding: var(--r-base) var(--r-large);
-    /* ใช้ตัวแปร */
-    font-size: 12px;
-    background-color: #f8fafc;
-    color: #94a3b8
+#scroll-to-top.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.footer-bottom {
-    padding: 15px 0;
-    background-color: #ffe4e6;
-    color: #665b5c
-}
 
-.container,
-.container-fluid {
-    --bs-gutter-x: 3rem
-}
-
-.ft-license {
-    font-size: 10px
-}
-
-.text-nowrap a {
-    text-decoration: none;
-    color: #94a3b8
-}
+/* =============================================================================
+   NAV SWITCHER
+   ============================================================================= */
 
 .switcher {
     position: fixed;
@@ -810,28 +733,31 @@ a {
     border: none;
     border-radius: 999px;
     background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent), inset 1.8px 3px 0 -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), inset -2px -2px 0 -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), inset -.3px -1px 4px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 0 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0 1px 5px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0 6px 16px 0 color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
-    box-sizing: border-box
+    box-shadow: var(--glass-shadow);
+    box-sizing: border-box;
 }
 
 .switcher__track {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 8px
+    gap: 8px;
 }
 
 .switcher__indicator {
     position: absolute;
-    left: -8px;
-    top: -4px;
+    left: -8px; top: -4px;
     width: 84px;
     border-radius: 999px;
     background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
     box-shadow: var(--glass-shadow);
-    transition: transform 420ms cubic-bezier(1, 0, .4, 1), width 420ms cubic-bezier(1, 0, .4, 1), background-color 400ms cubic-bezier(1, 0, .4, 1), box-shadow 400ms cubic-bezier(1, 0, .4, 1);
+    transition:
+        transform        420ms cubic-bezier(1, 0, 0.4, 1),
+        width            420ms cubic-bezier(1, 0, 0.4, 1),
+        background-color 400ms cubic-bezier(1, 0, 0.4, 1),
+        box-shadow       400ms cubic-bezier(1, 0, 0.4, 1);
     pointer-events: none;
-    z-index: 0
+    z-index: 0;
 }
 
 .switcher__option {
@@ -842,7 +768,6 @@ a {
     justify-content: center;
     align-items: center;
     padding: 0 var(--r-base);
-    width: auto;
     height: 100%;
     min-height: 50px;
     border-radius: 999px;
@@ -850,54 +775,170 @@ a {
     cursor: pointer;
     transition: color 160ms;
     user-select: none;
-    display: flex
+    display: flex;
 }
 
 .switcher__input {
     clip: rect(0 0 0 0);
-    clip-path: inset(100%);
-    height: 1px;
-    width: 1px;
+    clip-path: inset(10%);
+    height: 1px; width: 1px;
     overflow: hidden;
     position: absolute;
-    white-space: nowrap
+    white-space: nowrap;
 }
 
 .switcher__icon {
     display: block;
     width: 36px;
-    transition: scale 200ms cubic-bezier(.5, 0, 0, 1)
+    transition: scale 200ms cubic-bezier(0.5, 0, 0, 1);
 }
 
 .switcher__option:has(.switcher__input:checked) .switcher__icon {
-    transform: scale(1)
+    transform: scale(1);
 }
 
-._src_GlassElement_GlassElement_module__box {
-    cursor: pointer
+/* =============================================================================
+   BUTTON — BOOTSTRAP OVERRIDE
+   ============================================================================= */
+
+.btn {
+    --bs-btn-border-radius:       var(--r-round) !important;
 }
 
-#scrollToTop {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--c-primary);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s, transform 0.3s;
-    z-index: 1000;
+.btn-primary,
+a {
+    --bs-btn-color:                var(--c-light) !important;
+    --bs-btn-bg:                   var(--c-primary) !important;
+    --bs-btn-border-color:         var(--c-primary) !important;
+    --bs-btn-hover-color:          var(--c-light) !important;
+    --bs-btn-hover-bg:             var(--c-primary-hover) !important;
+    --bs-btn-hover-border-color:   var(--c-primary-hover) !important;
+    --bs-btn-focus-shadow-rgb:     252,128,159 !important;
+    --bs-btn-active-color:         var(--c-light) !important;
+    --bs-btn-active-bg:            var(--c-primary-active) !important;
+    --bs-btn-active-border-color:  var(--c-primary-active) !important;
+    --bs-btn-active-shadow:        inset 0 3px 5px rgba(0,0,0,0.125) !important;
+    --bs-btn-disabled-color:       var(--c-light) !important;
+    --bs-btn-disabled-bg:          var(--c-primary) !important;
+    --bs-btn-disabled-border-color:var(--c-primary) !important;
 }
 
-#scrollToTop.show {
-    opacity: 1;
-    transform: translateY(0);
+
+/* =============================================================================
+   FOOTER
+   ============================================================================= */
+
+.collaboration {
+    text-align: center;
+    padding: var(--r-base) var(--r-large);
+    font-size: 12px;
+    background-color: #f8fafc;
+    color: #94a3b8;
+}
+
+.footer-bottom {
+    padding: 15px 0;
+    background-color: #ffe4e6;
+    color: #665b5c;
+}
+
+.footer-license { font-size: var(--fs-xs); }
+
+.text-nowrap a {
+    text-decoration: none;
+    color: var(--c-content-muted);
+}
+
+.container,
+.container-fluid {
+    --bs-gutter-x: 3rem;
+}
+
+
+/* =============================================================================
+   RESPONSIVE — ≤ 767px (mobile)
+   ============================================================================= */
+
+@media (min-width: 768px) {
+    .bg-video { display: block !important; }
+    .bg-image  { display: none !important; }
+    }
+
+    @media (max-width: 767.98px) {
+    .bg-video { display: none !important; }
+    .bg-image  { display: block !important; }
+
+    .popup-container {
+        max-width: 100%;
+        height: 100%;
+        background: var(--c-light);
+        padding: 50px 20px 50px;
+        border-radius: 0;
+        overflow-x: scroll;
+    }
+
+    /* mobile: ลด offset ลงครึ่งหนึ่ง เพื่อไม่ให้กระตุกเกิน */
+    :root {
+        --anim-offset-x: 30px;
+        --anim-offset-y: 16px;
+    }
+}
+
+
+/* =============================================================================
+   RESPONSIVE — ≤ 1200px (tablet / small desktop)
+   ============================================================================= */
+
+@media (max-width: 1200px) {
+    .container {
+        --bs-gutter-x: 0 !important;
+        max-width: 720px !important;
+    }
+
+    .col-lg-6 { width: 100% !important; }
+
+    #info { padding: 80px 20px; }
+
+    .bio-section-inner.container {
+        flex-direction: column;
+        margin: 0 auto;
+        border-radius: var(--r-base);
+        text-align: center;
+    }
+
+    .hero-half-body-img { display: none; }
+
+    .bio-info-box {
+        padding: 90px 25px 50px !important;
+        margin-top: -75px;
+    }
+
+    .profile { display: block !important; }
+
+    .embed-row         { flex-direction: column; }
+    .embed-block,
+    .col-lg-4          { width: 100% !important; }
+
+    .block-center      { width: 100% !important; }
+    .col-custom-3      { width: 100% !important; }
+
+    /* Back-icon transforms — tablet */
+    .social-box:hover .svg-inline--fa.back        { transform: scale(2) rotate(15deg) translateX(17rem) translateY(-3.9rem); }
+    .social-box:hover .fa-iam48.back              { transform: scale(2) rotate(30deg) translateX(16rem) translateY(-8.3rem); }
+    .social-box:hover .fa-iam48.back.live         { transform: scale(2) rotate(30deg) translateX(16rem) translateY(-8.3rem); }
+    .ig-banner:hover .platform-icon.back,
+    .tiktok-banner:hover .platform-icon.back      { transform: scale(5.6) rotate(15deg) translateX(6rem) translateY(-1.1rem); }
+}
+
+
+/* =============================================================================
+   RESPONSIVE — ≤ 1400px (large tablet)
+   ============================================================================= */
+
+@media (max-width: 1400px) {
+    .ig-banner:hover .platform-icon.back,
+    .tiktok-banner:hover .platform-icon.back    { transform: scale(5.6) rotate(15deg) translateX(4.5rem) translateY(-0.7rem); }
+    .social-box:hover .svg-inline--fa.back      { transform: scale(2) rotate(15deg) translateX(8.5rem) translateY(-1.7rem); }
+    .social-box:hover .fa-iam48.back            { transform: scale(2) rotate(30deg) translateX(7.5rem) translateY(-3.4rem); }
+    .social-box:hover .fa-iam48.back.live       { transform: scale(2) rotate(30deg) translateX(12.5rem) translateY(-6.4rem); }
 }
