@@ -34,7 +34,8 @@ export const SUMMERFEST_2026_SCHEDULE: ActivitySchedule[] = [
             { day: "sat", time: "16:00–16:45", members: ["Neen","Ploen","Praew"] },
             { day: "sat", time: "17:00–17:45", members: ["Galeya","Jew","Nall"] },
             { day: "sat", time: "18:00–18:45", members: ["Rose","Saonoi","Satangpound"] },
-            { day: "sun", time: "10:00–10:45", members: ["Hongyok","Praew","Saonoi"] },
+            // [FIX] sun 10:00: เพิ่ม Emmy, เอา Saonoi ออก (ตามรูป schedule)
+            { day: "sun", time: "10:00–10:45", members: ["Emmy","Hongyok","Praew"] },
             { day: "sun", time: "11:00–11:45", members: ["Grape","Mail","Pancake"] },
             { day: "sun", time: "12:00–12:45", members: ["Arlee","Mint","Proud"] },
             { day: "sun", time: "13:00–13:45", members: ["Monet","Nammonn","Valentine"] },
@@ -59,7 +60,8 @@ export const SUMMERFEST_2026_SCHEDULE: ActivitySchedule[] = [
             { day: "sat", time: "10:00–10:45", members: ["Nall","Nisha","Valentine"] },
             { day: "sat", time: "11:00–11:45", members: ["Blythe","Grape","Mail"] },
             { day: "sat", time: "12:00–12:45", members: ["L","Proud","Valentine"] },
-            { day: "sat", time: "13:00–13:45", members: ["Cartoon","Chifa","Praew"] },
+            // [FIX] sat 13:00: เพิ่ม Nall, เอา Praew ออก (ตามรูป schedule)
+            { day: "sat", time: "13:00–13:45", members: ["Cartoon","Chifa","Nall"] },
             { day: "sat", time: "14:00–14:45", members: ["Inkcha","Lingling","Neen"] },
             { day: "sat", time: "15:00–15:45", members: ["Arlee","Jew","Kwan"] },
             { day: "sat", time: "16:00–16:45", members: ["Hoop","Nana","Pancake"] },
@@ -119,13 +121,15 @@ export const SUMMERFEST_2026_SCHEDULE: ActivitySchedule[] = [
             { day: "fri", time: "17:00–17:45", members: ["Patt","Ploen","Yoghurt"] },
             { day: "fri", time: "18:00–18:45", members: ["Nisha","Praifa","Sindy"] },
             { day: "sat", time: "10:00–10:45", members: ["Micha","Patt","Sindy"] },
-            { day: "sat", time: "11:00–11:45", members: ["Hongyok","Nall","Proud"] },
+            // [FIX] sat 11:00: Praew→Inkcha (ตามประกาศสลับ Praew↔Inkcha วันที่ 28 Mar)
+            { day: "sat", time: "11:00–11:45", members: ["Hongyok","Inkcha","Proud"] },
             { day: "sat", time: "12:00–12:45", members: ["Berry","Khowjow","Marine"] },
             { day: "sat", time: "13:00–13:45", members: ["Blythe","Mirin","Shenae"] },
             { day: "sat", time: "14:00–14:45", members: ["Cartoon","Prae","Wawa"] },
             { day: "sat", time: "15:00–15:45", members: ["Else","Khaimook","Luksorn"] },
             { day: "sat", time: "16:00–16:45", members: ["Lookked","Rose","Saonoi"] },
-            { day: "sat", time: "17:00–17:45", members: ["Inkcha","Jingjing","Palmmy"] },
+            // [FIX] sat 17:00: Inkcha→Praew (ตามประกาศสลับ Praew↔Inkcha วันที่ 28 Mar)
+            { day: "sat", time: "17:00–17:45", members: ["Jingjing","Palmmy","Praew"] },
             { day: "sat", time: "18:00–18:45", members: ["Chifa","Emmy","Galeya"] },
             { day: "sun", time: "10:00–10:45", members: ["Jingjing","L","Nisha"] },
             { day: "sun", time: "11:00–11:45", members: ["Ginna","Mayji","Mint"] },
