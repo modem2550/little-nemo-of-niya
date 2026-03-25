@@ -33,7 +33,7 @@ export default defineConfig({
       rollupOptions: {
         output: {
           manualChunks: {
-              // แยก vendor libraries ออกมาเป็น chunk แยก
+              // แยก vendor libraries ออกมาเป็น chunk แยกgit push --set-upstream origin main
           },
         },
       },

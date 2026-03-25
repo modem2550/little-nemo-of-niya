@@ -17,6 +17,7 @@ export interface DayConfig {
   key: string;
   label: string;
   short: string;
+  date?: string;
 }
 
 export interface PriceConfig {

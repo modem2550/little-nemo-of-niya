@@ -58,13 +58,15 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         <div class="sf-tabs-wrap">
             <div class="sf-tabs d-flex justify-content-center overflow-auto">
                 {[
-                    { id: 'members', icon: 'fa-user-group', label: 'Members' },
-                    { id: 'planner', icon: 'fa-calendar',   label: 'Planner' },
-                    { id: 'summary', icon: 'fa-list-check',  label: 'Summary' },
+                    { id: 'members',      icon: 'fa-user-group',  label: 'Members' },
+                    { id: 'planner',      icon: 'fa-calendar',    label: 'Planner' },
+                    { id: 'happening',    icon: 'fa-circle-dot',  label: 'Now' },
+                    { id: 'summary',      icon: 'fa-list-check',  label: 'Summary' },
                 ].map(({ id, icon, label }) => (
                     <button class={`sf-tab${id === 'members' ? ' active' : ''}`} data-tab={id}>
                         <i class={`fa-solid ${icon}`}></i>{label}
-                        {id === 'summary' && <span class="tab-badge" id="summaryBadge" style="display:none">0</span>}
+                        {id === 'happening' && <span class="tab-badge tab-badge--live" id="nowBadge" style="display:none">LIVE</span>}
+                        {id === 'summary'   && <span class="tab-badge" id="summaryBadge" style="display:none">0</span>}
                     </button>
                 ))}
             </div>
@@ -165,6 +167,14 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         </div>
     </div>
 
+    <!-- TAB: HAPPENING NOW -->
+    <div class="sf-panel" id="panel-happening">
+        <div class="sf-section filter-bar mb-4 mx-auto">
+             <div class="now-section-label now-section-label--live" style="justify-content: center; font-size:var(--fs-body);">Live Happening Activities</div>
+            <div id="nowContent"></div>
+        </div>
+    </div>
+
     <!-- TAB: SUMMARY -->
     <div class="sf-panel" id="panel-summary">
         <div class="sf-section mx-auto">
@@ -186,14 +196,20 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                             <button class={`day-tab day-tab--${d.key}`} data-day={d.key}>{d.short}</button>
                         ))}
                     </div>
-                    <div class="position-relative flex-shrink-0" id="sortDropdownWrap">
-                        <button class="sort-toggle-btn" id="sortToggleBtn" onclick="APP.toggleSortMenu()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M3.5 3.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 12.293zm4 .5a.5.5 0 0 1 0-1h1a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h3a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h5a.5.5 0 0 1 0 1zM7 12.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5"/>
-                            </svg>
-                            Sort <span class="sort-active-label" id="sortActiveLabel">Day Time ↑</span>
+                    <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                        <!-- Export Recap button -->
+                        <button class="btn-outline-sf btn-export-recap" id="exportRecapBtn" onclick="APP.exportRecap()">
+                            <i class="fa-solid fa-image"></i> Export Recap
                         </button>
-                        <div class="sort-menu" id="sortMenu"></div>
+                        <div class="position-relative" id="sortDropdownWrap">
+                            <button class="sort-toggle-btn" id="sortToggleBtn" onclick="APP.toggleSortMenu()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M3.5 3.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 12.293zm4 .5a.5.5 0 0 1 0-1h1a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h3a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h5a.5.5 0 0 1 0 1zM7 12.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5"/>
+                                </svg>
+                                Sort <span class="sort-active-label" id="sortActiveLabel">Day Time ↑</span>
+                            </button>
+                            <div class="sort-menu" id="sortMenu"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive rounded mb-3">
@@ -213,6 +229,16 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                         <i class="fa-solid fa-rotate-left"></i>Reset All
                     </button>
                 </div>
+                <div class="sf-disclaimer mt-4 pb-0">
+                    <div class="mx-auto">
+                        <div class="sf-disclaimer__title">การคำนวณค่าใช้จ่ายใน Planner อ้างอิงจากราคาต่อรายการดังนี้</div>
+                        <ul class="sf-disclaimer__list">
+                            <li>Digital Event Ticket — 250 Bath per Ticket</li>
+                            <li>ฮับขวัญได้(ด้าย)ไหมเจ้า? — 200 THB per Set</li>
+                            <li>ค่าใช้จ่ายที่แสดงเป็นเพียงการประมาณเพื่อช่วยวางแผน และไม่รวมสินค้า Hachi Cha ( <a href="https://www.facebook.com/share/p/1Dd4vvEwzx/">สามารถตรวจสอบราคาได้ที่ <strong>HachiCha</strong></a> ) และ Merchandise </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -225,21 +251,25 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 <i class="fa-solid fa-circle-info"></i> หมายเหตุ
             </div>
             <ul class="sf-disclaimer__list">
-                <li>กิจกรรมอาจมีการปรับรูปแบบหรือเลื่อนเวลาตามความเหมาะสม บริษัทฯ ขอสงวนสิทธิ์เปลี่ยนแปลงโดยไม่แจ้งล่วงหน้า — โปรดติดตามข้อมูลจาก <a href={officialLink} target="_blank"><strong>BNK48 & CGM48 Official</strong></a></li>
-                <li>เวลาที่แสดงใช้เพื่อประกอบการวางแผนเท่านั้น <strong>กรุณาบริหารการใช้บัตรกิจกรรมด้วยตัวท่านเอง</strong></li>
-                <li>ข้อมูลการวางแผนบันทึกไว้ใน localStorage หากมีการอัปเดต ผู้ใช้งานต้องตรวจสอบและแก้ไขด้วยตนเอง</li>
+                <li>ตารางกิจกรรมและรูปแบบกิจกรรมอาจมีการเปลี่ยนแปลงได้ตามความเหมาะสม</li>
+                <li>กิจกรรมอาจมีการปรับรูปแบบหรือเลื่อนเวลาตามความเหมาะสม โปรดติดตามข้อมูลจาก <a href={officialLink} target="_blank"><strong>BNK48 & CGM48 Official</strong></a></li>
+                <li>เวลาที่แสดงใช้เพื่อประกอบการวางแผนเท่านั้น <strong>ผู้ใช้งานควรบริหารการใช้บัตรกิจกรรมด้วยตนเอง</strong></li>
+                <li>ข้อมูลการวางแผนจะถูกบันทึกไว้ในเบราว์เซอร์ของผู้ใช้งาน (localStorage) และอาจต้องปรับแก้ด้วยตนเองหากมีการเปลี่ยนแปลงข้อมูล</li>
             </ul>
             <br />
             <div class="sf-disclaimer__title">
                 <i class="fa-solid fa-circle-info"></i> <strong>Disclaimer</strong>
             </div>
             <ul class="sf-disclaimer__list">
-                <li>เว็บไซต์นี้จัดทำโดยแฟนคลับเพื่อช่วยวางแผนการเข้าร่วมกิจกรรมเท่านั้น ไม่เกี่ยวข้องกับ BNK48 และ CGM48 อย่างเป็นทางการ — <a href="https://www.facebook.com/profile.php?id=61556940780361"><strong>little nemo of Niya</strong> (Niya BNK48 Thailand Fanclub)</a></li>
+                <li>เว็บไซต์นี้จัดทำโดยแฟนคลับเพื่อช่วยวางแผนการเข้าร่วมกิจกรรมเท่านั้น ไม่มีความเกี่ยวข้องหรือการรับรองอย่างเป็นทางการจาก BNK48 หรือ CGM48 หรือหน่วยงานที่เกี่ยวข้อง หากพบปัญหาสามารถแจ้งได้ที่ — <a href="https://www.facebook.com/profile.php?id=61556940780361"><strong>little nemo of Niya</strong> (Niya BNK48 Thailand Fanclub)</a> ทุกช่องทาง</li>
             </ul>
         </div>
     </div>
 
 <div class="sf-toast" id="sfToast"></div>
+
+<!-- Hidden canvas for Export Recap -->
+<canvas id="recapCanvas" style="display:none"></canvas>
 
 <script define:vars={{ cfg }}>
     // ── Bootstrap ────────────────────────────────────────────────────────────
@@ -268,6 +298,17 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 });
                 MEMBER_SCHEDULE_MAP.set(m, rows);
             }
+        }
+    }
+
+    // ── Full schedule index (day → time → activity → members) ─────────────────
+    // Used by Happening Now
+    const FULL_SCHEDULE = {}; // day → [ { time, actSlug, actName, members } ]
+    for (const { activitySlug, slots } of SCHEDULE) {
+        const actName = ACTIVITIES.find((a) => a.slug === activitySlug)?.name ?? activitySlug;
+        for (const { day, time, members } of slots) {
+            FULL_SCHEDULE[day] ??= [];
+            FULL_SCHEDULE[day].push({ time, actSlug: activitySlug, actName, members });
         }
     }
 
@@ -301,6 +342,55 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         if (type === "hub")   return PRICES.hub;
         return ticketsFor(type, name, slug, override) * PRICES.ticket;
     }
+
+    // Parse "HH:MM–HH:MM" → { startMin, endMin }
+    function parseTimeRange(range) {
+        const parts = range.replace(/–|-/g, "–").split("–");
+        const toMin = (s) => {
+            const [h, m] = s.trim().split(":").map(Number);
+            return h * 60 + (m || 0);
+        };
+        return { startMin: toMin(parts[0]), endMin: toMin(parts[1] ?? parts[0]) };
+    }
+
+    // ── Bangkok time helpers ─────────────────────────────────────────────────
+    function bkkNow() {
+        return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" }));
+    }
+
+    function nowMinutes() {
+        const b = bkkNow();
+        return b.getHours() * 60 + b.getMinutes();
+    }
+
+    // ── Detect today's day key from Bangkok date ──────────────────────────────
+    function detectTodayKey() {
+        const b = bkkNow();
+        const y = b.getFullYear();
+        const m = String(b.getMonth() + 1).padStart(2, "0");
+        const d = String(b.getDate()).padStart(2, "0");
+        const todayStr = `${y}-${m}-${d}`; // "2026-03-27"
+
+        const found = DAYS.find((day) => day.date === todayStr);
+        return found?.key ?? null;
+    }
+
+    function updateNowClock() {
+        const b = bkkNow();
+        const hh = String(b.getHours()).padStart(2, "0");
+        const mm = String(b.getMinutes()).padStart(2, "0");
+        const el = document.getElementById("nowClock");
+        if (el) el.textContent = `${hh}:${mm}`;
+
+        const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+        const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        const meta = document.getElementById("nowClockMeta");
+        if (meta) {
+            meta.textContent = `${dayNames[b.getDay()]} ${b.getDate()} ${monthNames[b.getMonth()]} ${b.getFullYear()}`;
+        }
+    }
+
+    updateNowClock(); // render once, no interval needed
 
     // ── State ────────────────────────────────────────────────────────────────
     const state = {
@@ -337,7 +427,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
     const ICON_CHECK = `<i class="fa-solid fa-check"></i>`;
     const ICON_DEL   = `<i class="fa-solid fa-minus"></i>`;
 
-    const memberCard  = (n) => document.querySelector(`.member-card[data-name="${n}"]`);
+    const memberCard  = (n) => document.querySelector(`.member-card[data-name="${CSS.escape(n)}"]`);
     const memberImg   = (n) => memberCard(n)?.dataset.img ?? "";
     const memberMeta  = (n) => ({ brand: memberCard(n)?.dataset.brand ?? "CGM48" });
 
@@ -384,7 +474,8 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         document.querySelectorAll(".sf-panel").forEach((p) => p.classList.remove("active"));
         document.querySelector(`.sf-tab[data-tab="${tabId}"]`)?.classList.add("active");
         document.getElementById(`panel-${tabId}`)?.classList.add("active");
-        if (tabId === "summary") renderSummaryTab();
+        if (tabId === "summary")   renderSummaryTab();
+        if (tabId === "happening") renderHappeningNow();
     }
     document.querySelectorAll(".sf-tab").forEach((btn) =>
         btn.addEventListener("click", () => switchTab(btn.dataset.tab))
@@ -517,7 +608,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
     function removeMemberFromPlanner(name) {
         state.selectedMembers.delete(name);
         state.cart.forEach((_, sid) => { if (sid.endsWith(`__${name}`)) state.cart.delete(sid); });
-        const cardBtn = document.querySelector(`.member-card__select-btn[data-name="${name}"]`);
+        const cardBtn = document.querySelector(`.member-card__select-btn[data-name="${CSS.escape(name)}"]`);
         if (cardBtn) { cardBtn.classList.remove("active"); cardBtn.innerHTML = ICON_ADD + " Add to Planner"; }
         renderSelectedMembersStrip();
         renderPlannerSchedule();
@@ -677,7 +768,337 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         badge.style.display = total > 0 ? "inline" : "none";
     }
 
-    // ── Summary ───────────────────────────────────────────────────────────────
+    // ════════════════════════════════════════════════════════════════════════
+    // HAPPENING NOW
+    // ════════════════════════════════════════════════════════════════════════
+
+    function renderHappeningNow() {
+        const container = document.getElementById("nowContent");
+        if (!container) return;
+
+        const todayKey = detectTodayKey();
+        const nowMin   = nowMinutes();
+
+        // ── ไม่ใช่วันงาน ──────────────────────────────────────────────────────
+        if (!todayKey) {
+            const nowBadge = document.getElementById("nowBadge");
+            if (nowBadge) nowBadge.style.display = "none";
+            container.innerHTML = `<div class="now-nothing-live">
+                <div class="now-nothing-icon"><i class="fa-solid fa-calendar-xmark"></i></div>
+                <div>ไม่มีกิจกรรมตามตารางในเวลานี้</div>
+            </div>`;
+            return;
+        }
+
+        const daySlots = FULL_SCHEDULE[todayKey] ?? [];
+
+        // Group by time, sort chronologically
+        const byTime = {};
+        daySlots.forEach((s) => {
+            byTime[s.time] ??= [];
+            byTime[s.time].push(s);
+        });
+        const sortedTimes = Object.keys(byTime).sort();
+
+        // ── Helper: render act cards for a time slot ──────────────────────────
+        function renderActCards(time, opts = {}) {
+            const slots = byTime[time];
+            const byAct = {};
+            slots.forEach((s) => {
+                byAct[s.actSlug] ??= { actName: s.actName, members: [], actSlug: s.actSlug };
+                s.members.forEach((m) => { if (!byAct[s.actSlug].members.includes(m)) byAct[s.actSlug].members.push(m); });
+            });
+            return Object.values(byAct).map((a) => {
+                const cfg = findAct(a.actName, a.actSlug);
+                const memberPills = a.members.map((m) => {
+                    const img = memberImg(m);
+                    const isSelected = state.selectedMembers.has(m);
+                    const imgEl = img
+                        ? `<img src="${img}" alt="${m}" style="width:20px;height:20px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0${opts.past ? ";opacity:.5" : ""}" onerror="this.style.display='none'">`
+                        : `<span style="width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;background:${cfg.color}22;color:${cfg.color};flex-shrink:0${opts.past ? ";opacity:.5" : ""}">${m[0]}</span>`;
+                    return `<span class="now-member-pill ${isSelected ? "now-member-pill--sel" : ""}">${imgEl}${m}</span>`;
+                }).join("");
+                return `<div class="now-act-card${opts.past ? " now-act-card--past" : ""}">
+                    <div class="now-act-card__header">
+                        <span class="now-act-card__icon" style="background:${cfg.color}${opts.past ? ";opacity:.5" : ""}"><i class="${cfg.icon}"></i></span>
+                        <span class="now-act-card__name"${opts.past ? ' style="opacity:.5"' : ""}>${a.actName}</span>
+                    </div>
+                    <div class="now-member-wrap">${memberPills}</div>
+                </div>`;
+            }).join("");
+        }
+
+        // ── หา current และ next slot ──────────────────────────────────────────
+        let currentTime = null;
+        let nextTime    = null;
+
+        for (const time of sortedTimes) {
+            const { startMin, endMin } = parseTimeRange(time);
+            if (nowMin >= startMin && nowMin < endMin) {
+                currentTime = time;
+            } else if (nowMin < startMin && nextTime === null) {
+                nextTime = time;
+            }
+        }
+
+        // ── Tab badge ─────────────────────────────────────────────────────────
+        const nowBadge = document.getElementById("nowBadge");
+        if (nowBadge) nowBadge.style.display = currentTime ? "inline" : "none";
+
+        // ── Build HTML ─────────────────────────────────────────────────────────
+        let html = "";
+
+        // กำลังเปิด
+        if (currentTime) {
+            html += `<div class="now-section-label now-section-label--live">Now Activities</div>
+            <div class="now-time-block">
+                <div class="now-time-label now-time-label--live">${currentTime}<span class="now-live-badge">LIVE</span></div>
+                <div class="now-act-grid">${renderActCards(currentTime)}</div>
+            </div>`;
+        } else {
+            html += `<div class="now-nothing-live">
+                <div class="now-nothing-icon"><i class="fa-solid fa-clock"></i></div>
+                <div>ยังไม่มีรอบที่เปิดอยู่ตอนนี้</div>
+            </div>`;
+        }
+
+        // รอบถัดไป
+        if (nextTime) {
+            html += `<div class="now-section-label now-section-label--next">Next Round</div>
+            <div class="now-time-block now-time-block--next">
+                <div class="now-time-label now-time-label--next">${nextTime}</div>
+                <div class="now-act-grid">${renderActCards(nextTime)}</div>
+            </div>`;
+        }
+
+        if (!currentTime && !nextTime) {
+            html += `<div class="now-nothing-live" style="margin-top:16px">
+                <div class="now-nothing-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <div>กิจกรรมวันนี้จบแล้ว</div>
+            </div>`;
+        }
+
+        container.innerHTML = html;
+    }
+
+    // Auto-refresh now panel every minute if active
+    setInterval(() => {
+        if (document.getElementById("panel-happening")?.classList.contains("active")) {
+            renderHappeningNow();
+        }
+    }, 60000);
+
+    // ════════════════════════════════════════════════════════════════════════
+    // EXPORT RECAP
+    // ════════════════════════════════════════════════════════════════════════
+
+    async function exportRecap() {
+        const btn = document.getElementById("exportRecapBtn");
+        if (btn) { 
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังสร้าง...`; 
+            btn.disabled = true; 
+        }
+
+        try {
+            // 1. รอให้ฟอนต์โหลดเสร็จก่อนเริ่มวาด (ป้องกันตัวหนังสือหาย/เพี้ยน)
+            await document.fonts.ready;
+
+            const canvas = document.getElementById("recapCanvas");
+            const ctx = canvas.getContext("2d");
+            const W = 800;
+
+            // เตรียมข้อมูล
+            const items = [...state.cart.values()].sort((a, b) => {
+                const dCmp = (DAY_ORDER[a.day] ?? 0) - (DAY_ORDER[b.day] ?? 0);
+                return dCmp || a.time.localeCompare(b.time);
+            });
+
+            let totalTix = 0, totalPrice = 0;
+            const memberSet = new Set();
+            items.forEach((c) => {
+                if (!c.actSlug) c.actSlug = c.sid.split("__")[0];
+                totalTix   += ticketsFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
+                totalPrice += priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
+                memberSet.add(c.member);
+            });
+
+            // ── Layout constants ─────────────────────────────────────────────
+            const PAD = 32, ROW_H = 52, HDR_H = 100, STAT_H = 90, FOOT_H = 60, TITLE_H = 72;
+            const H = TITLE_H + HDR_H + STAT_H + (items.length * ROW_H) + FOOT_H + PAD;
+
+            // 2. จัดการความคมชัด (High-DPI / Retina Scaling)
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = W * dpr;
+            canvas.height = H * dpr;
+            canvas.style.width = `${W}px`;
+            canvas.style.height = `${H}px`;
+            ctx.scale(dpr, dpr); // สเกลทุกอย่างใน Canvas ตามความละเอียดจอ
+
+            // ── Background ───────────────────────────────────────────────────
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, W, H);
+
+            // ── Top accent bar ───────────────────────────────────────────────
+            ctx.fillStyle = "#292848";
+            ctx.fillRect(0, 0, W, 6);
+
+            // ── Title area ───────────────────────────────────────────────────
+            let y = 6;
+            ctx.fillStyle = "#292848";
+            ctx.fillRect(0, y, W, TITLE_H);
+
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 22px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("BNK48 & CGM48 Siam-Nippon Summer Fest 2026", W / 2, y + 34);
+            ctx.font = "14px sans-serif";
+            ctx.fillStyle = "rgba(255,255,255,0.7)";
+            ctx.fillText("My Activity Recap  ·  little-nemo-of-niya", W / 2, y + 58);
+            y += TITLE_H;
+
+            // ── Stats bar ────────────────────────────────────────────────────
+            ctx.fillStyle = "#f6f4fb";
+            ctx.fillRect(0, y, W, STAT_H);
+
+            const stats = [
+                { label: "Rounds",  value: String(items.length) },
+                { label: "Members", value: String(memberSet.size) },
+                { label: "Tickets", value: String(totalTix) },
+                { label: "Total",   value: `฿${totalPrice.toLocaleString()}` },
+            ];
+            const sw = W / stats.length;
+            stats.forEach(({ label, value }, i) => {
+                const sx = i * sw + sw / 2;
+                ctx.textAlign = "center";
+                ctx.font = "bold 24px sans-serif";
+                ctx.fillStyle = "#292848";
+                ctx.fillText(value, sx, y + 42);
+                ctx.font = "12px sans-serif";
+                ctx.fillStyle = "#888";
+                ctx.fillText(label, sx, y + 62);
+            });
+            y += STAT_H;
+
+            // ── Table header ─────────────────────────────────────────────────
+            ctx.fillStyle = "#ede9f7";
+            ctx.fillRect(0, y, W, HDR_H / 2);
+            const cols = [
+                { label: "Member",   x: PAD,       w: 170 },
+                { label: "Activity", x: PAD + 170, w: 200 },
+                { label: "Day",      x: PAD + 370, w: 90  },
+                { label: "Time",     x: PAD + 460, w: 120 },
+                { label: "Round",    x: PAD + 580, w: 60  },
+                { label: "Price",    x: PAD + 640, w: 100 },
+            ];
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillStyle = "#888";
+            cols.forEach(({ label, x }) => {
+                ctx.textAlign = "left";
+                ctx.fillText(label.toUpperCase(), x, y + 26);
+            });
+            y += HDR_H / 2;
+            
+            // ── Rows ─────────────────────────────────────────────────────────
+            const DAY_COLOR = { fri: "#0ea5e9", sat: "#8b5cf6", sun: "#ef4444" };
+
+            items.forEach((c, idx) => {
+                const price  = priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
+                const cfg    = findAct(c.actName, c.actSlug);
+                const rowY   = y + idx * ROW_H;
+
+                ctx.fillStyle = idx % 2 === 0 ? "#ffffff" : "#faf9fd";
+                ctx.fillRect(0, rowY, W, ROW_H);
+
+                ctx.strokeStyle = "#ede9f7";
+                ctx.lineWidth   = 1;
+                ctx.beginPath(); ctx.moveTo(PAD, rowY + ROW_H); ctx.lineTo(W - PAD, rowY + ROW_H); ctx.stroke();
+
+                const midY = rowY + ROW_H / 2 + 5;
+
+                // Dot
+                ctx.fillStyle = cfg.color;
+                ctx.beginPath(); ctx.arc(cols[1].x + 8, midY - 4, 5, 0, Math.PI * 2); ctx.fill();
+
+                ctx.textAlign = "left";
+                ctx.font = "bold 13px sans-serif"; ctx.fillStyle = "#222233";
+                ctx.fillText(c.member,  cols[0].x, midY);
+                ctx.font = "13px sans-serif";      ctx.fillStyle = "#222233";
+                ctx.fillText(c.actName, cols[1].x + 18, midY);
+
+                // 3. Day pill (ใช้มาตรฐานใหม่ ctx.roundRect)
+                const dc = DAY_COLOR[c.day] ?? "#9b90b8";
+                ctx.fillStyle = dc + "33";
+                ctx.beginPath();
+                ctx.roundRect(cols[2].x, rowY + ROW_H / 2 - 10, 60, 20, 10);
+                ctx.fill();
+
+                ctx.fillStyle = dc;
+                ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+                ctx.fillText(c.dayLabel ?? c.day.toUpperCase(), cols[2].x + 30, midY);
+
+                ctx.textAlign = "left";
+                ctx.font = "12px sans-serif"; ctx.fillStyle = "#555";
+                ctx.fillText(c.time, cols[3].x, midY);
+
+                // Round badge
+                ctx.fillStyle = "#292848";
+                ctx.beginPath();
+                ctx.roundRect(cols[4].x, rowY + ROW_H / 2 - 10, 28, 20, 10);
+                ctx.fill();
+
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center";
+                ctx.fillText(String(c.rounds), cols[4].x + 14, midY);
+
+                ctx.textAlign = "right";
+                ctx.font = "bold 13px sans-serif"; ctx.fillStyle = "#292848";
+                ctx.fillText(price > 0 ? `฿${price.toLocaleString()}` : "—", cols[5].x + cols[5].w - PAD, midY);
+            });
+
+            y += items.length * ROW_H;
+
+            // ── Grand total bar ───────────────────────────────────────────────
+            ctx.fillStyle = "#292848";
+            ctx.fillRect(0, y, W, FOOT_H);
+            ctx.font = "bold 14px sans-serif"; ctx.fillStyle = "#ffffff"; ctx.textAlign = "left";
+            ctx.fillText("Grand Total", PAD, y + FOOT_H / 2 + 5);
+            ctx.font = "bold 22px sans-serif"; ctx.textAlign = "right";
+            ctx.fillText(`฿${totalPrice.toLocaleString()}`, W - PAD, y + FOOT_H / 2 + 7);
+
+            // ── Download ─────────────────────────────────────────────────────
+            const link = document.createElement("a");
+            link.download = `summerfest-recap-${Date.now()}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+
+            showToast("บันทึก Recap แล้ว!");
+        } catch (err) {
+            console.error(err);
+            showToast("เกิดข้อผิดพลาด กรุณาลองใหม่");
+        } finally {
+            if (btn) { btn.innerHTML = `<i class="fa-solid fa-image"></i> Export Recap`; btn.disabled = false; }
+        }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // SUMMARY
+    // ════════════════════════════════════════════════════════════════════════
+
     const SORT_OPTIONS = [
         { key: "day",      label: "Time" },
         { key: "member",   label: "Member" },
@@ -833,7 +1254,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         if (!confirm("Reset ทั้งหมด?")) return;
         state.cart.clear();
         state.selectedMembers.forEach((name) => {
-            const btn = document.querySelector(`.member-card__select-btn[data-name="${name}"]`);
+            const btn = document.querySelector(`.member-card__select-btn[data-name="${CSS.escape(name)}"]`);
             if (btn) { btn.classList.remove("active"); btn.innerHTML = ICON_ADD + " Add to Planner"; }
         });
         state.selectedMembers.clear();
@@ -858,7 +1279,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             await Promise.all(
                 (p.selectedMembers ?? []).map(async (name) => {
                     state.selectedMembers.add(name);
-                    const btn = document.querySelector(`.member-card__select-btn[data-name="${name}"]`);
+                    const btn = document.querySelector(`.member-card__select-btn[data-name="${CSS.escape(name)}"]`);
                     if (btn) { btn.classList.add("active"); btn.innerHTML = ICON_CHECK + " Added"; }
                     fetchSchedule(name);
                 })
@@ -867,6 +1288,12 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 if (!item.actSlug) item.actSlug = sid.split("__")[0];
                 state.cart.set(sid, item);
             });
+
+            // restore nowDay button
+            document.querySelectorAll("#nowDateRow [data-nowday]").forEach((b) =>
+                b.classList.toggle("active", b.dataset.nowday === state.nowDay)
+            );
+
             applyMemberCardFilter();
             document.querySelectorAll("#mBrandGroup .ftab").forEach((b) => b.classList.toggle("active", b.dataset.mv === state.mFilterBrand));
             buildMemberPageChips();
@@ -889,6 +1316,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         removeFromCart,
         setSort,
         toggleSortMenu,
+        exportRecap,
     };
     window.APP = APP;
     window.toggleFromMembersTab = (btn) => APP.toggleMember(btn);
