@@ -3,6 +3,7 @@ node_modulescat .github/workflows/deploy.yml
 .astro
 dist
 .DS_Store
+.env
 .env*.local
 .envcat src/lib/global.js
 path.tree
