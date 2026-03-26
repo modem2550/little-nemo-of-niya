@@ -58,6 +58,7 @@ import "../styles/main.css";
 
         <!-- Font Awesome: โหลด async ไม่บล็อก render -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css" integrity="sha256-4rTIfo5GQTi/7UJqoyUJQKzxW8VN/YBH31+Cy+vTZj4=" crossorigin="anonymous" media="print" onload="this.media='all'">
+        
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css" crossorigin="anonymous"></noscript>
 
         <!-- Bootstrap JS: defer แทน is:inline (ไม่บล็อก render) -->
@@ -70,19 +71,20 @@ import "../styles/main.css";
         </script>
 
         <!-- Google Tag Manager -->
-        <script>
-            (function(w: any, d: Document, s: string, l: string, i: string) {
-                w[l] = w[l] || [];
-                w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-                var f = d.getElementsByTagName(s)[0],
-                    // Cast the created element to HTMLScriptElement
-                    j = d.createElement(s) as HTMLScriptElement, 
-                    dl = l != 'dataLayer' ? '&l=' + l : '';
-                
-                j.async = true; // No more error!
-                j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-                f.parentNode?.insertBefore(j, f);
-            })(window, document, 'script', 'dataLayer', 'GTM-P3G8VXDF');
+        <script is:inline>
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-P3G8VXDF');
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-E1FESF3403"></script>
+        <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-E1FESF3403');
         </script>
     </head>
 

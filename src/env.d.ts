@@ -7,6 +7,8 @@ interface ImportMetaEnv {
 
 declare global {
   interface Window {
+    dataLayer: any[];
+    gtag: (command: 'config' | 'event' | 'js' | 'set', ...args: any[]) => void;
     va?: (...args: any[]) => void;
     vaq?: any[];
     vam?: string;
