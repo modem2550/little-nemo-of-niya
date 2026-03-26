@@ -1303,3 +1303,9 @@ tr{
     font-size: 32px;
     opacity: .3;
 }
+
+@media (min-width:435px) {
+    .sf-tab {
+        padding: 12px 16px;
+    }
+}

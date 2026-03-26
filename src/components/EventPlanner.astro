@@ -893,177 +893,210 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
     // ════════════════════════════════════════════════════════════════════════
 
     async function exportRecap() {
-        const btn = document.getElementById("exportRecapBtn");
-        if (btn) { 
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังสร้าง...`; 
-            btn.disabled = true; 
-        }
+        const btn    = document.getElementById("exportRecapBtn");
+        const canvas = document.getElementById("recapCanvas");
+        if (btn) { btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังสร้าง...`; btn.disabled = true; }
 
         try {
-            // 1. รอให้ฟอนต์โหลดเสร็จก่อนเริ่มวาด (ป้องกันตัวหนังสือหาย/เพี้ยน)
+            // ── Load fonts ───────────────────────────────────────────────────
+            const [cssOutfit, cssNoto] = await Promise.all([
+                fetch("https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap").then(r => r.text()),
+                fetch("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap").then(r => r.text()),
+            ]);
+
+            function extractWoff2(css) {
+                const match = css.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2)\)/);
+                return match?.[1] ?? null;
+            }
+
+            const urlOutfit = extractWoff2(cssOutfit);
+            const urlNoto   = extractWoff2(cssNoto);
+            if (!urlOutfit || !urlNoto) throw new Error("Font URL not found");
+
+            const [fontOutfit, fontNoto] = await Promise.all([
+                new FontFace("Outfit", `url(${urlOutfit})`).load(),
+                new FontFace("Noto Sans Thai", `url(${urlNoto})`).load(),
+            ]);
+            document.fonts.add(fontOutfit);
+            document.fonts.add(fontNoto);
             await document.fonts.ready;
 
-            const canvas = document.getElementById("recapCanvas");
-            const ctx = canvas.getContext("2d");
-            const W = 800;
-
-            // เตรียมข้อมูล
+            // ── Data ─────────────────────────────────────────────────────────
             const items = [...state.cart.values()].sort((a, b) => {
                 const dCmp = (DAY_ORDER[a.day] ?? 0) - (DAY_ORDER[b.day] ?? 0);
                 return dCmp || a.time.localeCompare(b.time);
             });
+            items.forEach((c) => { if (!c.actSlug) c.actSlug = c.sid.split("__")[0]; });
 
             let totalTix = 0, totalPrice = 0;
             const memberSet = new Set();
             items.forEach((c) => {
-                if (!c.actSlug) c.actSlug = c.sid.split("__")[0];
                 totalTix   += ticketsFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
                 totalPrice += priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
                 memberSet.add(c.member);
             });
 
-            // ── Layout constants ─────────────────────────────────────────────
-            const PAD = 32, ROW_H = 52, HDR_H = 100, STAT_H = 90, FOOT_H = 60, TITLE_H = 72;
-            const H = TITLE_H + HDR_H + STAT_H + (items.length * ROW_H) + FOOT_H + PAD;
+            // ── Layout ───────────────────────────────────────────────────────
+            const PAD     = 20;
+            const HDR_H   = 64;
+            const STAT_H  = 72;
+            const THEAD_H = 32;
+            const ROW_H   = 46;
+            const FOOT_H  = 56;
+            const W       = 800;
+            const H       = HDR_H + STAT_H + THEAD_H + (items.length * ROW_H) + FOOT_H;
 
-            // 2. จัดการความคมชัด (High-DPI / Retina Scaling)
             const dpr = window.devicePixelRatio || 1;
-            canvas.width = W * dpr;
-            canvas.height = H * dpr;
-            canvas.style.width = `${W}px`;
+            canvas.width        = W * dpr;
+            canvas.height       = H * dpr;
+            canvas.style.width  = `${W}px`;
             canvas.style.height = `${H}px`;
-            ctx.scale(dpr, dpr); // สเกลทุกอย่างใน Canvas ตามความละเอียดจอ
 
-            // ── Background ───────────────────────────────────────────────────
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, W, H);
+            const ctx = canvas.getContext("2d");
+            ctx.scale(dpr, dpr);
 
-            // ── Top accent bar ───────────────────────────────────────────────
-            ctx.fillStyle = "#292848";
-            ctx.fillRect(0, 0, W, 6);
+            // ── Colors ───────────────────────────────────────────────────────
+            const C = {
+                bg:      "#ffffff",
+                surface: "#f6f4fb",
+                border:  "#ede9f7",
+                primary: "#292848",
+                text:    "#222233",
+                muted:   "#999999",
+                fri:     "#0ea5e9",
+                sat:     "#8b5cf6",
+                sun:     "#ef4444",
+            };
+            const DAY_COLOR = { fri: C.fri, sat: C.sat, sun: C.sun };
 
-            // ── Title area ───────────────────────────────────────────────────
-            let y = 6;
-            ctx.fillStyle = "#292848";
-            ctx.fillRect(0, y, W, TITLE_H);
+            // ── Helpers ───────────────────────────────────────────────────────
+            function pill(color, x, y, w, h, r) {
+                ctx.beginPath();
+                ctx.roundRect(x, y, w, h, r);
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
 
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 22px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("BNK48 & CGM48 Siam-Nippon Summer Fest 2026", W / 2, y + 34);
-            ctx.font = "14px sans-serif";
-            ctx.fillStyle = "rgba(255,255,255,0.7)";
-            ctx.fillText("My Activity Recap  ·  little-nemo-of-niya", W / 2, y + 58);
-            y += TITLE_H;
+            function line(x1, y1, x2, y2, color = C.border) {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
 
-            // ── Stats bar ────────────────────────────────────────────────────
-            ctx.fillStyle = "#f6f4fb";
+            function txt(str, x, y, { size = 12, weight = "400", color = C.text, align = "left", font = "Outfit" } = {}) {
+                ctx.font = `${weight} ${size}px "${font}"`;
+                ctx.fillStyle = color;
+                ctx.textAlign = align;
+                ctx.textBaseline = "middle";
+                ctx.fillText(str, x, y);
+            }
+
+            function hasThai(str) { return /[\u0E00-\u0E7F]/.test(str); }
+            function smartFont(str) { return hasThai(str) ? "Noto Sans Thai" : "Outfit"; }
+
+            // ── HEADER ───────────────────────────────────────────────────────
+            let y = 0;
+            ctx.fillStyle = C.primary;
+            ctx.fillRect(0, y, W, HDR_H);
+            txt("BNK48 & CGM48 Siam-Nippon Summer Fest 2026", PAD, y + 22, { size: 14, weight: "700", color: "#ffffff" });
+            txt("My Activity Recap  ·  little-nemo-of-niya",  PAD, y + 44, { size: 11, color: "rgba(255,255,255,0.45)" });
+            y += HDR_H;
+
+            // ── STATS ────────────────────────────────────────────────────────
+            ctx.fillStyle = C.surface;
             ctx.fillRect(0, y, W, STAT_H);
+            line(0, y + STAT_H, W, y + STAT_H);
 
             const stats = [
-                { label: "Rounds",  value: String(items.length) },
-                { label: "Members", value: String(memberSet.size) },
-                { label: "Tickets", value: String(totalTix) },
-                { label: "Total",   value: `฿${totalPrice.toLocaleString()}` },
+                { label: "ROUNDS",  value: String(items.length) },
+                { label: "MEMBERS", value: String(memberSet.size) },
+                { label: "TICKETS", value: String(totalTix), big: true },
+                { label: "TOTAL",   value: `฿${totalPrice.toLocaleString()}` },
             ];
             const sw = W / stats.length;
-            stats.forEach(({ label, value }, i) => {
+            stats.forEach(({ label, value, big }, i) => {
                 const sx = i * sw + sw / 2;
-                ctx.textAlign = "center";
-                ctx.font = "bold 24px sans-serif";
-                ctx.fillStyle = "#292848";
-                ctx.fillText(value, sx, y + 42);
-                ctx.font = "12px sans-serif";
-                ctx.fillStyle = "#888";
-                ctx.fillText(label, sx, y + 62);
+                txt(value, sx, y + 28, { size: big ? 26 : 22, weight: "700", color: C.primary, align: "center" });
+                txt(label, sx, y + 54, { size: 10, color: C.muted, align: "center" });
+                if (i < stats.length - 1) line(i * sw + sw, y + 12, i * sw + sw, y + STAT_H - 12);
             });
             y += STAT_H;
 
-            // ── Table header ─────────────────────────────────────────────────
-            ctx.fillStyle = "#ede9f7";
-            ctx.fillRect(0, y, W, HDR_H / 2);
+            // ── TABLE HEADER ─────────────────────────────────────────────────
+            ctx.fillStyle = C.surface;
+            ctx.fillRect(0, y, W, THEAD_H);
+            line(0, y + THEAD_H, W, y + THEAD_H);
+
             const cols = [
-                { label: "Member",   x: PAD,       w: 170 },
-                { label: "Activity", x: PAD + 170, w: 200 },
-                { label: "Day",      x: PAD + 370, w: 90  },
-                { label: "Time",     x: PAD + 460, w: 120 },
-                { label: "Round",    x: PAD + 580, w: 60  },
-                { label: "Price",    x: PAD + 640, w: 100 },
+                { label: "MEMBER",   x: PAD },
+                { label: "ACTIVITY", x: PAD + 150 },
+                { label: "DAY",      x: PAD + 345 },
+                { label: "TIME",     x: PAD + 420 },
+                { label: "ROUND",    x: PAD + 530 },
+                { label: "PRICE",    x: W - PAD },
             ];
-            ctx.font = "bold 11px sans-serif";
-            ctx.fillStyle = "#888";
             cols.forEach(({ label, x }) => {
-                ctx.textAlign = "left";
-                ctx.fillText(label.toUpperCase(), x, y + 26);
+                const align = label === "PRICE" ? "right" : "left";
+                txt(label, x, y + THEAD_H / 2, { size: 10, weight: "700", color: C.muted, align });
             });
-            y += HDR_H / 2;
-            
-            // ── Rows ─────────────────────────────────────────────────────────
-            const DAY_COLOR = { fri: "#0ea5e9", sat: "#8b5cf6", sun: "#ef4444" };
+            y += THEAD_H;
 
+            // ── ROWS ─────────────────────────────────────────────────────────
             items.forEach((c, idx) => {
-                const price  = priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
-                const cfg    = findAct(c.actName, c.actSlug);
-                const rowY   = y + idx * ROW_H;
+                const price = priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
+                const cfg   = findAct(c.actName, c.actSlug);
+                const ry    = y + idx * ROW_H;
+                const mid   = ry + ROW_H / 2;
 
-                ctx.fillStyle = idx % 2 === 0 ? "#ffffff" : "#faf9fd";
-                ctx.fillRect(0, rowY, W, ROW_H);
+                ctx.fillStyle = C.surface;
+                ctx.fillRect(0, ry, W, ROW_H);
+                line(0, ry + ROW_H, W, ry + ROW_H);
 
-                ctx.strokeStyle = "#ede9f7";
-                ctx.lineWidth   = 1;
-                ctx.beginPath(); ctx.moveTo(PAD, rowY + ROW_H); ctx.lineTo(W - PAD, rowY + ROW_H); ctx.stroke();
+                // avatar
+                const isBNK = memberMeta(c.member).brand === "BNK48";
+                ctx.beginPath();
+                ctx.arc(cols[0].x + 13, mid, 13, 0, Math.PI * 2);
+                ctx.fillStyle = isBNK ? "#e8e4f8" : "#fce8f0";
+                ctx.fill();
+                txt(c.member[0], cols[0].x + 13, mid, { size: 11, weight: "700", color: isBNK ? C.primary : "#c0397a", align: "center" });
 
-                const midY = rowY + ROW_H / 2 + 5;
+                // member name
+                txt(c.member, cols[0].x + 30, mid, { size: 12, weight: "700" });
 
-                // Dot
+                // activity dot + name
+                ctx.beginPath();
+                ctx.arc(cols[1].x + 5, mid, 4, 0, Math.PI * 2);
                 ctx.fillStyle = cfg.color;
-                ctx.beginPath(); ctx.arc(cols[1].x + 8, midY - 4, 5, 0, Math.PI * 2); ctx.fill();
+                ctx.fill();
+                txt(c.actName, cols[1].x + 14, mid, { size: 12, weight: "700", font: smartFont(c.actName) });
 
-                ctx.textAlign = "left";
-                ctx.font = "bold 13px sans-serif"; ctx.fillStyle = "#222233";
-                ctx.fillText(c.member,  cols[0].x, midY);
-                ctx.font = "13px sans-serif";      ctx.fillStyle = "#222233";
-                ctx.fillText(c.actName, cols[1].x + 18, midY);
-
-                // 3. Day pill (ใช้มาตรฐานใหม่ ctx.roundRect)
+                // day pill
                 const dc = DAY_COLOR[c.day] ?? "#9b90b8";
-                ctx.fillStyle = dc + "33";
-                ctx.beginPath();
-                ctx.roundRect(cols[2].x, rowY + ROW_H / 2 - 10, 60, 20, 10);
-                ctx.fill();
+                pill(dc + "22", cols[2].x, mid - 10, 62, 20, 10);
+                txt(c.dayLabel ?? c.day.toUpperCase(), cols[2].x + 31, mid, { size: 10, weight: "700", color: dc, align: "center" });
 
-                ctx.fillStyle = dc;
-                ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
-                ctx.fillText(c.dayLabel ?? c.day.toUpperCase(), cols[2].x + 30, midY);
+                // time
+                txt(c.time, cols[3].x, mid, { size: 12, weight: "700" });
 
-                ctx.textAlign = "left";
-                ctx.font = "12px sans-serif"; ctx.fillStyle = "#555";
-                ctx.fillText(c.time, cols[3].x, midY);
+                // round badge
+                pill(C.primary, cols[4].x, mid - 12, 24, 24, 12);
+                txt(String(c.rounds), cols[4].x + 12, mid, { size: 11, weight: "700", color: "#fff", align: "center" });
 
-                // Round badge
-                ctx.fillStyle = "#292848";
-                ctx.beginPath();
-                ctx.roundRect(cols[4].x, rowY + ROW_H / 2 - 10, 28, 20, 10);
-                ctx.fill();
-
-                ctx.fillStyle = "#fff";
-                ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center";
-                ctx.fillText(String(c.rounds), cols[4].x + 14, midY);
-
-                ctx.textAlign = "right";
-                ctx.font = "bold 13px sans-serif"; ctx.fillStyle = "#292848";
-                ctx.fillText(price > 0 ? `฿${price.toLocaleString()}` : "—", cols[5].x + cols[5].w - PAD, midY);
+                // price
+                txt(price > 0 ? `฿${price.toLocaleString()}` : "—", W - PAD, mid, { size: 12, weight: "700", align: "right" });
             });
 
             y += items.length * ROW_H;
 
-            // ── Grand total bar ───────────────────────────────────────────────
-            ctx.fillStyle = "#292848";
+            // ── FOOTER ───────────────────────────────────────────────────────
+            ctx.fillStyle = C.primary;
             ctx.fillRect(0, y, W, FOOT_H);
-            ctx.font = "bold 14px sans-serif"; ctx.fillStyle = "#ffffff"; ctx.textAlign = "left";
-            ctx.fillText("Grand Total", PAD, y + FOOT_H / 2 + 5);
-            ctx.font = "bold 22px sans-serif"; ctx.textAlign = "right";
-            ctx.fillText(`฿${totalPrice.toLocaleString()}`, W - PAD, y + FOOT_H / 2 + 7);
+            txt("GRAND TOTAL",                                    PAD,     y + 20, { size: 10, color: "rgba(255,255,255,0.45)" });
+            txt(`${totalTix} tickets · ${items.length} rounds`,  PAD,     y + 38, { size: 11, color: "rgba(255,255,255,0.35)" });
+            txt(`฿${totalPrice.toLocaleString()}`,               W - PAD, y + FOOT_H / 2, { size: 22, weight: "700", color: "#fff", align: "right" });
 
             // ── Download ─────────────────────────────────────────────────────
             const link = document.createElement("a");
