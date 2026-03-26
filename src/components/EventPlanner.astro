@@ -60,7 +60,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 {[
                     { id: 'members',      icon: 'fa-user-group',  label: 'Members' },
                     { id: 'planner',      icon: 'fa-calendar',    label: 'Planner' },
-                    { id: 'happening',    icon: 'fa-circle-dot',  label: 'Now' },
+                    { id: 'happening',    icon: 'fa-clock',       label: 'Now' },
                     { id: 'summary',      icon: 'fa-list-check',  label: 'Summary' },
                 ].map(({ id, icon, label }) => (
                     <button class={`sf-tab${id === 'members' ? ' active' : ''}`} data-tab={id}>

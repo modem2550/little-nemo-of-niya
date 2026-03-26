@@ -184,16 +184,16 @@ section {
 }
 
 .hero-title {
-    font-size: var(--fs-display);
     color: var(--c-light);
-    margin-bottom: 4rem;
+    margin-bottom: 7rem;
     text-align: center;
     font-weight: 400 !important;
 }
 
+.hero-button { background: var(--c-light); color: var(--c-primary); border: var(--c-light);}
 .hero-title strong { font-weight: 700 !important; }
 .hero-title h2,
-.hero-title p     { margin: 0; font-weight: 400; letter-spacing: 0.25rem; }
+.hero-title p     { font-weight: 400; letter-spacing: 0.25rem; }
 
 /* Gradient fade at bottom of hero */
 .overlay {
