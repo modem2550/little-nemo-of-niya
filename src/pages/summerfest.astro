@@ -31,9 +31,9 @@ const members = (membersData ?? []).map((m) => ({
         prices={{ ticket: 250, hub: 200 }}
         {members}
         days={[
-            { key: "fri", label: "FRI 27 Mar", short: "FRI 27", date: "2026-03-27" },
-            { key: "sat", label: "SAT 28 Mar", short: "SAT 28", date: "2026-03-28" },
-            { key: "sun", label: "SUN 29 Mar", short: "SUN 29", date: "2026-03-29" },
+            { key: "fri", label: "FRI 27", short: "FRI 27", date: "2026-03-27" },
+            { key: "sat", label: "SAT 28", short: "SAT 28", date: "2026-03-28" },
+            { key: "sun", label: "SUN 29", short: "SUN 29", date: "2026-03-29" },
         ]}
         activities={[
             {
@@ -63,7 +63,7 @@ const members = (membersData ?? []).map((m) => ({
                 icon: "fa-solid fa-gun",
                 color: "#00c2ff",
                 tickets: 1,
-                desc: "ยิงเป้าบอลวางบนแก้วแข่งกับเมมเบอร์ ภายใน 00 วินาที · ชนะรับ Hi-Touch · หลังร่วมกิจกรรมรับ Photo 1 ใบ · 1 Ticket",
+                desc: "ยิงเป้าบอลวางบนแก้วแข่งกับเมมเบอร์ ภายใน 10 วินาที · ชนะรับ Hi-Touch · หลังร่วมกิจกรรมรับ Photo 1 ใบ · 1 Ticket",
             },
             {
                 slug: "don_non_tok",
@@ -72,7 +72,7 @@ const members = (membersData ?? []).map((m) => ({
                 icon: "fa-solid fa-baseball",
                 color: "#ff3b3b",
                 tickets: 2,
-                desc: "รับลูกบอล 3 ลูก · ปาด 0 = Photo+หยิบเอง · ปาด 1 = Photo จากสตาฟ · ปาด 2 = Photo จากเมมเบอร์ · ปาด 3 = Hi-Touch+Photo · 2 Tickets",
+                desc: "รับลูกบอล 3 ลูก · ปาตก 0 = Photo+หยิบเอง · ปาตก 1 = Photo จากสตาฟ · ปาตก 2 = Photo จากเมมเบอร์ · ปาตก 3 = Hi-Touch+Photo · 2 Tickets",
             },
             {
                 slug: "shot_me_girls",
@@ -220,13 +220,13 @@ const members = (membersData ?? []).map((m) => ({
                     { day: "fri", time: "17:00–17:45", members: ["Patt","Ploen","Yoghurt"] },
                     { day: "fri", time: "18:00–18:45", members: ["Nisha","Praifa","Sindy"] },
                     { day: "sat", time: "10:00–10:45", members: ["Micha","Patt","Sindy"] },
-                    { day: "sat", time: "11:00–11:45", members: ["Hongyok","Inkcha","Proud"] },
+                    { day: "sat", time: "11:00–11:45", members: ["Hongyok","Inkcha","Proud"], note: "กิจกรรมในรอบนี้เปลี่ยนแปลงเมมเบอร์จาก Inkcha เข้าร่วมแทน Praew" },
                     { day: "sat", time: "12:00–12:45", members: ["Berry","Khowjow","Marine"] },
                     { day: "sat", time: "13:00–13:45", members: ["Blythe","Mirin","Shenae"] },
                     { day: "sat", time: "14:00–14:45", members: ["Cartoon","Prae","Wawa"] },
                     { day: "sat", time: "15:00–15:45", members: ["Else","Khaimook","Luksorn"] },
                     { day: "sat", time: "16:00–16:45", members: ["Lookked","Rose","Saonoi"] },
-                    { day: "sat", time: "17:00–17:45", members: ["Jingjing","Palmmy","Praew"] },
+                    { day: "sat", time: "17:00–17:45", members: ["Jingjing","Palmmy","Praew"], note: "กิจกรรมในรอบนี้เปลี่ยนแปลงเมมเบอร์จาก Praew เข้าร่วมแทน Inkcha" },
                     { day: "sat", time: "18:00–18:45", members: ["Chifa","Emmy","Galeya"] },
                     { day: "sun", time: "10:00–10:45", members: ["Jingjing","L","Nisha"] },
                     { day: "sun", time: "11:00–11:45", members: ["Ginna","Mayji","Mint"] },
@@ -235,7 +235,8 @@ const members = (membersData ?? []).map((m) => ({
                     { day: "sun", time: "14:00–14:45", members: ["Chifa","Satangpound","Yoghurt"] },
                     { day: "sun", time: "15:00–15:45", members: ["Cartoon","Emmy","Tara"] },
                     { day: "sun", time: "16:00–16:45", members: ["Berry","Monet","Shenae"] },
-                    { day: "sun", time: "17:00–17:45", members: ["Blythe","Hongyok","Khaimook"] },
+                    // [FIX] sun 17:00: Khaimook แทน Nammonn (ตามประกาศ)
+                    { day: "sun", time: "17:00–17:45", members: ["Blythe","Hongyok","Khaimook"], note: "กิจกรรมในรอบนี้เปลี่ยนแปลงเมมเบอร์จาก Khaimook เข้าร่วมแทน Nammonn" },
                 ],
             },
             {
@@ -257,8 +258,8 @@ const members = (membersData ?? []).map((m) => ({
                     { day: "sat", time: "14:00–14:45", members: ["Mint","Nall","Valentine"] },
                     { day: "sat", time: "15:00–15:45", members: ["Hoop","Nisha","Yoghurt"] },
                     { day: "sat", time: "16:00–16:45", members: ["Arlee","Lingling","Nammonn"] },
-                    { day: "sat", time: "17:00–17:45", members: ["Janry","Kwan","Niya"] },
-                    { day: "sat", time: "18:00–18:45", members: ["Blythe","Praew","Punpon"] },
+                    { day: "sat", time: "17:00–17:45", members: ["Blythe","Praew","Punpon"] },
+                    { day: "sat", time: "18:00–18:45", members: ["Janry","Kwan","Niya"] },
                     { day: "sun", time: "10:00–10:45", members: ["Grape","Mail","Mirin"] },
                     { day: "sun", time: "11:00–11:45", members: ["Emmy","Patt","Rose"] },
                     { day: "sun", time: "12:00–12:45", members: ["Galeya","Luksorn","Nana"] },
@@ -282,7 +283,8 @@ const members = (membersData ?? []).map((m) => ({
                     { day: "fri", time: "17:00–17:45", members: ["Marine","Neen","Punpon"] },
                     { day: "fri", time: "18:00–18:45", members: ["Chifa","Hongyok","Lingling"] },
                     { day: "sat", time: "10:00–10:45", members: ["Arlee","Jew","Rose"] },
-                    { day: "sat", time: "11:00–11:45", members: ["Emmy","Neen","Mirin"] },
+                    // [FIX] sat 11:00: Neen แทน Janry (ตามประกาศ)
+                    { day: "sat", time: "11:00–11:45", members: ["Emmy","Neen","Mirin"], note: "กิจกรรมในรอบนี้เปลี่ยนแปลงเมมเบอร์จาก Neen เข้าร่วมแทน Janry" },
                     { day: "sat", time: "12:00–12:45", members: ["Fame","Micha","Patt"] },
                     { day: "sat", time: "13:00–13:45", members: ["Khowjow","Nammonn","Saonoi"] },
                     { day: "sat", time: "14:00–14:45", members: ["Marine","Ploen","Yoghurt"] },
@@ -290,7 +292,7 @@ const members = (membersData ?? []).map((m) => ({
                     { day: "sat", time: "16:00–16:45", members: ["Khowjow","Sindy","Wawa"] },
                     { day: "sat", time: "17:00–17:45", members: ["Nisha","Prae","Valentine"] },
                     { day: "sat", time: "18:00–18:45", members: ["Lewlew","Nall","Tara"] },
-                    { day: "sun", time: "00:00–00:45", members: ["Khowjow","Luksorn","Mint"] },
+                    { day: "sun", time: "10:00–10:45", members: ["Khowjow","Luksorn","Mint"] },
                     { day: "sun", time: "11:00–11:45", members: ["Else","Janry","Monet"] },
                     { day: "sun", time: "12:00–12:45", members: ["Else","Ginna","Hongyok"] },
                     { day: "sun", time: "13:00–13:45", members: ["Patt","Satangpound","Wawa"] },
@@ -307,11 +309,11 @@ const members = (membersData ?? []).map((m) => ({
                     { day: "fri", time: "11:00–11:45", members: ["Chifa","Punpon"] },
                     { day: "fri", time: "15:00–15:45", members: ["Lewlew","Punpon"] },
                     { day: "fri", time: "16:00–16:45", members: ["Chifa","Namphet","Tara"] },
-                    { day: "sat", time: "00:00–00:45", members: ["Lewlew","Punpon"] },
+                    { day: "sat", time: "10:00–10:45", members: ["Lewlew","Punpon"] },
                     { day: "sat", time: "11:00–11:45", members: ["Chifa","Namphet","Tara"] },
                     { day: "sat", time: "15:00–15:45", members: ["Chifa","Namphet","Tara"] },
                     { day: "sat", time: "16:00–16:45", members: ["Lewlew","Punpon"] },
-                    { day: "sun", time: "00:00–00:45", members: ["Chifa","Lewlew","Namphet"] },
+                    { day: "sun", time: "10:00–10:45", members: ["Chifa","Lewlew","Namphet"] },
                     { day: "sun", time: "11:00–11:45", members: ["Punpon","Tara"] },
                 ],
             },

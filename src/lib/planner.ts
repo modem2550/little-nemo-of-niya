@@ -29,6 +29,7 @@ export interface ScheduleSlot {
   day: string;
   time: string;
   members: string[];
+  note?:   string;
 }
 
 export interface ScheduleEntry {

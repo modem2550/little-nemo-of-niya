@@ -1309,3 +1309,18 @@ tr{
         padding: 12px 16px;
     }
 }
+
+.slot-note {
+    font-weight: 700;
+}
+
+.member-slot-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.member-slot-row.has-rounds span {
+    background: var(--act-color, var(--c-primary)) !important;
+}

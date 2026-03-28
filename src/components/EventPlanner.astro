@@ -280,7 +280,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
     const MEMBER_SCHEDULE_MAP = new Map();
     for (const { activitySlug, slots } of SCHEDULE) {
         const actName = ACTIVITIES.find((a) => a.slug === activitySlug)?.name ?? activitySlug;
-        for (const { day, time, members } of slots) {
+        for (const { day, time, members, note } of slots) {
             const slotId = `${activitySlug}__${day}__${time}`;
             for (const m of members) {
                 const rows = MEMBER_SCHEDULE_MAP.get(m) ?? [];
@@ -295,6 +295,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                     day,
                     time_range:       time,
                     slot_members:     members,
+                    note:             note ?? null,
                 });
                 MEMBER_SCHEDULE_MAP.set(m, rows);
             }
@@ -303,12 +304,12 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 
     // ── Full schedule index (day → time → activity → members) ─────────────────
     // Used by Happening Now
-    const FULL_SCHEDULE = {}; // day → [ { time, actSlug, actName, members } ]
+    const FULL_SCHEDULE = {}; // day → [ { time, actSlug, actName, members, note } ]
     for (const { activitySlug, slots } of SCHEDULE) {
         const actName = ACTIVITIES.find((a) => a.slug === activitySlug)?.name ?? activitySlug;
-        for (const { day, time, members } of slots) {
+        for (const { day, time, members, note } of slots) {
             FULL_SCHEDULE[day] ??= [];
-            FULL_SCHEDULE[day].push({ time, actSlug: activitySlug, actName, members });
+            FULL_SCHEDULE[day].push({ time, actSlug: activitySlug, actName, members, note });
         }
     }
 
@@ -369,7 +370,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         const y = b.getFullYear();
         const m = String(b.getMonth() + 1).padStart(2, "0");
         const d = String(b.getDate()).padStart(2, "0");
-        const todayStr = `${y}-${m}-${d}`; // "2026-03-27"
+        const todayStr = `${y}-${m}-${d}`;
 
         const found = DAYS.find((day) => day.date === todayStr);
         return found?.key ?? null;
@@ -390,7 +391,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         }
     }
 
-    updateNowClock(); // render once, no interval needed
+    updateNowClock();
 
     // ── State ────────────────────────────────────────────────────────────────
     const state = {
@@ -646,40 +647,47 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
     }
 
     function buildSlotRowHTML(actSlug, slotId, day, entry, firstRow, aType) {
-        return entry.members.map((memberName) => {
-            const sid = `${actSlug}__${slotId}__${memberName}`;
-            const qty = state.cart.get(sid)?.rounds ?? 0;
-            const cfg = findAct(firstRow.activity_name, actSlug);
-            const p = [
-                `'${sid}'`, `'${actSlug}'`, `'${slotId}'`, `'${memberName}'`,
-                `'${encodeURIComponent(firstRow.activity_name)}'`, `'${day}'`,
-                `'${encodeURIComponent(entry.row.time_range)}'`, `'${encodeURIComponent(aType)}'`,
-                firstRow.tickets_required ?? "null",
-                `'${encodeURIComponent((entry.row.slot_members ?? []).join(","))}'`,
-            ].join(",");
-            return `<div class="slot-row ${qty > 0 ? "has-rounds" : ""}" style="--act-color:${cfg.color}">
-                <div class="slot-left">
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <span class="slot-time">${entry.row.time_range}</span>
-                        <span style="background:var(--c-primary);color:#fff;border-radius:100px;padding:1px 8px;font-size:11px;font-weight:700">${memberName}</span>
+        const memberName = entry.members[0]; // representative (คนแรก)
+        const sid = `${actSlug}__${slotId}__${memberName}`;
+        const qty = state.cart.get(sid)?.rounds ?? 0;
+        const cfg = findAct(firstRow.activity_name, actSlug);
+
+        const p = [
+            `'${sid}'`, `'${actSlug}'`, `'${slotId}'`, `'${memberName}'`,
+            `'${encodeURIComponent(firstRow.activity_name)}'`, `'${day}'`,
+            `'${encodeURIComponent(entry.row.time_range)}'`, `'${encodeURIComponent(aType)}'`,
+            firstRow.tickets_required ?? "null",
+            `'${encodeURIComponent((entry.row.slot_members ?? []).join(","))}'`,
+        ].join(",");
+
+        // Badge เฉพาะ member ที่อยู่ใน entry.members
+        const memberBadges = entry.members.map(m =>
+            `<span style="background:var(--c-primary);color:#fff;border-radius:100px;padding:1px 8px;font-size:11px;font-weight:700">${m}</span>`
+        ).join("");
+
+        return `<div class="slot-row ${qty > 0 ? "has-rounds" : ""}" style="--act-color:${cfg.color}">
+                    <div class="slot-left">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="slot-time">${entry.row.time_range}</span>
+                            ${memberBadges}
+                        </div>
+                        ${entry.row.note ? `<div class="act-warn act-warn--warn slot-note"><i class="fa-solid fa-triangle-exclamation"></i> ${entry.row.note}</div>` : ""}
                     </div>
-                </div>
-                <div class="slot-right">
-                    <div class="ticket-form">
-                        <button type="button" class="ticket-btn" ${qty === 0 ? "disabled" : ""} onclick="APP.changeRounds(${p},-1)"><i class="fa-solid fa-minus"></i></button>
-                        <input type="number" class="ticket-qty" value="${qty}" min="0" inputmode="numeric"
-                            data-sid="${sid}" data-actslug="${actSlug}" data-slotid="${slotId}"
-                            data-member="${memberName}" data-actname="${encodeURIComponent(firstRow.activity_name)}"
-                            data-day="${day}" data-time="${encodeURIComponent(entry.row.time_range)}"
-                            data-atype="${encodeURIComponent(aType)}"
-                            data-ticketsreq="${firstRow.tickets_required ?? "null"}"
-                            data-slotmembers="${encodeURIComponent((entry.row.slot_members ?? []).join(","))}"
-                            onchange="APP.setRoundsFromInput(this)">
-                        <button type="button" class="ticket-btn" onclick="APP.changeRounds(${p},1)"><i class="fa-solid fa-plus"></i></button>
+                    <div class="slot-right">
+                        <div class="ticket-form">
+                            <button type="button" class="ticket-btn" ${qty === 0 ? "disabled" : ""} onclick="APP.changeRounds(${p},-1)"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" class="ticket-qty" value="${qty}" min="0" inputmode="numeric"
+                                data-sid="${sid}" data-actslug="${actSlug}" data-slotid="${slotId}"
+                                data-member="${memberName}" data-actname="${encodeURIComponent(firstRow.activity_name)}"
+                                data-day="${day}" data-time="${encodeURIComponent(entry.row.time_range)}"
+                                data-atype="${encodeURIComponent(aType)}"
+                                data-ticketsreq="${firstRow.tickets_required ?? "null"}"
+                                data-slotmembers="${encodeURIComponent((entry.row.slot_members ?? []).join(","))}"
+                                onchange="APP.setRoundsFromInput(this)">
+                            <button type="button" class="ticket-btn" onclick="APP.changeRounds(${p},1)"><i class="fa-solid fa-plus"></i></button>
+                        </div>
                     </div>
-                </div>
-            </div>`;
-        }).join("");
+                </div>`;
     }
 
     function buildActBlockHTML(actSlug, slots, day) {
@@ -779,7 +787,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         const todayKey = detectTodayKey();
         const nowMin   = nowMinutes();
 
-        // ── ไม่ใช่วันงาน ──────────────────────────────────────────────────────
         if (!todayKey) {
             const nowBadge = document.getElementById("nowBadge");
             if (nowBadge) nowBadge.style.display = "none";
@@ -792,7 +799,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 
         const daySlots = FULL_SCHEDULE[todayKey] ?? [];
 
-        // Group by time, sort chronologically
         const byTime = {};
         daySlots.forEach((s) => {
             byTime[s.time] ??= [];
@@ -800,7 +806,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         });
         const sortedTimes = Object.keys(byTime).sort();
 
-        // ── Helper: render act cards for a time slot ──────────────────────────
         function renderActCards(time, opts = {}) {
             const slots = byTime[time];
             const byAct = {};
@@ -828,7 +833,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             }).join("");
         }
 
-        // ── หา current และ next slot ──────────────────────────────────────────
         let currentTime = null;
         let nextTime    = null;
 
@@ -841,14 +845,11 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             }
         }
 
-        // ── Tab badge ─────────────────────────────────────────────────────────
         const nowBadge = document.getElementById("nowBadge");
         if (nowBadge) nowBadge.style.display = currentTime ? "inline" : "none";
 
-        // ── Build HTML ─────────────────────────────────────────────────────────
         let html = "";
 
-        // กำลังเปิด
         if (currentTime) {
             html += `<div class="now-section-label now-section-label--live">Now Activities</div>
             <div class="now-time-block">
@@ -862,7 +863,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             </div>`;
         }
 
-        // รอบถัดไป
         if (nextTime) {
             html += `<div class="now-section-label now-section-label--next">Next Round</div>
             <div class="now-time-block now-time-block--next">
@@ -881,7 +881,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         container.innerHTML = html;
     }
 
-    // Auto-refresh now panel every minute if active
     setInterval(() => {
         if (document.getElementById("panel-happening")?.classList.contains("active")) {
             renderHappeningNow();
@@ -898,7 +897,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         if (btn) { btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังสร้าง...`; btn.disabled = true; }
 
         try {
-            // ── Load fonts ───────────────────────────────────────────────────
             const [cssOutfit, cssNoto] = await Promise.all([
                 fetch("https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap").then(r => r.text()),
                 fetch("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap").then(r => r.text()),
@@ -921,7 +919,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             document.fonts.add(fontNoto);
             await document.fonts.ready;
 
-            // ── Data ─────────────────────────────────────────────────────────
             const items = [...state.cart.values()].sort((a, b) => {
                 const dCmp = (DAY_ORDER[a.day] ?? 0) - (DAY_ORDER[b.day] ?? 0);
                 return dCmp || a.time.localeCompare(b.time);
@@ -936,7 +933,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 memberSet.add(c.member);
             });
 
-            // ── Layout ───────────────────────────────────────────────────────
             const PAD     = 20;
             const HDR_H   = 64;
             const STAT_H  = 72;
@@ -955,7 +951,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             const ctx = canvas.getContext("2d");
             ctx.scale(dpr, dpr);
 
-            // ── Colors ───────────────────────────────────────────────────────
             const C = {
                 bg:      "#ffffff",
                 surface: "#f6f4fb",
@@ -969,7 +964,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             };
             const DAY_COLOR = { fri: C.fri, sat: C.sat, sun: C.sun };
 
-            // ── Helpers ───────────────────────────────────────────────────────
             function pill(color, x, y, w, h, r) {
                 ctx.beginPath();
                 ctx.roundRect(x, y, w, h, r);
@@ -997,7 +991,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             function hasThai(str) { return /[\u0E00-\u0E7F]/.test(str); }
             function smartFont(str) { return hasThai(str) ? "Noto Sans Thai" : "Outfit"; }
 
-            // ── HEADER ───────────────────────────────────────────────────────
             let y = 0;
             ctx.fillStyle = C.primary;
             ctx.fillRect(0, y, W, HDR_H);
@@ -1005,7 +998,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             txt("My Activity Recap  ·  little-nemo-of-niya",  PAD, y + 44, { size: 11, color: "rgba(255,255,255,0.45)" });
             y += HDR_H;
 
-            // ── STATS ────────────────────────────────────────────────────────
             ctx.fillStyle = C.surface;
             ctx.fillRect(0, y, W, STAT_H);
             line(0, y + STAT_H, W, y + STAT_H);
@@ -1025,7 +1017,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             });
             y += STAT_H;
 
-            // ── TABLE HEADER ─────────────────────────────────────────────────
             ctx.fillStyle = C.surface;
             ctx.fillRect(0, y, W, THEAD_H);
             line(0, y + THEAD_H, W, y + THEAD_H);
@@ -1044,7 +1035,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             });
             y += THEAD_H;
 
-            // ── ROWS ─────────────────────────────────────────────────────────
             items.forEach((c, idx) => {
                 const price = priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) * c.rounds;
                 const cfg   = findAct(c.actName, c.actSlug);
@@ -1055,50 +1045,40 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 ctx.fillRect(0, ry, W, ROW_H);
                 line(0, ry + ROW_H, W, ry + ROW_H);
 
-                // avatar
                 const isBNK = memberMeta(c.member).brand === "BNK48";
                 ctx.beginPath();
                 ctx.arc(cols[0].x + 13, mid, 13, 0, Math.PI * 2);
                 ctx.fillStyle = isBNK ? "#e8e4f8" : "#fce8f0";
                 ctx.fill();
                 txt(c.member[0], cols[0].x + 13, mid, { size: 11, weight: "700", color: isBNK ? C.primary : "#c0397a", align: "center" });
-
-                // member name
                 txt(c.member, cols[0].x + 30, mid, { size: 12, weight: "700" });
 
-                // activity dot + name
                 ctx.beginPath();
                 ctx.arc(cols[1].x + 5, mid, 4, 0, Math.PI * 2);
                 ctx.fillStyle = cfg.color;
                 ctx.fill();
                 txt(c.actName, cols[1].x + 14, mid, { size: 12, weight: "700", font: smartFont(c.actName) });
 
-                // day pill
                 const dc = DAY_COLOR[c.day] ?? "#9b90b8";
                 pill(dc + "22", cols[2].x, mid - 10, 62, 20, 10);
                 txt(c.dayLabel ?? c.day.toUpperCase(), cols[2].x + 31, mid, { size: 10, weight: "700", color: dc, align: "center" });
 
-                // time
                 txt(c.time, cols[3].x, mid, { size: 12, weight: "700" });
 
-                // round badge
                 pill(C.primary, cols[4].x, mid - 12, 24, 24, 12);
                 txt(String(c.rounds), cols[4].x + 12, mid, { size: 11, weight: "700", color: "#fff", align: "center" });
 
-                // price
                 txt(price > 0 ? `฿${price.toLocaleString()}` : "—", W - PAD, mid, { size: 12, weight: "700", align: "right" });
             });
 
             y += items.length * ROW_H;
 
-            // ── FOOTER ───────────────────────────────────────────────────────
             ctx.fillStyle = C.primary;
             ctx.fillRect(0, y, W, FOOT_H);
             txt("GRAND TOTAL",                                    PAD,     y + 20, { size: 10, color: "rgba(255,255,255,0.45)" });
             txt(`${totalTix} tickets · ${items.length} rounds`,  PAD,     y + 38, { size: 11, color: "rgba(255,255,255,0.35)" });
             txt(`฿${totalPrice.toLocaleString()}`,               W - PAD, y + FOOT_H / 2, { size: 22, weight: "700", color: "#fff", align: "right" });
 
-            // ── Download ─────────────────────────────────────────────────────
             const link = document.createElement("a");
             link.download = `summerfest-recap-${Date.now()}.png`;
             link.href = canvas.toDataURL("image/png");
@@ -1322,7 +1302,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 state.cart.set(sid, item);
             });
 
-            // restore nowDay button
             document.querySelectorAll("#nowDateRow [data-nowday]").forEach((b) =>
                 b.classList.toggle("active", b.dataset.nowday === state.nowDay)
             );
