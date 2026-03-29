@@ -20,7 +20,7 @@ const schemaData = {
     personSchema: {
         "@context": "https://schema.org",
         "@type": "Person",
-        "@id": "https://little-nemo-of-niya.vercel.app",
+        "@id": "https://little-nemo-of-niya.vercel.app/#person",
         "name": "Niya",
         "alternateName": ["นีญ่า", "Niya BNK48", "นีญ่า บีเอ็นเค48"],
         "description": "สมาชิกของวง BNK48",
@@ -28,7 +28,7 @@ const schemaData = {
             "@type": "Organization",
             "@id": "https://bnk48.com/",
             "name": "BNK48",
-            "logo": "https://bnk48.com/plugins/images/favicon-32.png",
+            "logo": "https://bnk48.com/logo.png",
             "url": "https://bnk48.com/"
         },
         "url": "https://little-nemo-of-niya.vercel.app/",
@@ -154,6 +154,9 @@ const schemaData = {
         <link rel="manifest" href="/site.webmanifest">
         
         <title>{title}</title>
+        
+        <!-- Google Site Verification (ใส่ content value จาก Google Search Console) -->
+        <meta name="google-site-verification" content="LND_1q1wO4RiVRx123fm8FVWPBYCW2EWkpnWWH_hPjY" />
         
         <!-- Schema Markup for SEO -->
         <script type="application/ld+json" set:html={JSON.stringify(schemaData.personSchema)}></script>
