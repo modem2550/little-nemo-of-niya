@@ -1,0 +1,94 @@
+// =============================================================================
+// ANIMATION UTILITIES
+// Scroll-reveal classes, stagger/delay loops, offset & duration modifiers.
+// @keyframes live in animations.scss (imported separately by MainLayout.astro).
+// =============================================================================
+
+@use "mixins" as *;
+
+// ── Base hidden states ────────────────────────────────────────────────────────
+
+.slide-right {
+    opacity: 0;
+    transform: translateX(var(--anim-offset-x, 60px));
+    transition:
+        opacity   var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22, 1, 0.36, 1)) var(--anim-delay, 0ms),
+        transform var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22, 1, 0.36, 1)) var(--anim-delay, 0ms);
+    will-change: opacity, transform;
+}
+
+.slide-left {
+    opacity: 0;
+    transform: translateX(calc(var(--anim-offset-x, 60px) * -1));
+    transition:
+        opacity   var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22, 1, 0.36, 1)) var(--anim-delay, 0ms),
+        transform var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22, 1, 0.36, 1)) var(--anim-delay, 0ms);
+    will-change: opacity, transform;
+}
+
+.fade-in,
+.slide-up {
+    opacity: 0;
+    transform: translateY(var(--anim-offset-y, 30px));
+    transition:
+        opacity   var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22, 1, 0.36, 1)) var(--anim-delay, 0ms),
+        transform var(--anim-duration, 500ms) var(--anim-easing, cubic-bezier(0.22, 1, 0.36, 1)) var(--anim-delay, 0ms);
+    will-change: opacity, transform;
+}
+
+// ── Visible state (JS adds .show) ─────────────────────────────────────────────
+
+.slide-right.show,
+.slide-left.show,
+.fade-in.show,
+.slide-up.show {
+    opacity: 1;
+    transform: translate(0, 0);
+}
+
+// ── CSS-only stagger — 80ms × n (up to 6) ─────────────────────────────────────
+// Usage: <div class="slide-right stagger-3">
+
+@include stagger-delay(6, 80, '.stagger-', 'ms', false, false);
+
+// ── CSS-only section delay — 60ms × n (up to 4) ───────────────────────────────
+// Usage: <section class="delay-s2">
+
+@include stagger-delay(4, 60, '.delay-s', 'ms', false, false);
+
+// ── Offset overrides ──────────────────────────────────────────────────────────
+
+.offset-sm { --anim-offset-x: 30px;  --anim-offset-y: 15px; }
+.offset-lg { --anim-offset-x: 100px; --anim-offset-y: 50px; }
+
+// ── Duration overrides ────────────────────────────────────────────────────────
+
+.duration-fast { --anim-duration: 300ms; }
+.duration-slow { --anim-duration: 700ms; }
+
+// ── Scroll-to-top button ──────────────────────────────────────────────────────
+
+#scroll-to-top {
+    position: fixed;
+    bottom: 35px;
+    right: 20px;
+    background: var(--c-primary);
+    color: var(--c-light);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 1000;
+
+    &.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,86 @@
+// =============================================================================
+// DESIGN TOKENS — CSS Custom Properties
+// All :root variables are kept exactly as-is.
+// SCSS variables are NOT used here so JS runtime overrides (ThemeConfig) work.
+// =============================================================================
+
+:root {
+    // ── Colors ────────────────────────────────────────────────────────────────
+    --c-glass: #bbbbbc;
+    --c-light: #fff;
+    --c-dark: #000;
+    --c-content: #222233;
+    --c-primary: #fc809f;
+    --c-primary-hover: #fb4774;
+
+    // ── Backgrounds ───────────────────────────────────────────────────────────
+    --c-bg: #F7F7F8;
+    --c-surface: #f4ebef;
+    --c-surface-alt: #e7e7e7;
+    --c-border: #D8D8DA;
+
+    // ── Text hierarchy ────────────────────────────────────────────────────────
+    --c-content-secondary: #55556A;
+    --c-content-muted: #888899;
+
+    // ── Group / team colors ───────────────────────────────────────────────────
+    --c-bnk: #cb96c2;
+    --c-cgm: #3CC2B1;
+    --c-biii: #97886b;
+    --c-nv: #ec248e;
+    --c-c: #44bfad;
+    --c-trainee: #93001d;
+
+    // ── Day-of-week accent colors ─────────────────────────────────────────────
+    --c-fri: #0ea5e9;
+    --c-sat: #8b5cf6;
+    --c-sun: #ef4444;
+
+    // ── Transitions ───────────────────────────────────────────────────────────
+    --t-duration: 0.3s;
+    --t-ease-smooth: 0.3s ease;
+
+    // ── Border radius ─────────────────────────────────────────────────────────
+    --r-base: 12px;
+    --r-large: 24px;
+    --r-round: 1000px;
+
+    // ── Glass effect ──────────────────────────────────────────────────────────
+    --op-hover-back: 0.3;
+    --glass-reflex-dark: 1;
+    --glass-reflex-light: 1;
+    --saturation: 150%;
+
+    // ── Platform gradient ─────────────────────────────────────────────────────
+    --bg-instagram: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+
+    // ── Section heading ───────────────────────────────────────────────────────
+    --c-section-text: var(--c-primary);
+
+    // ── Golden Ratio Type Scale (φ = 1.618, base = 16px) ─────────────────────
+    --fs-display: clamp(2.6rem, 5.5vw + 1rem, 4.235rem);
+    --fs-h1: 2.618rem;
+    --fs-h2: 1.618rem;
+    --fs-h3: 1.272rem;
+    --fs-h4: 1.18rem;
+    --fs-h5: 1.125rem;
+    --fs-body: 1rem;
+    --fs-small: 0.618rem;
+    --fs-xs: 0.618rem;
+
+    // ── Animation defaults (JS overrides via inline style) ────────────────────
+    --anim-delay: 0ms;
+    --anim-offset-x: 60px;
+    --anim-offset-y: 30px;
+    --anim-duration: 500ms;
+    --anim-easing: cubic-bezier(0.22, 1, 0.36, 1);
+
+    // ── Page layout & UX ──────────────────────────────────────────────────────
+    --page-max-width: 1200px;
+    --section-pad-y: clamp(3.25rem, 7vw, 5.25rem);
+    --shadow-soft: 0 4px 28px color-mix(in srgb, var(--c-dark) 7%, transparent);
+    --shadow-card:
+        0 1px 0 color-mix(in srgb, var(--c-light) 80%, transparent),
+        0 12px 36px -8px color-mix(in srgb, var(--c-dark) 12%, transparent);
+    --focus-ring-color: color-mix(in srgb, var(--c-primary) 55%, transparent);
+}

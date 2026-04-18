@@ -2,6 +2,7 @@
  * Date Utilities
  * รวมฟังก์ชันสำหรับจัดการวันที่ในโปรเจกต์
  */
+import type { Event } from '../types/event';
 
 export const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 export const MONTHS_TH = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
@@ -71,13 +72,6 @@ export function getEventStatus(eventDate: string, endDate?: string | null) {
 }
 
 // ── Categorize ────────────────────────────────────────────────────────────────
-
-export interface Event {
-  id?: string;
-  date: string;
-  end_date?: string | null;
-  [key: string]: any;
-}
 
 export function categorizeEvents<T extends Event>(events: T[]): { upcoming: T[]; past: T[] } {
   const today = startOfToday();

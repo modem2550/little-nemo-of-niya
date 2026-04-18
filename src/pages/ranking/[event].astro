@@ -1,0 +1,98 @@
+---
+export const prerender = true;
+import MainLayout from "@/layouts/MainLayout.astro";
+import MemberRankingGame from "@/features/ranking/ui/MemberRankingGame";
+import { getRankingEvents } from "@/features/events/eventEngine";
+import "@/styles/ranking.scss";
+import { getSupabase } from "@/services/supabase/server";
+
+export async function getStaticPaths() {
+    const events = getRankingEvents();
+    return events.map((e) => ({
+        params: { event: e.slug },
+        props: { eventData: e },
+    }));
+}
+
+const { eventData } = Astro.props;
+const config = eventData.features.ranking;
+
+if (!config) {
+    throw new Error(`Ranking data missing for event ${eventData.slug}`);
+}
+
+const supabase = getSupabase();
+let query = supabase
+    .from("members")
+    .select("id,name,brand,gen,team,profile_image_url")
+    .is("graduated_at", null)
+    .order("name");
+
+if (config.brandTarget !== "48th") {
+    query = query.eq("brand", config.brandTarget);
+}
+
+const { data: membersData } = await query;
+
+const members = (membersData ?? []).map((m: any) => ({
+    id: m.id,
+    name: m.name,
+    brand: m.brand ?? "CGM48",
+    gen: m.gen ?? "Unknown",
+    team: m.team ?? "Trainee",
+    profile_image_url: m.profile_image_url,
+}));
+
+const title = config.pageTitle;
+const description = config.description;
+const rankingVariants = [
+    { slug: "BNK48", label: "BNK48" },
+    { slug: "CGM48", label: "CGM48" },
+    { slug: "48th", label: "48TH" },
+].filter((variant) => variant.slug !== eventData.slug);
+---
+
+<MainLayout title={title} description={description} theme={eventData.theme}>
+    <nav class="ranking-sub-nav border-0" aria-label="Ranking game variants">
+        <div
+            class="ranking-sub-nav-container d-flex flex-wrap align-items-center justify-content-between gap-3 px-3"
+        >
+            <a
+                href="/planner"
+                class="ranking-sub-nav-back text-white text-decoration-none d-inline-flex align-items-center gap-2 fw-bold small"
+            >
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                <span>Back to Planner</span>
+            </a>
+            <div class="d-flex align-items-center flex-wrap ms-md-auto">
+                {
+                    rankingVariants.map((variant, idx) => (
+                        <>
+                            {idx > 0 && <span class="text-white">|</span>}
+                            <a
+                                href={`/ranking/${variant.slug}`}
+                                class="ranking-sub-nav-link text-white text-decoration-none fw-bold small px-2 py-1 rounded"
+                            >
+                                <span>
+                                    {variant.label} <small>var.</small>
+                                </span>
+                            </a>
+                        </>
+                    ))
+                }
+            </div>
+        </div>
+    </nav>
+
+    <div class="ranking-page-shell">
+        <MemberRankingGame
+            client:visible
+            members={members}
+            storageKey={config.storageKey}
+            totalRounds={config.rounds}
+            primaryColor={eventData.primaryColor}
+            primaryGradient={config.primaryGradient}
+            brand={config.brandTarget}
+        />
+    </div>
+</MainLayout>

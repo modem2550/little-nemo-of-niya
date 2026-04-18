@@ -1,0 +1,10 @@
+// =============================================================================
+// MAIN — Entry point
+// Pulls in all partials. MainLayout.astro imports this file + animations.scss.
+// =============================================================================
+
+@use 'tokens';       // :root CSS custom properties
+@use 'mixins' as *;  // mixins & functions (no CSS output)
+@use 'anim-utils';   // scroll animation utility classes + stagger loops
+@use 'layout';       // global layout, header, nav, hero, bio, footer, policy
+@use 'components';   // social-box map, icons, back-icon hover transforms

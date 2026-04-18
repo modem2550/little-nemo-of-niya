@@ -1,0 +1,52 @@
+// =============================================================================
+// MIXINS & FUNCTIONS
+// =============================================================================
+
+// ── Responsive breakpoints ────────────────────────────────────────────────────
+@mixin bp-max($w) {
+    @media (max-width: $w) { @content; }
+}
+
+@mixin bp-min($w) {
+    @media (min-width: $w) { @content; }
+}
+
+// ── Focus ring (shared between elements) ──────────────────────────────────────
+@mixin focus-ring {
+    outline: 3px solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+// ── LINE gradient builder ──────────────────────────────────────────────────────
+// Usage: line-gradient(0.15)  →  low-opacity version (background)
+//        line-gradient(1)     →  full-opacity version (hover bg)
+@function line-gradient($alpha) {
+    @return linear-gradient(
+        45deg,
+        rgba(0, 211, 200, $alpha)  0%,
+        rgba(0, 208, 173, $alpha)  14.28%,
+        rgba(0, 204, 137, $alpha)  28.56%,
+        rgba(0, 200, 107, $alpha)  42.84%,
+        rgba(0, 197, 83,  $alpha)  57.12%,
+        rgba(0, 195, 67,  $alpha)  71.4%,
+    );
+}
+
+// ── Shared staggered delay loop ───────────────────────────────────────────────
+@mixin stagger-delay($count, $delay, $selector: '&:nth-child', $unit: 'ms', $is-nth: true, $zero-indexed-math: true) {
+    @for $i from 1 through $count {
+        $val: $i * $delay;
+        @if $zero-indexed-math {
+            $val: ($i - 1) * $delay;
+        }
+        @if $is-nth {
+            #{$selector}(#{$i}) {
+                --anim-delay: #{$val}#{$unit};
+            }
+        } @else {
+            #{$selector}#{$i} {
+                --anim-delay: #{$val}#{$unit};
+            }
+        }
+    }
+}

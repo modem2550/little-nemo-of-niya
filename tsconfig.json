@@ -1,0 +1,38 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "allowJs": true,
+    "checkJs": false,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": [
+    ".astro/types.d.ts",
+    "src/**/*",
+    "env.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    ".astro"
+  ]
+}

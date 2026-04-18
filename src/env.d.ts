@@ -3,6 +3,7 @@ interface ImportMetaEnv {
   readonly SUPABASE_ANON_KEY: string;
   readonly ADMIN_TOKEN?: string;
   readonly SPEED_INSIGHTS_TOKEN?: string;
+  readonly VERCEL?: string;
 }
 
 declare global {

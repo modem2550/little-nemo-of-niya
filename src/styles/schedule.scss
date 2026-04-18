@@ -1,0 +1,240 @@
+/* =============================================================================
+   SCHEDULE PAGE — LAYOUT
+   ============================================================================= */
+
+.schedule-page {
+  background-color: var(--c-bg);
+  padding: calc(70px + 2.25rem) var(--r-large) 4.5rem;
+
+  &__title {
+    font-size: clamp(1.85rem, 4vw + 0.5rem, 2.75rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--c-primary);
+    margin: 0 0 0.65rem;
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    color: var(--c-content-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+}
+
+.page-shell.page-main {
+  padding-top: 1.75rem;
+  padding-bottom: 2.5rem;
+}
+
+.events-section {
+  padding: 1.25rem 0;
+}
+
+.event-count {
+  opacity: 0.75;
+  font-size: 0.9em;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3.25rem 1.25rem;
+  border-radius: var(--r-large);
+  background: color-mix(in srgb, var(--c-surface) 90%, var(--c-bg));
+  border: 1px dashed var(--c-border);
+
+  .icon {
+    opacity: 0.35;
+    margin-bottom: 1rem;
+    color: var(--c-content-muted);
+  }
+}
+
+#upcoming-events-container,
+#past-events-container {
+  padding: 24px 0;
+}
+
+#upcoming-events-container {
+  padding: 0 !important;
+  background-color: #ffffff00;
+}
+
+/* =============================================================================
+   EVENT CARD — BASE WRAPPER
+   ============================================================================= */
+
+.event-card-wrapper {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--c-light);
+  border-radius: var(--r-large);
+  border: 1px solid color-mix(in srgb, var(--c-border) 80%, transparent);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0, 1);
+  will-change: transform;
+}
+
+/* =============================================================================
+   EVENT CARD — COVER IMAGE
+   ============================================================================= */
+
+.card-cover-img,
+.card-cover-img--hover {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+}
+
+.card-cover-img--hover {
+  position: absolute;
+  inset: 0;
+  height: 0;
+  opacity: 0;
+  padding-bottom: 100%;
+  transition:
+    opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1),
+    height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1),
+    padding-bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1);
+  will-change: opacity, height;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1);
+  }
+}
+
+.event-card-wrapper:hover {
+  .card-cover-img--hover {
+    height: 100%;
+    padding-bottom: 0;
+    opacity: 1;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+/* =============================================================================
+   EVENT CARD — INFO PANEL
+   ============================================================================= */
+
+.card-info {
+  background: none !important;
+}
+
+.card-content .h5 {
+  font-size: 1.05rem;
+  color: var(--c-content);
+}
+
+/* =============================================================================
+   EVENT CARD — META ROWS (location / date / live)
+   ============================================================================= */
+
+.card-meta-row {
+  grid-template-columns: var(--r-base) auto;
+  color: color-mix(in srgb, var(--c-content) 70%, var(--c-content) 0%);
+
+  p {
+    font-size: 0.95rem;
+  }
+
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+/* =============================================================================
+   EVENT CARD — PAST VARIANT
+   ============================================================================= */
+
+.is-past-event {
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+
+  a {
+    display: flex;
+  }
+
+  article {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .card-detail-link .card-info {
+    background-color: transparent !important;
+  }
+
+  .card-info .card-detail-link {
+    display: block;
+  }
+
+  .event-card-wrapper {
+    display: grid;
+    grid-template-columns: 80px auto;
+    background-color: var(--c-light);
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-radius: 5px;
+
+    &:hover {
+      color: var(--c-content);
+      text-decoration: underline var(--c-primary);
+    }
+  }
+
+  .card-cover-img,
+  .card-cover-img--hover {
+    aspect-ratio: 1 / 1;
+    height: 100px;
+    width: 100px;
+    border-radius: 5px;
+  }
+
+  .card-content {
+    padding: 0 1rem !important;
+
+    .h5 {
+      font-size: 0.95rem;
+    }
+  }
+
+  .card-meta-row p {
+    font-size: 0.75rem;
+  }
+
+  &:hover {
+    .card-content .h5 {
+      text-decoration: underline;
+      text-decoration-color: var(--c-primary);
+    }
+
+    .card-cover-img--hover {
+      opacity: 0;
+    }
+  }
+}
+
+/* =============================================================================
+   EVENT GRID — AUTO-FIT LAYOUT
+   ============================================================================= */
+
+.event-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(289.25px, 1fr));
+  gap: var(--r-large);
+  justify-items: center;
+  color: var(--c-content);
+}
+
+/* btn overrides → handled by main.css Bootstrap override */

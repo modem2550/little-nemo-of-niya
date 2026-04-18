@@ -1,0 +1,82 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { normalizeImages } from '../utils/imageFetcher';
+
+// Mock data simulating external API or CMS response
+const mockData = [
+  {
+    id: 1,
+    name: 'Placeholder Image 1',
+    description: 'First test image from external source.',
+    image: 'https://picsum.photos/id/1018/800/600', // External URL
+  },
+  {
+    id: 2,
+    name: 'Placeholder Image 2',
+    description: 'Second test image from another source.',
+    image: 'https://picsum.photos/id/1015/800/600', // External URL
+  },
+  {
+    id: 3,
+    name: 'Placeholder Image 3 (Duplicate)',
+    description: 'Testing deduplication logic. Should not redownload.',
+    image: 'https://picsum.photos/id/1018/800/600', // Same URL as image 1 to test deduplication
+  }
+];
+
+// During the build, this function will:
+// 1. Download images if not in disk cache
+// 2. Convert them to .webp and save to /public/demmo
+// 3. Return paths like /demmo/[name]-[hash].webp
+// 4. Update the array objects with the local path
+const itemsWithLocalImages = await normalizeImages(mockData, 'image', 'name');
+
+---
+
+<MainLayout title="Build-Time Image Pipeline Demo" description="Testing automatic image fetching and conversion">
+  <main class="container py-5">
+    <h1 class="mb-4 text-center">Image Pipeline Demo</h1>
+    <p class="text-center text-muted mb-5">
+      The images below were originally external URLs. 
+      During the Astro build process, they were downloaded, converted to <code>.webp</code>, 
+      deduplicated, and stored locally in the <code>/public/demmo/</code> directory.
+    </p>
+
+    <div class="row g-4">
+      {itemsWithLocalImages.map((item) => (
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm border-0">
+            {/* The src here is the local generated webp path! NO CORS issues. */}
+            <img 
+              src={item.image} 
+              alt={item.name} 
+              class="card-img-top" 
+              style="object-fit: cover; height: 250px;" 
+              loading="lazy" 
+            />
+            <div class="card-body">
+              <h5 class="card-title">{item.name}</h5>
+              <p class="card-text text-muted">{item.description}</p>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <small class="text-muted d-block text-truncate" title={item.image}>
+                <strong>Local path:</strong> {item.image}
+              </small>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </main>
+</MainLayout>
+
+<style>
+  /* Optional: Extra styles to make the demo page look better */
+  .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+  }
+</style>

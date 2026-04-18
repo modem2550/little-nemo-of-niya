@@ -1,0 +1,62 @@
+---
+export const prerender = true;
+import MainLayout from "@/layouts/MainLayout.astro";
+import EventPlanner from "@/features/planner/EventPlanner.astro";
+import { getPlannerEvents } from "@/features/events/eventEngine";
+import { getSupabase } from "@/services/supabase/server";
+
+export async function getStaticPaths() {
+    const events = getPlannerEvents();
+    const plannerOnlyEvents = events.filter(e => !e.features.planner?.href);
+    return plannerOnlyEvents.map(e => ({
+        params: { event: e.slug },
+        props: { eventData: e },
+    }));
+}
+
+const { eventData } = Astro.props;
+const plannerData = eventData.features.planner;
+
+if (!plannerData) {
+    throw new Error(`Planner data missing for event ${eventData.slug}`);
+}
+
+const supabase = getSupabase();
+const { data: membersData } = await supabase
+    .from("members")
+    .select("id,name,brand,gen,team,profile_image_url")
+    .is("graduated_at", null)
+    .order("name");
+
+const members = (membersData ?? []).map((m: any) => ({
+    ...m,
+    brand: m.brand ?? "CGM48",
+    gen:   m.gen   ?? "Unknown",
+    team:  m.team  ?? "Trainee",
+}));
+---
+
+<MainLayout title={plannerData.pageTitle} theme={eventData.theme}>
+
+    {/* ✅ Visually-hidden H1 for SEO — EventPlanner renders H2 for the visual title */}
+    <h1 class="visually-hidden">{plannerData.pageTitle}</h1>
+
+    <article id="planner-main" aria-label={plannerData.pageTitle}>
+        <EventPlanner
+            eventSlug={eventData.slug}
+            eventName={eventData.name}
+            pageTitle={plannerData.pageTitle}
+            officialLink={plannerData.officialLink}
+            storageKey={plannerData.storageKey}
+            heroImage={plannerData.heroImage}
+            primaryColor={eventData.primaryColor}
+            primaryHover={eventData.primaryHover}
+            prices={plannerData.prices}
+            members={members}
+            days={plannerData.days}
+            activities={plannerData.activities}
+            schedule={plannerData.schedule}
+        />
+    </article>
+
+</MainLayout>

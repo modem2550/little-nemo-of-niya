@@ -1,0 +1,30 @@
+---
+import PlannerView from "@/components/planner/EventPlanner.astro";
+import type {
+    ActivityConfig,
+    DayConfig,
+    PriceConfig,
+    ScheduleEntry,
+} from "@/features/planner/plannerUtils";
+import type { Member } from "@/types/member";
+
+interface Props {
+    eventSlug: string;
+    eventName: string;
+    pageTitle?: string;
+    officialLink: string;
+    storageKey: string;
+    heroImage: string;
+    primaryColor: string;
+    primaryHover: string;
+    prices: PriceConfig;
+    days: DayConfig[];
+    activities: ActivityConfig[];
+    members: Member[];
+    schedule: ScheduleEntry[];
+}
+
+const props = Astro.props as Props;
+---
+
+<PlannerView {...props} />

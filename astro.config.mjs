@@ -1,12 +1,15 @@
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
+import react from '@astrojs/react';
 
 export default defineConfig({
   output: 'server',
   adapter: vercel({
     webAnalytics: { enabled: true },
   }),
-  integrations: [],
+  integrations: [
+    react(),
+  ],
 
   redirects: {
     '/dem._.mo/:slug': '/api/dem._.mo/:slug'
@@ -27,20 +30,14 @@ export default defineConfig({
 
   vite: {
     build: {
-      // minify JS ด้วย esbuild (เร็วกว่า terser)
       minify: 'esbuild',
-      // แยก chunk ให้ browser cache ได้ดีขึ้น
       rollupOptions: {
         output: {
-          manualChunks: {
-              // แยก vendor libraries ออกมาเป็น chunk แยกgit push --set-upstream origin main
-          },
+          manualChunks: {},
         },
       },
-      // กำหนด target ให้เหมาะกับ modern browsers
       target: 'es2020',
     },
-    // minify CSS ตอน build
     css: {
       devSourcemap: false,
     },

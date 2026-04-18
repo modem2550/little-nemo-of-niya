@@ -6,7 +6,7 @@ const ICON_SPEAKER_OFF = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5
 ---
 
 <MainLayout title="404 - Not Found">
-    <main>
+    <div class="page-404">
         <div class="wrap">
             <div class="info">
                 <h1 class="fs-12 fw-400 mb-2">404 PAGE NOT FOUND</h1>
@@ -17,7 +17,7 @@ const ICON_SPEAKER_OFF = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5
                     </svg>
                     back to home
                 </a>
-                <button class="btn btn-sm btn-outline-light btn-rounded fs-12 fw-500 d-inline-block ms-1" id="muteButton">
+                <button type="button" class="btn btn-sm btn-outline-light btn-rounded fs-12 fw-500 d-inline-block ms-1" id="muteButton">
                     play with sound
                     <Fragment set:html={ICON_SPEAKER_ON} />
                 </button>
@@ -29,10 +29,10 @@ const ICON_SPEAKER_OFF = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5
                 </video>
             </div>
         </div>
-    </main>
+    </div>
 
-    <footer class="text-center py-4" style="opacity:0.7;font-size:0.75rem">
-        <p class="text-white mb-0">inspyration From<a href="https://emmafans.vercel.app/" class="text-white fw-bold opacity-75-hover">emmafans By withmywish*</a></p>
+    <footer class="page-404__credit text-center py-4">
+        <p class="mb-0">inspyration From <a href="https://emmafans.vercel.app/" class="page-404__credit-link">emmafans By withmywish*</a></p>
     </footer>
 
     <script>
@@ -51,8 +51,24 @@ const ICON_SPEAKER_OFF = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5
 </MainLayout>
 
 <style is:global>
-    body { background-color: #000; }
+    body { background-color: var(--c-dark); }
     header { display: none; }
+
+    .page-404__credit {
+        font-size: var(--fs-small);
+        opacity: 0.72;
+        color: color-mix(in srgb, var(--c-light) 88%, transparent);
+    }
+
+    .page-404__credit-link {
+        color: var(--c-light) !important;
+        font-weight: 700;
+        margin-left: 0.2em;
+    }
+
+    .page-404__credit-link:hover {
+        color: var(--c-primary) !important;
+    }
 
     .wrap {
         width: auto;
