@@ -16,6 +16,9 @@ jobs:
         uses: withastro/action@v3
         with:
           node-version: 22
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
   deploy:
     needs: build
     runs-on: ubuntu-latest

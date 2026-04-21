@@ -22,11 +22,16 @@ if (!plannerData) {
 }
 
 const supabase = getSupabase();
-const { data: membersData } = await supabase
-    .from("members")
-    .select("id,name,brand,gen,team,profile_image_url")
-    .is("graduated_at", null)
-    .order("name");
+let membersData: any[] | null = null;
+
+if (supabase) {
+    const { data } = await supabase
+        .from("members")
+        .select("id,name,brand,gen,team,profile_image_url")
+        .is("graduated_at", null)
+        .order("name");
+    membersData = data;
+}
 
 const members = (membersData ?? []).map((m: any) => ({
     ...m,

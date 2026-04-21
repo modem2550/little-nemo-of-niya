@@ -5,7 +5,8 @@ export function getSupabase() {
   const key = import.meta.env.SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    throw new Error('Supabase anon env vars not found');
+    console.warn('[getSupabase] Supabase env vars not found — returning null');
+    return null;
   }
 
   return createClient(url, key);

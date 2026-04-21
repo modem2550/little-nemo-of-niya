@@ -22,17 +22,22 @@ if (!config) {
 }
 
 const supabase = getSupabase();
-let query = supabase
-    .from("members")
-    .select("id,name,brand,gen,team,profile_image_url")
-    .is("graduated_at", null)
-    .order("name");
+let membersData: any[] | null = null;
 
-if (config.brandTarget !== "48th") {
-    query = query.eq("brand", config.brandTarget);
+if (supabase) {
+    let query = supabase
+        .from("members")
+        .select("id,name,brand,gen,team,profile_image_url")
+        .is("graduated_at", null)
+        .order("name");
+
+    if (config.brandTarget !== "48th") {
+        query = query.eq("brand", config.brandTarget);
+    }
+
+    const { data } = await query;
+    membersData = data;
 }
-
-const { data: membersData } = await query;
 
 const members = (membersData ?? []).map((m: any) => ({
     id: m.id,
