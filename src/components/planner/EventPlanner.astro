@@ -118,7 +118,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 
 <!-- TAB: MEMBERS -->
 <div class="sf-panel active" id="panel-members">
-    <div class="sf-section-shell mx-auto py-4 pb-0">
+    <div class="sf-section-shell mx-auto p-4 pb-0">
         <div
             class="d-flex flex-column gap-3 bg-white p-4 rounded-4 border mb-4 mx-auto"
         >
@@ -219,7 +219,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 
 <!-- TAB: PLANNER -->
 <div class="sf-panel" id="panel-planner">
-    <div class="sf-section-shell mx-auto py-4 pb-0">
+    <div class="sf-section-shell mx-auto p-4 pb-0">
         <div
             class="planner-empty flex-column align-items-center text-center py-5"
             id="plannerEmpty"
@@ -292,7 +292,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 
 <!-- TAB: HAPPENING NOW -->
 <div class="sf-panel" id="panel-happening">
-    <div class="sf-section-shell mx-auto py-4 pb-0">
+    <div class="sf-section-shell mx-auto p-4 pb-0">
         <div
             class="now-section-label now-section-label--live now-section-label--centered"
         >
@@ -1578,7 +1578,13 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 if (mImg) {
                     ctx.save();
                     ctx.clip();
-                    ctx.drawImage(mImg, cols[0].x, mid - 13, 26, 26);
+                    // object-fit:cover — crop source to a centered square
+                    const sw = mImg.naturalWidth;
+                    const sh = mImg.naturalHeight;
+                    const side = Math.min(sw, sh);
+                    const sx = (sw - side) / 2;
+                    const sy = Math.max(0, (sh - side) * 0.15); // bias toward top (face)
+                    ctx.drawImage(mImg, sx, sy, side, side, cols[0].x, mid - 13, 26, 26);
                     ctx.restore();
                     ctx.lineWidth = 1;
                     ctx.strokeStyle = isBNK ? "#e8e4f8" : "#fce8f0";

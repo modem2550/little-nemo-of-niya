@@ -574,20 +574,6 @@ main {
     &:last-child {
         border-bottom: 0;
     }
-
-    &.has-rounds {
-        background: color-mix(in srgb, var(--c-primary) 6%, #fff);
-
-        &::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--act-color, var(--c-primary));
-        }
-    }
 }
 
 .slot-left {
@@ -1811,7 +1797,7 @@ tr {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
             display: inline-block;
         }
     }
