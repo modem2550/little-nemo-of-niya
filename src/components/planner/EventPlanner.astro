@@ -72,7 +72,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 <a href={officialLink} class="sf-hero__link" target="_blank">
                     BNK48 & CGM48 Official <i
                         class="fa-solid fa-arrow-up-right-from-square ms-1 u-fs-10"
-                        ></i>
+                    ></i>
                 </a>
             </div>
         </div>
@@ -105,10 +105,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                             </span>
                         )}
                         {id === "summary" && (
-                            <span
-                                class="tab-badge d-none"
-                                id="summaryBadge"
-                            >
+                            <span class="tab-badge d-none" id="summaryBadge">
                                 0
                             </span>
                         )}
@@ -121,8 +118,10 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 
 <!-- TAB: MEMBERS -->
 <div class="sf-panel active" id="panel-members">
-    <div class="sf-section-shell mx-auto px-3 py-4 pb-5">
-        <div class="d-flex flex-column gap-3 bg-white p-4 rounded-4 border mb-4 mx-auto">
+    <div class="sf-section-shell mx-auto py-4 pb-0">
+        <div
+            class="d-flex flex-column gap-3 bg-white p-4 rounded-4 border mb-4 mx-auto"
+        >
             <div class="row g-2" id="mBrandGroup">
                 {
                     [
@@ -142,9 +141,14 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                     ))
                 }
             </div>
-            <hr class="filter-divider-thick border-top border-secondary border-opacity-25 opacity-50 my-1 m-0" />
+            <hr
+                class="filter-divider-thick border-top border-secondary border-opacity-25 opacity-50 my-1 m-0"
+            />
             <div id="mGenGroup"></div>
-            <hr class="filter-divider-thick border-top border-secondary border-opacity-25 opacity-50 my-1 m-0 d-none" id="mGenDivider" />
+            <hr
+                class="filter-divider-thick border-top border-secondary border-opacity-25 opacity-50 my-1 m-0 d-none"
+                id="mGenDivider"
+            />
             <div id="mTeamGroup"></div>
         </div>
         <div class="member-cards-grid" id="memberCardsGrid">
@@ -215,9 +219,9 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 
 <!-- TAB: PLANNER -->
 <div class="sf-panel" id="panel-planner">
-    <div class="sf-section-shell sf-section-shell--planner mx-auto px-3">
+    <div class="sf-section-shell mx-auto py-4 pb-0">
         <div
-            class="planner-empty d-flex flex-column align-items-center text-center py-5"
+            class="planner-empty flex-column align-items-center text-center py-5"
             id="plannerEmpty"
         >
             <svg
@@ -244,7 +248,9 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             >
         </div>
         <div id="plannerContent" class="d-none">
-            <div class="d-flex flex-column gap-3 bg-white p-4 rounded-4 border mb-4 mx-auto">
+            <div
+                class="d-flex flex-column gap-3 bg-white p-4 rounded-4 border mb-4 pb-0 mx-auto"
+            >
                 <div class="row g-2 mb-0" id="dayFilterRow">
                     <div class="col-6 col-sm-3">
                         <button class="day-ftab active w-100" data-day="all"
@@ -264,26 +270,29 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                         ))
                     }
                 </div>
-                <hr class="filter-divider-thick border-top border-secondary border-opacity-25 opacity-50 my-1 m-0" />
+                <hr
+                    class="filter-divider-thick border-top border-secondary border-opacity-25 opacity-50 my-1 m-0"
+                />
                 <div
                     class="row g-2 align-items-stretch mb-3"
                     id="actNameFilterRow"
                 >
                 </div>
-                <div
-                    class="d-flex flex-wrap gap-2 mb-3"
-                    id="selectedMembersStrip"
-                >
-                </div>
-                <div id="scheduleBlocks"></div>
             </div>
+            <div
+                class="d-flex flex-nowrap gap-2 mb-3 overflow-x-auto w-100"
+                id="selectedMembersStrip"
+                style="padding-bottom: 4px; scrollbar-width: none;"
+            >
+            </div>
+            <div id="scheduleBlocks"></div>
         </div>
     </div>
 </div>
 
 <!-- TAB: HAPPENING NOW -->
 <div class="sf-panel" id="panel-happening">
-    <div class="sf-section filter-bar mb-4 mx-auto">
+    <div class="sf-section-shell mx-auto py-4 pb-0">
         <div
             class="now-section-label now-section-label--live now-section-label--centered"
         >
@@ -300,22 +309,8 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             class="panel-empty text-center py-5 flex-column align-items-center"
             id="summaryEmpty"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="40"
-                height="40"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-                style="opacity:.3"
-                class="mb-3"
-            >
-                <path
-                    d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 2h-4v3h4zm0 4h-4v3h4zm0 4h-4v3h3a1 1 0 0 0 1-1zm-5 3v-3H6v3zm-5 0v-3H1v2a1 1 0 0 0 1 1zm-4-4h4V8H1zm0-4h4V4H1zm5-3v3h4V4zm4 4H6v3h4z"
-                ></path>
-            </svg>
-            <p
-                class="fw-bold mb-1 summary-empty-title"
-            >
+            <i class="fa-solid fa-arrow-down-short-wide"></i>
+            <p class="fw-bold mb-1 summary-empty-title">
                 ยังไม่มี Round ที่เลือก
             </p>
             <p class="mb-3 summary-empty-subtitle">
@@ -326,24 +321,42 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             >
         </div>
         <div id="summaryContent" class="d-none">
-            <div class="stat-grid mb-3" id="statGrid"></div>
+            <div class="row mb-3" id="statGrid"></div>
             <div
                 class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3"
             >
-                <div class="d-flex gap-2 flex-wrap flex-1" id="summaryDayTabs">
-                    <button class="day-tab active" data-day="all"
-                        >All Days</button
-                    >
-                    {
-                        days.map((d) => (
-                            <button
-                                class={`day-tab day-tab--${d.key}`}
-                                data-day={d.key}
+                <div
+                    class="d-flex gap-2 flex-wrap flex-1"
+                    id="summaryDayTabsWrap"
+                >
+                    <div class="position-relative" id="summaryDayTabs">
+                        <button
+                            class="sort-toggle-btn"
+                            id="dayToggleBtn"
+                            onclick="APP.toggleDayMenu()"
+                        >
+                            <i class="fa-solid fa-arrow-down-short-wide"
+                            ></i><span
+                                class="sort-active-label"
+                                id="dayActiveLabel">All Days</span
                             >
-                                {d.short}
+                        </button>
+                        <div class="sort-menu" id="dayMenu">
+                            <button class="sort-menu-item" data-day="all">
+                                <span>All Days</span>
                             </button>
-                        ))
-                    }
+                            {
+                                days.map((d) => (
+                                    <button
+                                        class="sort-menu-item day-tab"
+                                        data-day={d.key}
+                                    >
+                                        <span>{d.short}</span>
+                                    </button>
+                                ))
+                            }
+                        </div>
+                    </div>
                 </div>
                 <div class="d-flex gap-2 align-items-center flex-shrink-0">
                     <!-- Export Recap button -->
@@ -360,17 +373,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                             id="sortToggleBtn"
                             onclick="APP.toggleSortMenu()"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="13"
-                                height="13"
-                                fill="currentColor"
-                                viewBox="0 0 16 16"
-                            >
-                                <path
-                                    d="M3.5 3.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 12.293zm4 .5a.5.5 0 0 1 0-1h1a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h3a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h5a.5.5 0 0 1 0 1zM7 12.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5"
-                                ></path>
-                            </svg>
+                            <i class="fa-solid fa-arrow-down-short-wide"></i>
                             Sort <span
                                 class="sort-active-label"
                                 id="sortActiveLabel">Day Time ↑</span
@@ -380,7 +383,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                     </div>
                 </div>
             </div>
-            <div class="table-responsive rounded mb-3">
+            <div class="table-responsive rounded">
                 <table class="sf-table w-100">
                     <thead>
                         <tr>
@@ -472,6 +475,25 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 </div>
 
 <div class="sf-toast" id="sfToast"></div>
+
+<!-- Modal for Export Recap -->
+<div id="recapOverlay" class="recap-overlay d-none">
+    <div class="recap-overlay__header">
+        <span class="recap-overlay__hint"
+            ><i class="fa-solid fa-circle-down"></i> กดค้างที่รูปหรือคลิกขวาเพื่อบันทึก</span
+        >
+        <button
+            type="button"
+            class="recap-overlay__close"
+            onclick="APP.closeRecapOverlay()"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <div class="recap-overlay__content">
+        <img id="recapImage" alt="Recap Image" />
+    </div>
+</div>
 
 <!-- Hidden canvas for Export Recap -->
 <canvas id="recapCanvas" class="d-none"></canvas>
@@ -807,11 +829,11 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 <label class="fw-bold planner-muted-text" for="mFilter${fk}">${labelText}</label>
                 <select class="form-select form-select-sm" id="mFilter${fk}" data-mf="${fk}">
                     ${all
-                .map(
-                    ({ v, label }) =>
-                        `<option value="${v}" ${cur === v ? "selected" : ""}>${label}</option>`,
-                )
-                .join("")}
+                        .map(
+                            ({ v, label }) =>
+                                `<option value="${v}" ${cur === v ? "selected" : ""}>${label}</option>`,
+                        )
+                        .join("")}
                 </select>
             </div>`;
         }
@@ -985,7 +1007,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 const imgEl = img
                     ? `<img src="${img}" alt="${name}" class="sel-pill__img" onerror="this.style.display='none'">`
                     : `<span class="sel-pill__img" style="display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;background:rgba(255,255,255,.25)">${name[0]}</span>`;
-                return `<div class="sel-pill">${imgEl}${name}<button class="sel-pill__rm" onclick="APP.removeMember('${name}')" title="Remove">${ICON_DEL}</button></div>`;
+                return `<div class="sel-pill flex-shrink-0">${imgEl}${name}<button class="sel-pill__rm" onclick="APP.removeMember('${name}')" title="Remove">${ICON_DEL}</button></div>`;
             })
             .join("");
     }
@@ -1035,12 +1057,19 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             `'${encodeURIComponent((entry.row.slot_members ?? []).join(","))}'`,
         ].join(",");
 
-        // Badge เฉพาะ member ที่อยู่ใน entry.members
-        const memberBadges = entry.members
-            .map(
-                (m) =>
-                    `<span style="background:var(--c-primary);color:#fff;border-radius:100px;padding:1px 8px;font-size:11px;font-weight:700">${m}</span>`,
-            )
+        // แสดง member ทุกคนที่อยู่ในรอบนั้น (slot_members) หรือถ้าไม่มีก็ใช้ entry.members แทน
+        const slotMembers = entry.row.slot_members?.length
+            ? entry.row.slot_members
+            : entry.members;
+        const memberBadges = slotMembers
+            .map((m) => {
+                const isSelected = entry.members.includes(m);
+                if (isSelected) {
+                    return `<span style="background:var(--c-primary);color:#fff;border-radius:100px;padding:1px 8px;font-size:11px;font-weight:700">${m}</span>`;
+                } else {
+                    return `<span style="background:var(--c-surface-alt);color:var(--c-text-muted);border-radius:100px;padding:1px 8px;font-size:11px;font-weight:500">${m}</span>`;
+                }
+            })
             .join("");
 
         return `<div class="slot-row ${qty > 0 ? "has-rounds" : ""}" style="--act-color:${cfg.color}">
@@ -1095,7 +1124,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             .join("");
 
         return `<div class="act-block slide-up">
-            <div class="act-block__header">
+            <div class="act-block__header" style="background-color: color-mix(in srgb, ${cfg.color}, transparent 90%)">
                 <div class="act-block__left">
                     <div class="act-block__icon" style="background:${cfg.color}"><i class="${cfg.icon}"></i></div>
                     <span class="act-block__name">${firstRow.activity_name}</span>
@@ -1110,11 +1139,11 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         const content = document.getElementById("plannerContent");
         if (!state.selectedMembers.size) {
             empty.style.display = "flex";
-            content.style.display = "none";
+            content.classList.add("d-none");
             return;
         }
         empty.style.display = "none";
-        content.style.display = "block";
+        content.classList.remove("d-none");
         [...state.selectedMembers]
             .filter((n) => !state.memberCache.has(n))
             .forEach((n) => fetchSchedule(n));
@@ -1354,32 +1383,6 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         }
 
         try {
-            const [cssOutfit, cssNoto] = await Promise.all([
-                fetch(
-                    "https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap",
-                ).then((r) => r.text()),
-                fetch(
-                    "https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap",
-                ).then((r) => r.text()),
-            ]);
-
-            function extractWoff2(css) {
-                const match = css.match(
-                    /url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2)\)/,
-                );
-                return match?.[1] ?? null;
-            }
-
-            const urlOutfit = extractWoff2(cssOutfit);
-            const urlNoto = extractWoff2(cssNoto);
-            if (!urlOutfit || !urlNoto) throw new Error("Font URL not found");
-
-            const [fontOutfit, fontNoto] = await Promise.all([
-                new FontFace("Outfit", `url(${urlOutfit})`).load(),
-                new FontFace("Noto Sans Thai", `url(${urlNoto})`).load(),
-            ]);
-            document.fonts.add(fontOutfit);
-            document.fonts.add(fontNoto);
             await document.fonts.ready;
 
             const items = [...state.cart.values()].sort((a, b) => {
@@ -1542,7 +1545,18 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             });
             y += THEAD_H;
 
-            items.forEach((c, idx) => {
+            const loadImg = (src) =>
+                new Promise((resolve) => {
+                    if (!src) return resolve(null);
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => resolve(img);
+                    img.onerror = () => resolve(null);
+                    img.src = src;
+                });
+
+            for (let idx = 0; idx < items.length; idx++) {
+                const c = items[idx];
                 const price =
                     priceFor(c.actType, c.actName, c.actSlug, c.ticketsReq) *
                     c.rounds;
@@ -1557,15 +1571,30 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 const isBNK = memberMeta(c.member).brand === "BNK48";
                 ctx.beginPath();
                 ctx.arc(cols[0].x + 13, mid, 13, 0, Math.PI * 2);
-                ctx.fillStyle = isBNK ? "#e8e4f8" : "#fce8f0";
-                ctx.fill();
-                txt(c.member[0], cols[0].x + 13, mid, {
-                    size: 11,
-                    weight: "700",
-                    color: isBNK ? C.primary : "#c0397a",
-                    align: "center",
-                });
-                txt(c.member, cols[0].x + 30, mid, { size: 12, weight: "700" });
+
+                const mImgSrc = memberImg(c.member);
+                const mImg = await loadImg(mImgSrc);
+
+                if (mImg) {
+                    ctx.save();
+                    ctx.clip();
+                    ctx.drawImage(mImg, cols[0].x, mid - 13, 26, 26);
+                    ctx.restore();
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = isBNK ? "#e8e4f8" : "#fce8f0";
+                    ctx.stroke();
+                } else {
+                    ctx.fillStyle = isBNK ? "#e8e4f8" : "#fce8f0";
+                    ctx.fill();
+                    txt(c.member[0], cols[0].x + 13, mid, {
+                        size: 11,
+                        weight: "700",
+                        color: isBNK ? C.primary : "#c0397a",
+                        align: "center",
+                    });
+                }
+
+                txt(c.member, cols[0].x + 32, mid, { size: 12, weight: "700" });
 
                 ctx.beginPath();
                 ctx.arc(cols[1].x + 5, mid, 4, 0, Math.PI * 2);
@@ -1602,7 +1631,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                     mid,
                     { size: 12, weight: "700", align: "right" },
                 );
-            });
+            }
 
             y += items.length * ROW_H;
 
@@ -1623,12 +1652,14 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 align: "right",
             });
 
-            const link = document.createElement("a");
-            link.download = `summerfest-recap-${Date.now()}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-
-            showToast("บันทึก Recap แล้ว!");
+            const dataUrl = canvas.toDataURL("image/png");
+            const overlay = document.getElementById("recapOverlay");
+            const img = document.getElementById("recapImage");
+            if (overlay && img) {
+                img.src = dataUrl;
+                overlay.classList.remove("d-none");
+                document.body.style.overflow = "hidden";
+            }
         } catch (err) {
             console.error(err);
             showToast("เกิดข้อผิดพลาด กรุณาลองใหม่");
@@ -1676,11 +1707,24 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         document.getElementById("sortToggleBtn").classList.toggle("open", open);
     }
 
+    function toggleDayMenu() {
+        const open = document
+            .getElementById("dayMenu")
+            .classList.toggle("open");
+        document.getElementById("dayToggleBtn").classList.toggle("open", open);
+    }
+
     document.addEventListener("click", (e) => {
-        const wrap = document.getElementById("sortDropdownWrap");
-        if (wrap && !wrap.contains(e.target)) {
+        const sortWrap = document.getElementById("sortDropdownWrap");
+        if (sortWrap && !sortWrap.contains(e.target)) {
             document.getElementById("sortMenu")?.classList.remove("open");
             document.getElementById("sortToggleBtn")?.classList.remove("open");
+        }
+
+        const dayWrap = document.getElementById("summaryDayTabs");
+        if (dayWrap && !dayWrap.contains(e.target)) {
+            document.getElementById("dayMenu")?.classList.remove("open");
+            document.getElementById("dayToggleBtn")?.classList.remove("open");
         }
     });
 
@@ -1704,11 +1748,11 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         const content = document.getElementById("summaryContent");
         if (!state.cart.size) {
             empty.style.display = "flex";
-            content.style.display = "none";
+            content.classList.add("d-none");
             return;
         }
         empty.style.display = "none";
-        content.style.display = "block";
+        content.classList.remove("d-none");
         let totalRounds = 0,
             totalTix = 0,
             totalPrice = 0;
@@ -1736,7 +1780,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         ]
             .map(
                 (s) =>
-                    `<div class="stat-card slide-up"><div class="stat-card__label">${s.label}</div><div class="stat-card__value">${s.value}</div><div class="stat-card__unit">${s.unit}</div></div>`,
+                    `<div class="col mb-3 slide-up show"><div class="stat-card__label">${s.label}</div><div class="stat-card__value">${s.value}</div><div class="stat-card__unit">${s.unit}</div></div>`,
             )
             .join("");
         buildSortBar();
@@ -1871,10 +1915,17 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             const btn = e.target.closest(".day-tab");
             if (!btn) return;
             document
-                .querySelectorAll(".day-tab")
+                .querySelectorAll("#summaryDayTabs .day-tab")
                 .forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
             state.summaryDay = btn.dataset.day;
+
+            const lbl = document.getElementById("dayActiveLabel");
+            if (lbl) lbl.textContent = btn.textContent.trim();
+
+            document.getElementById("dayMenu")?.classList.remove("open");
+            document.getElementById("dayToggleBtn")?.classList.remove("open");
+
             renderSummaryTable();
             saveToStorage();
         });
@@ -1959,17 +2010,27 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                     ),
                 );
             document
-                .querySelectorAll(".day-tab")
-                .forEach((b) =>
-                    b.classList.toggle(
-                        "active",
-                        b.dataset.day === state.summaryDay,
-                    ),
-                );
+                .querySelectorAll("#summaryDayTabs .day-tab")
+                .forEach((b) => {
+                    const isActive = b.dataset.day === state.summaryDay;
+                    b.classList.toggle("active", isActive);
+                    if (isActive) {
+                        const lbl = document.getElementById("dayActiveLabel");
+                        if (lbl) lbl.textContent = b.textContent.trim();
+                    }
+                });
             renderSelectedMembersStrip();
             renderPlannerSchedule();
             updateSummaryBadge();
         } catch {}
+    }
+
+    function closeRecapOverlay() {
+        const overlay = document.getElementById("recapOverlay");
+        if (overlay) {
+            overlay.classList.add("d-none");
+            document.body.style.overflow = "";
+        }
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -1983,7 +2044,9 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         removeFromCart,
         setSort,
         toggleSortMenu,
+        toggleDayMenu,
         exportRecap,
+        closeRecapOverlay,
     };
     window.APP = APP;
     window.toggleFromMembersTab = (btn) => APP.toggleMember(btn);

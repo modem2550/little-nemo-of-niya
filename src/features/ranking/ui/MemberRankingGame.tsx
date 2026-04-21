@@ -12,6 +12,7 @@ import {
 import type { Member } from '@/types/member';
 
 const STORAGE_VERSION = 1;
+const LONG_PRESS_THRESHOLD = 500; // ms
 
 const brandNames: Record<string, string> = {
     BNK48: 'BNK48',
@@ -37,7 +38,7 @@ interface TopRankingResult {
 }
 
 interface ShareCardRef {
-    download: () => Promise<void>;
+    generateImage: () => Promise<string>;
 }
 
 interface ResultShareCardProps {
@@ -49,7 +50,7 @@ interface ResultShareCardProps {
     cardId: string;
 }
 
-type GameState = 'menu' | 'playing' | 'finished' | 'old-results';
+type GameState = 'menu' | 'playing' | 'finished' | 'old-results' | 'view-all-ranking';
 
 interface GameProgress extends PairingState {
     roundCount: number;
@@ -60,10 +61,8 @@ type RankingThemeStyle = CSSProperties & {
     '--ranking-primary': string;
     '--ranking-primary-gradient': string;
     '--ranking-primary-alpha': string;
+    '--rp-accent': string;
 };
-
-const RANKING_BTN_BASE =
-    'btn ranking-ui-btn rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-2';
 
 function createEmptyProgress(): GameProgress {
     return {
@@ -92,16 +91,26 @@ const ResultShareCard = forwardRef<ShareCardRef, ResultShareCardProps>(
         const [isDownloading, setIsDownloading] = useState(false);
         const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-        const download = useCallback(async () => {
-            if (!cardRef.current) return;
+        const generateImage = useCallback(async () => {
+            if (!cardRef.current) throw new Error("Ref not ready");
+            setIsDownloading(true);
             try {
-                setIsDownloading(true);
-                setErrorMessage(null);
-
-                // Wait a bit for images to load
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // Wait for images to fully load and render
+                await new Promise(resolve => setTimeout(resolve, 800));
 
                 const canvas = await new Promise<HTMLCanvasElement>((resolve, reject) => {
+                    if ((window as any).html2canvas) {
+                        (window as any).html2canvas(cardRef.current, {
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#fff',
+                            logging: false,
+                            imageTimeout: 10000, // ⬆️ เพิ่มเวลา timeout สำหรับโหลดรูป
+                            ignoreElements: (element: Element) => element.tagName === 'SCRIPT'
+                        }).then(resolve).catch(reject);
+                        return;
+                    }
                     const script = document.createElement('script');
                     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
                     script.onload = () => {
@@ -111,24 +120,16 @@ const ResultShareCard = forwardRef<ShareCardRef, ResultShareCardProps>(
                             useCORS: true,
                             allowTaint: true,
                             backgroundColor: '#fff',
-                            logging: true,
-                            imageTimeout: 5000,
-                            ignoreElements: (element: Element) => {
-                                return element.tagName === 'SCRIPT';
-                            }
+                            logging: false,
+                            imageTimeout: 10000,
+                            ignoreElements: (element: Element) => element.tagName === 'SCRIPT'
                         }).then(resolve).catch(reject);
                     };
                     script.onerror = () => reject(new Error('Failed to load html2canvas'));
                     document.head.appendChild(script);
                 });
 
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = `oshi-ranking-${new Date().getTime()}.png`;
-                link.click();
-            } catch (err) {
-                console.error('Download failed:', err);
-                setErrorMessage('Failed to generate image. Please try again.');
+                return canvas.toDataURL('image/png');
             } finally {
                 setIsDownloading(false);
             }
@@ -136,9 +137,9 @@ const ResultShareCard = forwardRef<ShareCardRef, ResultShareCardProps>(
 
         useEffect(() => {
             if (ref && typeof ref === 'object') {
-                ref.current = { download };
+                ref.current = { generateImage };
             }
-        }, [download, ref]);
+        }, [generateImage, ref]);
 
         if (!winner) return null;
 
@@ -150,10 +151,10 @@ const ResultShareCard = forwardRef<ShareCardRef, ResultShareCardProps>(
                 ref={cardRef}
                 id={cardId}
                 style={{
-                    position: 'absolute',
-                    top: '-9999px',
+                    position: 'fixed',
+                    top: -9999,
                     left: 0,
-                    opacity: 1,
+                    zIndex: -9999,
                     pointerEvents: 'none',
                     width: '1080px',
                     height: '1350px',
@@ -181,7 +182,7 @@ const ResultShareCard = forwardRef<ShareCardRef, ResultShareCardProps>(
                     onError={() => console.warn('Background image failed to load')}
                 />
 
-                {/* CONTENT AREA — วางบนกระดาษ */}
+                {/* CONTENT AREA */}
                 <div
                     style={{
                         position: 'absolute',
@@ -197,7 +198,7 @@ const ResultShareCard = forwardRef<ShareCardRef, ResultShareCardProps>(
                         boxSizing: 'border-box',
                     }}
                 >
-                    {/* HEADER — Brand + Date */}
+                    {/* HEADER */}
                     <div
                         style={{
                             display: 'flex',
@@ -460,6 +461,154 @@ const ResultShareCard = forwardRef<ShareCardRef, ResultShareCardProps>(
 ResultShareCard.displayName = 'ResultShareCard';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// DOWNLOAD BUTTON WITH LONG-PRESS DETECTION
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface DownloadButtonProps {
+    imageUrl: string;
+    isLoading: boolean;
+    primaryColor: string;
+    primaryGradient?: string;
+}
+
+function DownloadButton({ imageUrl, isLoading, primaryColor, primaryGradient }: DownloadButtonProps) {
+    const [isPressed, setIsPressed] = useState(false);
+    const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const linkRef = useRef<HTMLAnchorElement>(null);
+
+    const handleMouseDown = useCallback(() => {
+        setIsPressed(true);
+        pressTimerRef.current = setTimeout(() => {
+            if (linkRef.current) {
+                linkRef.current.click();
+            }
+        }, LONG_PRESS_THRESHOLD);
+    }, []);
+
+    const handleMouseUp = useCallback(() => {
+        setIsPressed(false);
+        if (pressTimerRef.current) {
+            clearTimeout(pressTimerRef.current);
+            pressTimerRef.current = null;
+        }
+    }, []);
+
+    const handleTouchStart = useCallback(() => {
+        setIsPressed(true);
+        pressTimerRef.current = setTimeout(() => {
+            if (linkRef.current) {
+                linkRef.current.click();
+            }
+        }, LONG_PRESS_THRESHOLD);
+    }, []);
+
+    const handleTouchEnd = useCallback(() => {
+        setIsPressed(false);
+        if (pressTimerRef.current) {
+            clearTimeout(pressTimerRef.current);
+            pressTimerRef.current = null;
+        }
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (pressTimerRef.current) {
+                clearTimeout(pressTimerRef.current);
+            }
+        };
+    }, []);
+
+    if (isLoading) {
+        return (
+            <button
+                type="button"
+                className="ranking-planner-skin__cta"
+                style={{
+                    background: primaryGradient ?? primaryColor,
+                    opacity: 0.65,
+                }}
+                disabled
+            >
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                กำลังเตรียมรูป...
+            </button>
+        );
+    }
+
+    return (
+        <>
+            <a
+                ref={linkRef}
+                href={imageUrl}
+                download={`oshi-ranking-${new Date().getTime()}.png`}
+                style={{ display: 'none' }}
+            />
+            <button
+                type="button"
+                className="ranking-planner-skin__ctaGhost"
+                onClick={() => linkRef.current?.click()}
+                onMouseDown={handleMouseDown}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                aria-pressed={isPressed}
+            >
+                <i className="fa-solid fa-download" aria-hidden="true"></i>
+                บันทึกภาพ
+            </button>
+        </>
+    );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VIEW ALL RANKING SECTION
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface ViewAllRankingProps {
+    rankResults: (Member & { score: number })[];
+    primaryColor: string;
+    onBack: () => void;
+}
+
+function ViewAllRanking({ rankResults, primaryColor, onBack }: ViewAllRankingProps) {
+    const skinStyle = {
+        '--ranking-primary': primaryColor,
+        '--rp-accent': primaryColor,
+    } as CSSProperties;
+
+    return (
+        <section className="ranking-view-all d-flex flex-column" style={skinStyle}>
+            <div className="ranking-view-all__shell d-flex flex-column">
+                <div className="ranking-view-all__header">
+                    <div className="d-flex align-items-center justify-content-between gap-3">
+                        <h2 className="ranking-view-all__title">Oshi Ranking ทั้งหมด</h2>
+                        <button type="button" className="ranking-view-all__close" onClick={onBack} aria-label="ปิด">
+                            <i className="fa-solid fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div className="ranking-view-all__list">
+                    {rankResults.map((member, index) => (
+                        <RankingRow
+                            key={member.id}
+                            member={member}
+                            rank={index + 1}
+                            primaryColor={primaryColor}
+                        />
+                    ))}
+                </div>
+
+                <div className="ranking-view-all__footer">
+                    <small>รวมทั้งหมด {rankResults.length} คน</small>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // MAIN GAME COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -475,8 +624,44 @@ export default function MemberRankingGame({
     const [gameProgress, setGameProgress] = useState<GameProgress>(createEmptyProgress());
     const [oldResults, setOldResults] = useState<TopRankingResult | null>(null);
     const [history, setHistory] = useState<GameProgress[]>([]);
-    const [isSharing, setIsSharing] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
+    const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
+    useEffect(() => {
+        if (gameState === 'finished' || gameState === 'old-results') {
+            if (resultImageUrl || isGeneratingImage) return;
+
+            const triggerGen = async () => {
+                setIsGeneratingImage(true);
+                setErrorMessage(null);
+
+                let retries = 30; // ⬆️ เพิ่มจำนวนครั้งในการรอ ref
+                while (!shareCardRef.current && retries > 0) {
+                    await new Promise(r => setTimeout(r, 100));
+                    retries--;
+                }
+
+                if (shareCardRef.current) {
+                    try {
+                        const url = await shareCardRef.current.generateImage();
+                        setResultImageUrl(url);
+                    } catch (err) {
+                        console.error('Image generation error:', err);
+                        setErrorMessage('เกิดข้อผิดพลาดในการสร้างรูปผลลัพธ์ โปรดลองอีกครั้ง');
+                    }
+                } else {
+                    setErrorMessage('ไม่สามารถสร้างรูปผลลัพธ์ได้ (Missing Ref)');
+                }
+                setIsGeneratingImage(false);
+            };
+
+            triggerGen();
+        } else {
+            setResultImageUrl(null);
+            setIsGeneratingImage(false);
+        }
+    }, [gameState]);
 
     const shareCardRef = useRef<ShareCardRef>(null);
 
@@ -510,7 +695,6 @@ export default function MemberRankingGame({
         (finalState: PairingState) => {
             try {
                 const topRanking = calculateFinalRanking(members, finalState)
-                    .slice(0, 10)
                     .map((m) => ({
                         id: m.id,
                         name: m.name,
@@ -525,7 +709,7 @@ export default function MemberRankingGame({
                     version: STORAGE_VERSION,
                     timestamp: new Date().toISOString(),
                     totalRounds,
-                    topRanking,
+                    topRanking: topRanking.slice(0, 10),
                     allScores: finalState.scores,
                 };
 
@@ -637,21 +821,6 @@ export default function MemberRankingGame({
         });
     }, [memberIds, totalRounds, saveResults]);
 
-    const handleShareResult = useCallback(async () => {
-        if (!shareCardRef.current || isSharing) return;
-
-        try {
-            setIsSharing(true);
-            setErrorMessage(null);
-            await shareCardRef.current.download();
-        } catch (err) {
-            console.error('Could not generate image', err);
-            setErrorMessage('Failed to generate image. Please try again.');
-        } finally {
-            setIsSharing(false);
-        }
-    }, [isSharing]);
-
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (gameState !== 'playing') return;
@@ -681,7 +850,8 @@ export default function MemberRankingGame({
         '--ranking-primary': primaryColor,
         '--ranking-primary-gradient': primaryGradient ?? primaryColor,
         '--ranking-primary-alpha': `${primaryColor}33`,
-    } as any;
+        '--rp-accent': primaryColor,
+    } as RankingThemeStyle;
 
     const currentTop10 = useMemo(() => {
         if (gameState !== 'finished') return [];
@@ -690,43 +860,74 @@ export default function MemberRankingGame({
             .map((m) => ({ ...m, score: gameProgress.scores[m.id] || 0 }));
     }, [members, gameProgress, gameState]);
 
+    const currentAllRanking = useMemo(() => {
+        if (gameState !== 'finished' && gameState !== 'view-all-ranking') return [];
+        return calculateFinalRanking(members, gameProgress)
+            .map((m) => ({ ...m, score: gameProgress.scores[m.id] || 0 }));
+    }, [members, gameProgress, gameState]);
+
     const progressPercent =
         totalRounds > 0 ? Math.min(100, Math.round((gameProgress.roundCount / totalRounds) * 100)) : 0;
+
+    // VIEW ALL RANKING STATE
+    if (gameState === 'view-all-ranking') {
+        return (
+            <ViewAllRanking
+                rankResults={currentAllRanking}
+                primaryColor={primaryColor}
+                onBack={() => setGameState('finished')}
+            />
+        );
+    }
 
     // MENU STATE
     if (gameState === 'menu') {
         return (
             <div
-                className="ranking-container d-flex flex-column align-items-center justify-content-center w-100 px-3 py-5"
+                className="ranking-container d-flex flex-column align-items-center justify-content-center w-100"
                 style={themeStyle}
             >
-                <div className="text-center ranking-menu-content">
-                    <h1 className="fw-bolder mb-3 ranking-title">
-                        ค้นพบโอชิอันดับ 1
-                        <br />ของคุณหรือยัง?
-                    </h1>
-                    <p className="mb-5 mx-auto text-secondary ranking-subtitle">
-                        ค้นหาว่าใครคือที่สุดของใจคุณ จากเมมเบอร์ {members.length} คน
-                    </p>
-                    <div className="ranking-actions">
-                        <button
-                            className={`${RANKING_BTN_BASE} ranking-btn ranking-btn-primary text-white border-0`}
-                            onClick={startGame}
-                            style={{
-                                background: primaryGradient ?? primaryColor,
-                            }}
-                        >
-                            เริ่มเล่นเลย
-                        </button>
-                        {oldResults && (
-                            <button
-                                className={`${RANKING_BTN_BASE} ranking-btn ranking-btn-secondary border bg-light text-dark`}
-                                onClick={() => setGameState('old-results')}
-                            >
-                                <i className="fa-solid fa-clock-rotate-left"></i> ผลลัพธ์ก่อนหน้า
-                            </button>
-                        )}
-                    </div>
+                <div className="ranking-planner-skin ranking-menu-content w-100">
+                    <header className="ranking-planner-skin__intro">
+                        <h1 className="ranking-planner-skin__title">
+                            พร้อมจะค้นพบโอชิอันดับ 1
+                            <br />
+                            ของคุณหรือยัง?
+                        </h1>
+                        <p className="ranking-planner-skin__lead">
+                            ค้นหาว่าใครคือที่สุดของใจคุณ จากเมมเบอร์ {members.length} คน
+                        </p>
+                    </header>
+
+                    <article className="ranking-planner-skin__card" aria-labelledby="ranking-menu-card-heading">
+                        <div className="ranking-planner-skin__cardBody">
+                            <h2 id="ranking-menu-card-heading" className="h6 fw-bold mb-0" style={{ color: 'var(--c-content)' }}>
+                                พร้อมแล้วหรือยัง?
+                            </h2>
+                            <p className="ranking-planner-skin__desc">
+                                ที่จะโอชิในตัวจิงของคุณณณณณ​ 🫵
+                            </p>
+                            <div className="ranking-planner-skin__actions" style={{ flexWrap: 'nowrap', flexDirection: 'row' }}>
+                                <button
+                                    type="button"
+                                    className="ranking-planner-skin__ctaGhost"
+                                    onClick={startGame}
+                                >
+                                    เริ่มเล่นเลย
+                                </button>
+                                {oldResults && (
+                                    <button
+                                        type="button"
+                                        className="ranking-planner-skin__ctaGhost"
+                                        onClick={() => setGameState('old-results')}
+                                    >
+                                        <i className="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                                        ผลลัพธ์ก่อนหน้า
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </article>
                 </div>
             </div>
         );
@@ -736,119 +937,98 @@ export default function MemberRankingGame({
     if (gameState === 'finished' || gameState === 'old-results') {
         const sourceData = gameState === 'finished' ? currentTop10 : oldResults?.topRanking;
         const winner = sourceData?.[0];
-        const subtitle =
-            gameState === 'finished'
-                ? `จากการประมวลผลอย่างละเอียด ${totalRounds} รอบ`
-                : new Date(oldResults?.timestamp || '').toLocaleString('th-TH');
 
         return (
-            <div className="ranking-container py-5 px-3" style={{ ...themeStyle, pointerEvents: isSharing ? 'none' : 'auto' }}>
-                <div className="text-center mb-5 ranking-results-header">
-                    <h1 className="fw-bolder m-0 ranking-title">
-                        {gameState === 'finished' ? 'นี่คืออันดับของคุณ' : 'ผลลัพธ์ที่บันทึกไว้'}
-                    </h1>
-                    <p className="mt-2 fw-medium text-secondary ranking-date">
-                        {subtitle}
-                    </p>
-                </div>
-
-                {winner && (
-                    <div
-                        className="ranking-winner-highlight bg-white rounded-4 py-3 px-5 mb-5 text-center position-relative overflow-hidden"
-                        style={{
-                            border: `1.5px solid ${primaryColor}`,
-                            animation: 'rankingFadeUp 0.6s var(--anim-easing) both',
-                        }}
-                    >
-                        <div
-                            className="mx-auto mb-4 overflow-hidden rounded-circle ranking-winner-photo"
-                        >
-                            <img
-                                src={winner.profile_image_url || '/placeholder.png'}
-                                alt={winner.name}
-                                className="w-100 h-100 object-fit-cover pointer-events-none ranking-img-top"
-                            />
-                        </div>
-                        <div
-                            className="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill text-white fw-bold mb-3 text-uppercase ranking-winner-pill"
-                            style={{
-                                background: primaryGradient ?? primaryColor,
-                            }}
-                        >
-                            Oshi No. 1
-                        </div>
-                        <h2 className="fw-bolder mb-1 ranking-winner-name">
-                            {winner.name}
+            <section
+                className="sec-result pt-3 pb-5"
+                id="sec_result"
+                style={{ ...themeStyle, display: 'block' }}
+            >
+                <div className="ranking-planner-skin__resultBlock">
+                    <header className="ranking-planner-skin__intro ranking-planner-skin__intro--tight">
+                        <h2 className='h5' style={{ color: primaryGradient ?? primaryColor }}>
+                            {brandNames[brand]}'s Member Ranking Sort
                         </h2>
-                        <p className="mb-0 text-secondary ranking-result-subtitle">
-                            {winner.brand} · {winner.gen}
+                        <p className='h4 fw-bold'>
+                            {gameState === 'finished' ? 'ผลการจัดอันดับของคุณ' : 'ผลลัพธ์ที่บันทึกไว้'}
                         </p>
-                    </div>
-                )}
+                    </header>
 
-                <div className="d-flex flex-column gap-2 mb-5 mx-auto ranking-result-list">
-                    {sourceData?.slice(winner ? 1 : 0).map((m, i) => (
-                        <RankingRow
-                            key={m.id}
-                            member={m}
-                            rank={(winner ? 2 : 1) + i}
-                            primaryColor={primaryColor}
-                        />
-                    ))}
+                    {isGeneratingImage ? (
+                        <div className="text-center py-5 my-4">
+                            <div className="spinner-border mb-3" role="status" style={{ width: '3rem', height: '3rem', color: primaryColor }}>
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
+                            <p className="fw-bold" style={{ color: 'var(--c-content-secondary)' }}>
+                                กำลังประมวลผลรูปภาพผลลัพธ์...
+                            </p>
+                        </div>
+                    ) : resultImageUrl ? (
+                        <div className="text-center">
+                            <div className="ranking-planner-skin__figure mb-4 mx-auto shadow-sm" style={{ maxWidth: '500px' }}>
+                                <img
+                                    className="img-fluid d-block mx-auto"
+                                    src={resultImageUrl}
+                                    alt="Ranking Results"
+                                    style={{ objectFit: 'contain' }}
+                                />
+                            </div>
+                            <p className='mb-1'><small>(กดค้างเพื่อดาวน์โหลดรูป)</small></p>
+                            <div className='ranking-planner-skin__actions'>
+                                <DownloadButton
+                                    imageUrl={resultImageUrl}
+                                    isLoading={false}
+                                    primaryColor={primaryColor}
+                                    primaryGradient={primaryGradient}
+                                />
+                            </div>
+                            <hr style={{ maxWidth: '500px', margin: '1rem auto' }} />
+                            <p className='mb-1'>แชร์ Ranking ของคุณบน <i className="fa-brands fa-x-twitter"></i></p>
+                            <h3 className="fw-bold mb-4" style={{ color: primaryGradient ?? primaryColor }}>#TheBestYouOshi</h3>
+                            <div className="ranking-planner-skin__actions">
+                                <a
+                                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('#TheBestYouOshi')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="ranking-planner-skin__ctaX"
+                                >
+                                    แชร์ไปยัง <i className="fa-brands fa-x-twitter" aria-hidden="true"></i>
+                                </a>
+                                <button
+                                    type="button"
+                                    className="ranking-planner-skin__ctaGhost"
+                                    onClick={() => setGameState('view-all-ranking')}
+                                >
+                                    <i className="fa-solid fa-list" aria-hidden="true"></i>
+                                    ดู Ranking ทั้งหมด
+                                </button>
+                                <button type="button" className="ranking-planner-skin__ctaGhost" onClick={startGame}>
+                                    <i className="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                                    เล่นใหม่อีกครั้ง
+                                </button>
+                            </div>
+                        </div>
+                    ) : errorMessage ? (
+                        <div className="text-center text-danger fw-bolder mt-4">
+                            {errorMessage}
+                            <br />
+                            <button type="button" className="ranking-planner-skin__ctaGhost mt-3" onClick={resetGame}>
+                                กลับไปหน้าแรก
+                            </button>
+                        </div>
+                    ) : null}
+
+                    <ResultShareCard
+                        ref={shareCardRef}
+                        cardId="share-result-card"
+                        winner={winner as Member}
+                        rankResults={(sourceData || []) as (Member & { score: number })[]}
+                        primaryColor={primaryColor}
+                        primaryGradient={primaryGradient}
+                        brandName={brandNames[brand]}
+                    />
                 </div>
-
-                <div
-                    className="d-flex align-items-center justify-content-center gap-2 mt-4 flex-wrap"
-                    style={{ margin: '0 auto' }}
-                >
-                    <button
-                        className={`${RANKING_BTN_BASE} ranking-btn ranking-btn-primary text-white border-0`}
-                        onClick={startGame}
-                        style={{
-                            background: primaryGradient ?? primaryColor,
-                        }}
-                    >
-                        เล่นใหม่อีกครั้ง
-                    </button>
-                    <button
-                        className={`${RANKING_BTN_BASE} ranking-btn ranking-btn-secondary border bg-light text-dark`}
-                        onClick={resetGame}
-                    >
-                        หน้าเมนู
-                    </button>
-                    <button
-                        className={`${RANKING_BTN_BASE} ranking-ui-btn ranking-share-btn rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-2 border bg-white text-dark`}
-                        onClick={handleShareResult}
-                        disabled={isSharing}
-                    >
-                        {isSharing ? (
-                            <>
-                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>{' '}
-                            </>
-                        ) : (
-                            <>
-                                <i className="fa-solid fa-share-nodes"></i>
-                            </>
-                        )}
-                    </button>
-                </div>
-
-                {errorMessage && (
-                    <div className="text-center mt-3 text-danger fw-bold ranking-note-text">
-                        {errorMessage}
-                    </div>
-                )}
-
-                <ResultShareCard
-                    ref={shareCardRef}
-                    cardId="share-result-card"
-                    winner={winner as Member}
-                    rankResults={(sourceData || []) as (Member & { score: number })[]}
-                    primaryColor={primaryColor}
-                    primaryGradient={primaryGradient}
-                    brandName={brandNames[brand]}
-                />
-            </div>
+            </section>
         );
     }
 
@@ -862,34 +1042,25 @@ export default function MemberRankingGame({
     if (!m1 || !m2) return null;
 
     return (
-        <div className="ranking-container w-100 px-3" style={themeStyle}>
-            <div
-                className="w-100 position-sticky top-0 text-center bg-white py-3 mb-4 z-3 ranking-progress-head"
-            >
-                <div
-                    className="d-flex justify-content-center gap-3 align-items-center mb-2 mx-auto ranking-note-text ranking-progress-meta"
-                >
-                    <span className="text-secondary">
-                        รอบปัจจุบัน: {gameProgress.roundCount + 1} / {totalRounds}
-                    </span>
-                    <span style={{ color: primaryColor }}>{progressPercent}%</span>
-                </div>
-                <div className="progress mx-auto ranking-progress-track">
-                    <div
-                        className="progress-bar"
-                        role="progressbar"
-                        style={{
-                            width: `${progressPercent}%`,
-                            background: primaryGradient ?? primaryColor,
-                            transition: 'width 0.4s ease',
-                        }}
-                    />
+        <div className="ranking-game-play ranking-container w-100 px-3" style={themeStyle}>
+            <div className="ranking-progress-panel">
+                <div className="ranking-progress-panel__inner">
+                    <div className="ranking-progress-group">
+                        <span className="ranking-progress-label">
+                            รอบ {gameProgress.roundCount + 1} / {totalRounds}
+                        </span>
+                        <span className="ranking-progress-percent" style={{ color: primaryColor }}>
+                            {progressPercent}%
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <h2 className="text-center fw-bolder mb-4 ranking-game-title">
-                ใครที่คุณชื่นชอบมากกว่ากัน?
-            </h2>
+            <header className="ranking-planner-skin__intro ranking-planner-skin__intro--tight px-1">
+                <h2 className="ranking-planner-skin__title ranking-planner-skin__title--sm">
+                    ใครที่คุณชื่นชอบมากกว่ากัน?
+                </h2>
+            </header>
 
             <div
                 className="ranking-arena mx-auto w-100 gap-3"
@@ -914,41 +1085,21 @@ export default function MemberRankingGame({
                 </div>
             </div>
 
-            <div className="row" style={{ width: 'fit-content', margin: '0 auto' }}>
-                <div className="col-6">
-                    <button
-                        className={`${RANKING_BTN_BASE} ranking-control-btn border bg-white text-dark`}
-                        onClick={handleUndo}
-                        disabled={history.length === 0}
-                        style={{
-                            textWrap: 'nowrap',
-                        }}
-                    >
-                        <i className="fa-solid fa-arrow-rotate-left"></i> ย้อนกลับ
-                    </button>
-                </div>
-                <div className="col-6">
-                    <button
-                        className={`${RANKING_BTN_BASE} ranking-control-btn  border bg-white text-dark`}
-                        onClick={handleSkip}
-                    >
-                        <i className="fa-solid fa-forward"></i> ไม่เลือก
-                    </button>
-                </div>
+            <div className="ranking-arena d-flex flex-wrap justify-content-center gap-2 mt-4">
+                <button
+                    type="button"
+                    className="ranking-planner-skin__ctaGhost"
+                    onClick={handleUndo}
+                    disabled={history.length === 0}
+                >
+                    <i className="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
+                    ย้อนกลับ
+                </button>
+                <button type="button" className="ranking-planner-skin__ctaGhost" onClick={handleSkip}>
+                    <i className="fa-solid fa-forward" aria-hidden="true"></i>
+                    ไม่เลือก
+                </button>
             </div>
-
-            <p className="text-center text-secondary mt-5 mx-auto ranking-note-text">
-                <div className="d-flex justify-content-center gap-3 flex-wrap mb-2">
-                    <kbd className="me-1 bg-light text-dark border px-2 rounded">←</kbd> choose left
-                    <span className="mx-2">|</span>
-                    <kbd className="me-1 bg-light text-dark border px-2 rounded">→</kbd> choose right
-                </div>
-                <div className="d-flex justify-content-center gap-3 flex-wrap">
-                    <kbd className="me-1 bg-light text-dark border px-2 rounded">S</kbd> skip
-                    <span className="mx-2">|</span>
-                    <kbd className="me-1 bg-light text-dark border px-2 rounded">Z</kbd> undo
-                </div>
-            </p>
         </div>
     );
 }
@@ -972,7 +1123,7 @@ function RankingChoice({ member, onClick, primaryColor }: RankingChoiceProps) {
     const brandColor = brandColors[member.brand] ?? primaryColor;
 
     return (
-        <button className="ranking-choice btn w-100 bg-white p-0 overflow-hidden text-start" onClick={onClick}>
+        <button type="button" className="ranking-choice w-100 p-0 overflow-hidden text-start border-0" onClick={onClick}>
             <div className="position-relative w-100 h-100 ranking-choice-image">
                 {member.profile_image_url ? (
                     <img
@@ -1021,30 +1172,48 @@ function RankingRow({ member, rank, primaryColor }: RankingRowProps) {
     const brandColor = brandColors[member.brand] ?? primaryColor;
 
     return (
-        <div className="d-flex align-items-center bg-white py-3 px-5 rounded-4 border mb-2 ranking-result-row" style={{ borderLeft: `5px solid ${rank === 1 ? primaryColor : 'var(--c-border)'}` }}>
-            <div className="fw-bolder text-center me-3 ranking-result-rank" style={{ color: rank <= 3 ? primaryColor : 'var(--c-content-muted)' }}>
+        <div
+            className="d-flex align-items-center w-100 bg-white py-3 border-bottom ranking-result-row ranking-result-row--planner hover-lift"
+            style={{
+                transition: 'transform 0.2s',
+                gap: '0.5rem'
+            }}
+        >
+            <div
+                className="fw-bolder text-center flex-shrink-0 me-3"
+                style={{
+                    width: '28px',
+                    color: rank <= 3 ? '#111' : '#9ca3af',
+                }}
+            >
                 {rank === 1 ? (
-                    <i className="fa-solid fa-medal text-warning"></i>
+                    <i className="fa-solid fa-medal text-warning fs-3"></i>
                 ) : rank === 2 ? (
-                    <i className="fa-solid fa-medal text-secondary"></i>
+                    <i className="fa-solid fa-medal text-secondary fs-3"></i>
                 ) : rank === 3 ? (
-                    <i className="fa-solid fa-medal" style={{ color: '#cd7f32' }}></i>
+                    <i className="fa-solid fa-medal" style={{ color: '#cd7f32', fontSize: '1.75rem' }}></i>
                 ) : (
                     `#${rank}`
                 )}
             </div>
-            <div className="rounded-circle overflow-hidden flex-shrink-0 me-3 bg-light border ranking-result-avatar">
+            <div
+                className="rounded-circle overflow-hidden flex-shrink-0 bg-light border me-3"
+                style={{
+                    width: '45px',
+                    height: '45px',
+                }}
+            >
                 {member.profile_image_url ? (
                     <img
                         src={member.profile_image_url}
                         alt={member.name}
-                        className="w-100 h-100 object-fit-cover ranking-img-top"
-                        loading="eager"
+                        className="w-100 h-100 object-fit-cover"
+                        loading="lazy"
                         crossOrigin="anonymous"
                     />
                 ) : (
                     <div
-                        className="w-100 h-100 d-flex align-items-center justify-content-center text-white fw-bold"
+                        className="w-100 h-100 d-flex align-items-center justify-content-center text-white fw-bold fs-4"
                         style={{ backgroundColor: brandColor }}
                     >
                         {member.name[0]}
@@ -1052,12 +1221,17 @@ function RankingRow({ member, rank, primaryColor }: RankingRowProps) {
                 )}
             </div>
             <div className="flex-grow-1 min-w-0">
-                <div className="fw-bolder text-truncate text-dark ranking-result-name">
+                <div
+                    className="fw-bolder text-truncate text-dark mb-1"
+                    style={{ fontSize: '1.25rem' }}
+                >
                     {member.name}
                 </div>
-                <div className="text-secondary mt-1 ranking-result-meta">
-                    <span className="d-inline-block rounded-circle me-1 ranking-result-dot" style={{ backgroundColor: brandColor }}></span>
-                    {member.brand} · {member.gen}
+                <div
+                    className="fw-bold"
+                    style={{ fontSize: '0.85rem', color: brandColor }}
+                >
+                    {member.brand} <span className="text-secondary mx-1">•</span> <span className="text-secondary">{member.gen}</span>
                 </div>
             </div>
         </div>
