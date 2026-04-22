@@ -3,7 +3,7 @@
 import MainLayout from "../layouts/MainLayout.astro";
 
 export interface Props {
-    title?: string;
+title?: string;
 }
 
 const { title = "นโยบายความเป็นส่วนตัว (Privacy Policy)" } = Astro.props;
@@ -19,34 +19,31 @@ const { title = "นโยบายความเป็นส่วนตัว
                 <h2 class="wp-block-heading">ข้อมูลที่เราเก็บรวบรวม</h2>
                 <p>
                     Niya BNK48 – Fan Website (“เรา”)
-                    ให้ความสำคัญกับความเป็นส่วนตัวของผู้ใช้งาน เว็บไซต์ของเรา <strong
-                        >ไม่มีระบบสมัครสมาชิกและไม่มีการเก็บข้อมูลส่วนบุคคลโดยตรง</strong
-                    > เช่น ชื่อ-นามสกุล, อีเมล, ที่อยู่ หรือหมายเลขโทรศัพท์ อย่างไรก็ตาม
+                    ให้ความสำคัญกับความเป็นส่วนตัวของผู้ใช้งาน เว็บไซต์ของเรา
+                    <strong>ไม่มีระบบสมัครสมาชิกและไม่มีการเก็บข้อมูลส่วนบุคคลโดยตรง</strong> เช่น ชื่อ-นามสกุล, อีเมล,
+                    ที่อยู่ หรือหมายเลขโทรศัพท์ อย่างไรก็ตาม
                     การใช้งานเว็บไซต์ของคุณอาจก่อให้เกิดการเก็บข้อมูลบางประเภทโดยอัตโนมัติผ่านเทคโนโลยีมาตรฐาน
                     ดังนี้:
                 </p>
                 <ul class="policy-list">
                     <li>
-                        <strong
-                            >LocalStorage
-                            (พื้นที่จัดเก็บภายในเบราว์เซอร์ของคุณ):</strong
-                        > เว็บไซต์ใช้ LocalStorage เพื่อบันทึกผลเกม (game results),
+                        <strong>LocalStorage
+                            (พื้นที่จัดเก็บภายในเบราว์เซอร์ของคุณ):</strong> เว็บไซต์ใช้ LocalStorage เพื่อบันทึกผลเกม
+                        (game results),
                         ข้อมูลเกมจัดอันดับ (ranking game), ข้อมูลแผนกิจกรรม (event
                         planner) และการตั้งค่าผู้ใช้ (user preferences) ข้อมูลเหล่านี้จะถูกเก็บเฉพาะในอุปกรณ์ของคุณ
                         และไม่สามารถเข้าถึงได้โดยเราโดยตรง
                     </li>
                     <li>
-                        <strong
-                            >คุกกี้ (Cookies) และเทคโนโลยีการวิเคราะห์:</strong
-                        > เราใช้ Google Analytics, Vercel Analytics รวมถึงบริการของ
+                        <strong>คุกกี้ (Cookies) และเทคโนโลยีการวิเคราะห์:</strong> เราใช้ Google Analytics, Vercel
+                        Analytics รวมถึงบริการของ
                         Cloudflare เพื่อทำความเข้าใจพฤติกรรมผู้ใช้และปรับปรุงประสิทธิภาพเว็บไซต์
                         ซึ่งอาจมีการบันทึกที่อยู่ IP แบบไม่ระบุตัวตน, ชนิดของเบราว์เซอร์,
                         ระบบปฏิบัติการ, เวลาเข้าใช้งาน และหน้าเว็บที่เข้าชม
                     </li>
                     <li>
-                        <strong
-                            >เนื้อหาจากบุคคลที่สาม (Third-party Embeds):</strong
-                        > วิดีโอ YouTube, พลังงานโซเชียลมีเดีย (Twitter/X, Instagram)
+                        <strong>เนื้อหาจากบุคคลที่สาม (Third-party Embeds):</strong> วิดีโอ YouTube,
+                        พลังงานโซเชียลมีเดีย (Twitter/X, Instagram)
                         และฟอนต์จาก Google Fonts อาจมีการเก็บข้อมูลของตนเองเพิ่มเติม
                         (ดูรายละเอียดในนโยบายคุกกี้)
                     </li>
@@ -113,18 +110,17 @@ const { title = "นโยบายความเป็นส่วนตัว
                 <h2 class="wp-block-heading">คุกกี้ (Cookies)</h2>
                 <p>
                     เว็บไซต์ของเราใช้คุกกี้เพื่อการวิเคราะห์และรองรับเนื้อหาจากบุคคลที่สาม
-                    โดยคุกกี้ที่ใช้มีรายละเอียดแยกต่างหากใน <a
-                        href="/cookies-policy">นโยบายการใช้คุกกี้</a
-                    > ของเรา โดยสรุป:
+                    โดยคุกกี้ที่ใช้มีรายละเอียดแยกต่างหากใน <a href="/cookies-policy">นโยบายการใช้คุกกี้</a> ของเรา
+                    โดยสรุป:
                 </p>
                 <ul class="policy-list">
                     <li>
-                        <strong
-                            >คุกกี้จาก Google Analytics และ Vercel Analytics:</strong
-                        > ใช้เก็บสถิติการเข้าชมแบบไม่ระบุตัวตน
+                        <strong>คุกกี้จาก Google Analytics และ Vercel Analytics:</strong>
+                        ใช้เก็บสถิติการเข้าชมแบบไม่ระบุตัวตน
                     </li>
                     <li>
-                        <strong>คุกกี้จาก YouTube, Twitter, Instagram:</strong> อาจถูกตั้งค่าเมื่อคุณดูวิดีโอหรือโต้ตอบกับโพสต์ที่ฝังไว้บนเว็บไซต์ของเรา
+                        <strong>คุกกี้จาก YouTube, Twitter, Instagram:</strong>
+                        อาจถูกตั้งค่าเมื่อคุณดูวิดีโอหรือโต้ตอบกับโพสต์ที่ฝังไว้บนเว็บไซต์ของเรา
                     </li>
                     <li>
                         <strong>คุกกี้จาก Cloudflare:</strong> เพื่อความปลอดภัยและประสิทธิภาพของเครือข่าย
@@ -154,40 +150,29 @@ const { title = "นโยบายความเป็นส่วนตัว
                     <li>
                         <strong>Vercel (โฮสติ้ง):</strong> เก็บ log ของเซิร์ฟเวอร์
                         เช่น ที่อยู่ IP, User Agent, และเวลาที่ร้องขอ ดูนโยบายได้ที่
-                        <a
-                            href="https://vercel.com/legal/privacy-policy"
-                            target="_blank"
-                            rel="noopener noreferrer">Vercel Privacy Policy</a
-                        >
+                        <a href="https://vercel.com/legal/privacy-policy" target="_blank"
+                            rel="noopener noreferrer">Vercel Privacy Policy</a>
                     </li>
                     <li>
                         <strong>Cloudflare (CDN & Security):</strong> อาจเก็บที่อยู่
                         IP และข้อมูลการเชื่อมต่อเพื่อป้องกันการโจมตี ดูนโยบายได้ที่
-                        <a
-                            href="https://www.cloudflare.com/privacypolicy/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            >Cloudflare Privacy Policy</a
-                        >
+                        <a href="https://www.cloudflare.com/privacypolicy/" target="_blank"
+                            rel="noopener noreferrer">Cloudflare Privacy Policy</a>
                     </li>
                     <li>
-                        <strong>Supabase (Backend Database):</strong> จัดเก็บข้อมูลที่ไม่ระบุตัวตนสำหรับฟีเจอร์ของเว็บไซต์
-                        ดูนโยบายได้ที่ <a
-                            href="https://supabase.com/privacy"
-                            target="_blank"
-                            rel="noopener noreferrer">Supabase Privacy Policy</a
-                        >
+                        <strong>Supabase (Backend Database):</strong>
+                        จัดเก็บข้อมูลที่ไม่ระบุตัวตนสำหรับฟีเจอร์ของเว็บไซต์
+                        ดูนโยบายได้ที่ <a href="https://supabase.com/privacy" target="_blank"
+                            rel="noopener noreferrer">Supabase Privacy Policy</a>
                     </li>
                     <li>
                         <strong>Google (Analytics, Fonts, YouTube):</strong> ดูนโยบายรวมได้ที่
-                        <a
-                            href="https://policies.google.com/privacy"
-                            target="_blank"
-                            rel="noopener noreferrer">Google Privacy Policy</a
-                        >
+                        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google
+                            Privacy Policy</a>
                     </li>
                     <li>
-                        <strong>Twitter/X และ Instagram (Meta):</strong> มีนโยบายความเป็นส่วนตัวของตนเองสำหรับการฝังเนื้อหา
+                        <strong>Twitter/X และ Instagram (Meta):</strong>
+                        มีนโยบายความเป็นส่วนตัวของตนเองสำหรับการฝังเนื้อหา
                     </li>
                 </ul>
             </section>
@@ -202,7 +187,8 @@ const { title = "นโยบายความเป็นส่วนตัว
                 </p>
                 <ul class="policy-list">
                     <li>
-                        <strong>สิทธิ์ในการล้าง LocalStorage:</strong> คุณสามารถลบข้อมูลทั้งหมดที่เว็บไซต์จัดเก็บไว้ในเบราว์เซอร์ได้ตามวิธีที่อธิบายในข้อ
+                        <strong>สิทธิ์ในการล้าง LocalStorage:</strong>
+                        คุณสามารถลบข้อมูลทั้งหมดที่เว็บไซต์จัดเก็บไว้ในเบราว์เซอร์ได้ตามวิธีที่อธิบายในข้อ
                         3
                     </li>
                     <li>
@@ -210,19 +196,13 @@ const { title = "นโยบายความเป็นส่วนตัว
                         หรือลบคุกกี้ที่มีอยู่
                     </li>
                     <li>
-                        <strong
-                            >สิทธิ์ในการปฏิเสธการติดตามของ Google Analytics:</strong
-                        > ติดตั้ง <a
-                            href="https://tools.google.com/dlpage/gaoptout"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            >Google Analytics Opt-out Browser Add-on</a
-                        >
+                        <strong>สิทธิ์ในการปฏิเสธการติดตามของ Google Analytics:</strong> ติดตั้ง <a
+                            href="https://tools.google.com/dlpage/gaoptout" target="_blank"
+                            rel="noopener noreferrer">Google Analytics Opt-out Browser Add-on</a>
                     </li>
                     <li>
-                        <strong
-                            >สิทธิ์ในการขอข้อมูลที่เราอาจเก็บไว้ใน Supabase:</strong
-                        > หากคุณเชื่อว่ามีข้อมูลที่ระบุตัวตนคุณโดยไม่ตั้งใจ โปรดติดต่อเราตามช่องทางด้านล่าง
+                        <strong>สิทธิ์ในการขอข้อมูลที่เราอาจเก็บไว้ใน Supabase:</strong>
+                        หากคุณเชื่อว่ามีข้อมูลที่ระบุตัวตนคุณโดยไม่ตั้งใจ โปรดติดต่อเราตามช่องทางด้านล่าง
                         เราจะตรวจสอบและลบให้โดยเร็ว
                     </li>
                 </ul>
@@ -266,16 +246,12 @@ const { title = "นโยบายความเป็นส่วนตัว
                     โปรดติดต่อเราที่:
                 </p>
                 <address>
-                    อีเมล: <a href="mailto:teamniya.thfc1402@gmail.com"
-                        >teamniya.thfc1402@gmail.com</a
-                    >
+                    อีเมล: <a href="mailto:teamniya.thfc1402@gmail.com">teamniya.thfc1402@gmail.com</a>
                     <br />
-                    เว็บไซต์: <a href="https://little-nemo-of-niya.vercel.app"
-                        >https://little-nemo-of-niya.vercel.app</a
-                    >
+                    เว็บไซต์: <a
+                        href="https://little-nemo-of-niya.vercel.app">https://little-nemo-of-niya.vercel.app</a>
                     <br />
-                    X: <a href="https://x.com/niyabnk48_thfc">@niyabnk48_thfc</a
-                    >
+                    X: <a href="https://x.com/niyabnk48_thfc">@niyabnk48_thfc</a>
                 </address>
             </section>
         </div>

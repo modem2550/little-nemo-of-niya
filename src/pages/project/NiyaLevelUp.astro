@@ -3,28 +3,24 @@ import MainLayout from "@/layouts/MainLayout.astro";
 
 const projectTitle = "Niya Level Up";
 const projectDesc =
-    "ร่วมสนับสนุนและส่งกำลังใจให้ Niya BNK48 ผ่านโปรเจคพิเศษนี้";
+"ร่วมสนับสนุนและส่งกำลังใจให้ Niya BNK48 ผ่านโปรเจคพิเศษนี้";
 
 const currentAmount = 10000;
 const goalAmount = 10000;
 const percent = Math.min(Math.round((currentAmount / goalAmount) * 100), 100);
 
 const milestones = [
-    { amount: 1000, label: "฿1,000", reached: currentAmount >= 1000 },
-    { amount: 3000, label: "฿3,000", reached: currentAmount >= 3000 },
-    { amount: 5000, label: "฿5,000", reached: currentAmount >= 5000 },
-    { amount: 7500, label: "฿7,500", reached: currentAmount >= 7500 },
-    { amount: 10000, label: "฿10,000", reached: currentAmount >= 10000 },
+{ amount: 1000, label: "฿1,000", reached: currentAmount >= 1000 },
+{ amount: 3000, label: "฿3,000", reached: currentAmount >= 3000 },
+{ amount: 5000, label: "฿5,000", reached: currentAmount >= 5000 },
+{ amount: 7500, label: "฿7,500", reached: currentAmount >= 7500 },
+{ amount: 10000, label: "฿10,000", reached: currentAmount >= 10000 },
 ];
 ---
 
 <MainLayout title={`${projectTitle} — Niya BNK48`} description={projectDesc}>
-    <link
-        rel="preload"
-        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-        as="style"
-        slot="head"
-    />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" as="style"
+        slot="head" />
 
     <style is:global>
         @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
@@ -144,10 +140,12 @@ const milestones = [
         }
 
         @keyframes cur-blink {
+
             0%,
             100% {
                 opacity: 1;
             }
+
             50% {
                 opacity: 0;
             }
@@ -344,15 +342,19 @@ const milestones = [
             .nlu-card {
                 padding: 1.25rem 1rem;
             }
+
             .nlu-amount {
                 font-size: 1.4rem;
             }
+
             .nlu-title {
                 font-size: 1.2rem;
             }
+
             .nlu-qr-row {
                 flex-direction: column;
             }
+
             .nlu-qr-box {
                 width: 100%;
                 height: 200px;
@@ -366,121 +368,26 @@ const milestones = [
                 <div class="nlu-container">
                     <!-- Hero -->
                     <div class="nlu-hero">
-                        <svg
-                            class="nlu-mushroom"
-                            viewBox="0 0 16 16"
-                            xmlns="http://www.w3.org/2000/svg"
-                            style="image-rendering:pixelated"
-                            aria-hidden="true"
-                        >
-                            <rect
-                                x="5"
-                                y="0"
-                                width="6"
-                                height="1"
-                                fill="#222233"></rect>
-                            <rect
-                                x="3"
-                                y="1"
-                                width="10"
-                                height="1"
-                                fill="#222233"></rect>
-                            <rect
-                                x="2"
-                                y="2"
-                                width="12"
-                                height="1"
-                                fill="#222233"></rect>
-                            <rect
-                                x="1"
-                                y="3"
-                                width="14"
-                                height="2"
-                                fill="#222233"></rect>
-                            <rect
-                                x="2"
-                                y="5"
-                                width="12"
-                                height="1"
-                                fill="#222233"></rect>
-                            <rect
-                                x="3"
-                                y="6"
-                                width="10"
-                                height="1"
-                                fill="#222233"></rect>
-                            <rect
-                                x="5"
-                                y="7"
-                                width="6"
-                                height="1"
-                                fill="#222233"></rect>
-                            <rect
-                                x="3"
-                                y="1"
-                                width="2"
-                                height="6"
-                                fill="#fc9fa8"></rect>
-                            <rect
-                                x="5"
-                                y="1"
-                                width="6"
-                                height="6"
-                                fill="#fc9fa8"></rect>
-                            <rect
-                                x="11"
-                                y="1"
-                                width="2"
-                                height="6"
-                                fill="#fc9fa8"></rect>
-                            <rect
-                                x="5"
-                                y="1"
-                                width="2"
-                                height="3"
-                                fill="#ffffff"></rect>
-                            <rect
-                                x="9"
-                                y="2"
-                                width="2"
-                                height="2"
-                                fill="#ffffff"></rect>
-                            <rect
-                                x="6"
-                                y="8"
-                                width="4"
-                                height="1"
-                                fill="#222233"></rect>
-                            <rect
-                                x="6"
-                                y="8"
-                                width="4"
-                                height="4"
-                                fill="#ffffff"></rect>
-                            <rect
-                                x="5"
-                                y="9"
-                                width="6"
-                                height="1"
-                                fill="#222233"></rect>
-                            <rect
-                                x="5"
-                                y="10"
-                                width="1"
-                                height="2"
-                                fill="#222233"></rect>
-                            <rect
-                                x="10"
-                                y="10"
-                                width="1"
-                                height="2"
-                                fill="#222233"></rect>
-                            <rect
-                                x="4"
-                                y="11"
-                                width="8"
-                                height="1"
-                                fill="#222233"></rect>
+                        <svg class="nlu-mushroom" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"
+                            style="image-rendering:pixelated" aria-hidden="true">
+                            <rect x="5" y="0" width="6" height="1" fill="#222233"></rect>
+                            <rect x="3" y="1" width="10" height="1" fill="#222233"></rect>
+                            <rect x="2" y="2" width="12" height="1" fill="#222233"></rect>
+                            <rect x="1" y="3" width="14" height="2" fill="#222233"></rect>
+                            <rect x="2" y="5" width="12" height="1" fill="#222233"></rect>
+                            <rect x="3" y="6" width="10" height="1" fill="#222233"></rect>
+                            <rect x="5" y="7" width="6" height="1" fill="#222233"></rect>
+                            <rect x="3" y="1" width="2" height="6" fill="#fc9fa8"></rect>
+                            <rect x="5" y="1" width="6" height="6" fill="#fc9fa8"></rect>
+                            <rect x="11" y="1" width="2" height="6" fill="#fc9fa8"></rect>
+                            <rect x="5" y="1" width="2" height="3" fill="#ffffff"></rect>
+                            <rect x="9" y="2" width="2" height="2" fill="#ffffff"></rect>
+                            <rect x="6" y="8" width="4" height="1" fill="#222233"></rect>
+                            <rect x="6" y="8" width="4" height="4" fill="#ffffff"></rect>
+                            <rect x="5" y="9" width="6" height="1" fill="#222233"></rect>
+                            <rect x="5" y="10" width="1" height="2" fill="#222233"></rect>
+                            <rect x="10" y="10" width="1" height="2" fill="#222233"></rect>
+                            <rect x="4" y="11" width="8" height="1" fill="#222233"></rect>
                         </svg>
                         <div class="nlu-title">
                             <img src="/img/nlu-title.png" alt="Niya Level Up" />
@@ -494,7 +401,7 @@ const milestones = [
 
                         <div class="nlu-amount">
                             <span class="nlu-amount-unit">฿</span>{
-                                currentAmount.toLocaleString()
+                            currentAmount.toLocaleString()
                             }
                         </div>
                         <div class="nlu-goal-text">
@@ -502,12 +409,7 @@ const milestones = [
                         </div>
 
                         <div class="nlu-bar-wrap">
-                            <div
-                                class="nlu-bar-fill"
-                                id="nlu-bar"
-                                style={`--pct: 0%`}
-                                data-target={`${percent}%`}
-                            >
+                            <div class="nlu-bar-fill" id="nlu-bar" style={`--pct: 0%`} data-target={`${percent}%`}>
                                 <div class="nlu-bar-cursor"></div>
                             </div>
                         </div>
@@ -515,21 +417,18 @@ const milestones = [
 
                         <div class="nlu-milestones">
                             {
-                                milestones.map((m) => (
-                                    <div
-                                        class={`nlu-milestone${m.reached ? " reached" : ""}`}
-                                    >
-                                        {m.label}
-                                    </div>
-                                ))
+                            milestones.map((m) => (
+                            <div class={`nlu-milestone${m.reached ? " reached" : "" }`}>
+                                {m.label}
+                            </div>
+                            ))
                             }
                         </div>
                     </div>
 
                     <!-- Divider -->
                     <div class="nlu-divider">
-                        <span></span><b></b><span></span><b></b><span></span><b
-                        ></b><span></span>
+                        <span></span><b></b><span></span><b></b><span></span><b></b><span></span>
                     </div>
 
                     <!-- QR Card -->
@@ -551,29 +450,20 @@ const milestones = [
                                 <div class="nlu-qr-title">วิธีโดเนท</div>
                                 <div class="nlu-step">
                                     <span class="nlu-step-num">1</span>
-                                    <span class="nlu-step-text"
-                                        >เปิดแอป PromptPay<br />หรือ Mobile
-                                        Banking</span
-                                    >
+                                    <span class="nlu-step-text">เปิดแอป PromptPay<br />หรือ Mobile
+                                        Banking</span>
                                 </div>
                                 <div class="nlu-step">
                                     <span class="nlu-step-num">2</span>
-                                    <span class="nlu-step-text"
-                                        >สแกน QR Code<br />ด้านซ้าย</span
-                                    >
+                                    <span class="nlu-step-text">สแกน QR Code<br />ด้านซ้าย</span>
                                 </div>
                                 <div class="nlu-step">
                                     <span class="nlu-step-num">3</span>
-                                    <span class="nlu-step-text"
-                                        >กรอกจำนวนเงิน<br />ที่ต้องการ</span
-                                    >
+                                    <span class="nlu-step-text">กรอกจำนวนเงิน<br />ที่ต้องการ</span>
                                 </div>
                                 <div class="nlu-step">
                                     <span class="nlu-step-num">4</span>
-                                    <span class="nlu-step-text"
-                                        >ยืนยันการโอน<br
-                                        />แล้วส่งสลิปหาทีมงาน</span
-                                    >
+                                    <span class="nlu-step-text">ยืนยันการโอน<br />แล้วส่งสลิปหาทีมงาน</span>
                                 </div>
                                 <div class="nlu-qr-note">
                                     ทุกยอดไม่มีขั้นต่ำ<br />
@@ -591,87 +481,18 @@ const milestones = [
                     <div class="nlu-footer">
                         <div class="nlu-hearts" aria-hidden="true">
                             {
-                                [0, 1, 2].map((i) => (
-                                    <svg
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 14 14"
-                                        class="ph"
-                                    >
-                                        <rect
-                                            x="2"
-                                            y="1"
-                                            width="3"
-                                            height="2"
-                                            fill={
-                                                i === 1 ? "#fb4774" : "#fc809f"
-                                            }
-                                        />
-                                        <rect
-                                            x="9"
-                                            y="1"
-                                            width="3"
-                                            height="2"
-                                            fill={
-                                                i === 1 ? "#fb4774" : "#fc809f"
-                                            }
-                                        />
-                                        <rect
-                                            x="1"
-                                            y="3"
-                                            width="12"
-                                            height="3"
-                                            fill={
-                                                i === 1 ? "#fb4774" : "#fc809f"
-                                            }
-                                        />
-                                        <rect
-                                            x="2"
-                                            y="6"
-                                            width="10"
-                                            height="3"
-                                            fill={
-                                                i === 1 ? "#fb4774" : "#fc809f"
-                                            }
-                                        />
-                                        <rect
-                                            x="3"
-                                            y="9"
-                                            width="8"
-                                            height="2"
-                                            fill={
-                                                i === 1 ? "#fb4774" : "#fc809f"
-                                            }
-                                        />
-                                        <rect
-                                            x="4"
-                                            y="11"
-                                            width="6"
-                                            height="1"
-                                            fill={
-                                                i === 1 ? "#fb4774" : "#fc809f"
-                                            }
-                                        />
-                                        <rect
-                                            x="5"
-                                            y="12"
-                                            width="4"
-                                            height="1"
-                                            fill={
-                                                i === 1 ? "#fb4774" : "#fc809f"
-                                            }
-                                        />
-                                        <rect
-                                            x="6"
-                                            y="13"
-                                            width="2"
-                                            height="1"
-                                            fill={
-                                                i === 1 ? "#fb4774" : "#fc809f"
-                                            }
-                                        />
-                                    </svg>
-                                ))
+                            [0, 1, 2].map((i) => (
+                            <svg width="16" height="16" viewBox="0 0 14 14" class="ph">
+                                <rect x="2" y="1" width="3" height="2" fill={ i===1 ? "#fb4774" : "#fc809f" } />
+                                <rect x="9" y="1" width="3" height="2" fill={ i===1 ? "#fb4774" : "#fc809f" } />
+                                <rect x="1" y="3" width="12" height="3" fill={ i===1 ? "#fb4774" : "#fc809f" } />
+                                <rect x="2" y="6" width="10" height="3" fill={ i===1 ? "#fb4774" : "#fc809f" } />
+                                <rect x="3" y="9" width="8" height="2" fill={ i===1 ? "#fb4774" : "#fc809f" } />
+                                <rect x="4" y="11" width="6" height="1" fill={ i===1 ? "#fb4774" : "#fc809f" } />
+                                <rect x="5" y="12" width="4" height="1" fill={ i===1 ? "#fb4774" : "#fc809f" } />
+                                <rect x="6" y="13" width="2" height="1" fill={ i===1 ? "#fb4774" : "#fc809f" } />
+                            </svg>
+                            ))
                             }
                         </div>
                         <div class="nlu-footer-text">
@@ -699,5 +520,5 @@ const milestones = [
                 });
             </script>
         </div>
-    </div></MainLayout
->
+    </div>
+</MainLayout>

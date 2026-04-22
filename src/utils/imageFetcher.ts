@@ -20,7 +20,7 @@ function loadManifest(): Record<string, string> {
       const data = fs.readFileSync(MANIFEST_PATH, 'utf-8');
       return JSON.parse(data);
     } catch (e) {
-      console.warn('Failed to parse image cache manifest. Returning empty cache.', e);
+      // Failed to parse image cache manifest. Returning empty cache.
       return {};
     }
   }
@@ -34,7 +34,8 @@ function saveManifest(manifest: Record<string, string>) {
   try {
     fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf-8');
   } catch (e) {
-    console.warn('Failed to write image cache manifest.', e);
+    // Failed to write image cache manifest — non-critical build error
+    // Error: ${e}
   }
 }
 
@@ -105,7 +106,8 @@ export async function processImage(url: string, alt: string): Promise<string> {
 
       return publicPath;
     } catch (error) {
-      console.error(`[imageFetcher] Error processing image ${url}:`, error);
+      // [imageFetcher] Error processing image ${url} — falling back to original URL
+      // Error: ${error}
       // Fallback: Return original URL if anything fails
       return url;
     }

@@ -179,7 +179,7 @@ const ResultShareCard = forwardRef<ShareCardRef, ResultShareCardProps>(
                         display: 'block',
                     }}
                     alt="card-background"
-                    onError={() => console.warn('Background image failed to load')}
+                    onError={() => { /* Background image failed to load */ }}
                 />
 
                 {/* CONTENT AREA */}
@@ -647,7 +647,7 @@ export default function MemberRankingGame({
                         const url = await shareCardRef.current.generateImage();
                         setResultImageUrl(url);
                     } catch (err) {
-                        console.error('Image generation error:', err);
+                        // Image generation error — error message is set for user feedback
                         setErrorMessage('เกิดข้อผิดพลาดในการสร้างรูปผลลัพธ์ โปรดลองอีกครั้ง');
                     }
                 } else {
@@ -683,7 +683,7 @@ export default function MemberRankingGame({
                 setOldResults(data);
             }
         } catch (e) {
-            console.error('Safe property access for results failed:', e);
+            // Safe property access for results failed — silent failure for non-critical load
         }
     }, [storageKey]);
 
@@ -716,7 +716,7 @@ export default function MemberRankingGame({
                 localStorage.setItem(storageKey, JSON.stringify(data));
                 setOldResults(data);
             } catch (e) {
-                console.error('Storage commit failed:', e);
+                // Storage commit failed — silent failure for non-critical save
             }
         },
         [members, storageKey, totalRounds]

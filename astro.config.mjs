@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
+import cdnTransformer from './src/integrations/cdn-transformer.js';
 
 export default defineConfig({
   output: 'server',
@@ -9,6 +10,7 @@ export default defineConfig({
   }),
   integrations: [
     react(),
+    cdnTransformer(),
   ],
 
   redirects: {

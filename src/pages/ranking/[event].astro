@@ -59,13 +59,9 @@ const rankingVariants = [
 
 <MainLayout title={title} description={description} theme={eventData.theme}>
     <nav class="ranking-sub-nav border-0" aria-label="Ranking game variants">
-        <div
-            class="ranking-sub-nav-container d-flex flex-wrap align-items-center justify-content-between gap-3 px-3"
-        >
-            <a
-                href="/planner"
-                class="ranking-sub-nav-back text-white text-decoration-none d-inline-flex align-items-center gap-2 fw-bold small"
-            >
+        <div class="ranking-sub-nav-container d-flex flex-wrap align-items-center justify-content-between gap-3 px-3">
+            <a href="/planner"
+                class="ranking-sub-nav-back text-white text-decoration-none d-inline-flex align-items-center gap-2 fw-bold small">
                 <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
                 <span>Back to Planner</span>
             </a>
@@ -74,10 +70,8 @@ const rankingVariants = [
                     rankingVariants.map((variant, idx) => (
                         <>
                             {idx > 0 && <span class="text-white">|</span>}
-                            <a
-                                href={`/ranking/${variant.slug}`}
-                                class="ranking-sub-nav-link text-white text-decoration-none fw-bold small px-2 py-1 rounded"
-                            >
+                            <a href={`/ranking/${variant.slug}`}
+                                class="ranking-sub-nav-link text-white text-decoration-none fw-bold small px-2 py-1 rounded">
                                 <span>
                                     {variant.label} <small>var.</small>
                                 </span>
@@ -90,14 +84,7 @@ const rankingVariants = [
     </nav>
 
     <div class="ranking-page-shell">
-        <MemberRankingGame
-            client:visible
-            members={members}
-            storageKey={config.storageKey}
-            totalRounds={config.rounds}
-            primaryColor={eventData.primaryColor}
-            primaryGradient={config.primaryGradient}
-            brand={config.brandTarget}
-        />
+        <MemberRankingGame client:visible members={members} storageKey={config.storageKey} totalRounds={config.rounds}
+            primaryColor={eventData.primaryColor} primaryGradient={config.primaryGradient} brand={config.brandTarget} />
     </div>
 </MainLayout>

@@ -5,7 +5,7 @@ export function getSupabase() {
   const key = import.meta.env.SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    console.warn('[getSupabase] Supabase env vars not found — returning null');
+    // Supabase environment variables not found — returning null as fallback
     return null;
   }
 

@@ -11,3 +11,4 @@ Untitled-1.html
 public/video/output.mp4
 public/video/BG-video.mp4
 node_modules
+.cache/

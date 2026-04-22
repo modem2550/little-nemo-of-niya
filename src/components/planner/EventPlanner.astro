@@ -1667,7 +1667,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
                 document.body.style.overflow = "hidden";
             }
         } catch (err) {
-            console.error(err);
+            // Recap generation error
             showToast("เกิดข้อผิดพลาด กรุณาลองใหม่");
         } finally {
             if (btn) {

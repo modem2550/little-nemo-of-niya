@@ -128,45 +128,33 @@ const schemaData = {
 ---
 
 <!doctype html>
-<meta name="title" content={title} />
-<meta name="description" content={description} />
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
 
-<html lang="th">
+    <html lang="th">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content={description} />
-        <meta
-            name="keywords"
-            content="niya, niya bnk48, นีญ่า, นีญ่า bnk48, bnk48 niya, niya thai idol, บีเอ็นเค48"
-        />
+        <meta name="keywords" content="niya, niya bnk48, นีญ่า, นีญ่า bnk48, bnk48 niya, niya thai idol, บีเอ็นเค48" />
         <meta name="robots" content="index, follow" />
 
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={Astro.url} />
         <meta property="og:type" content="website" />
-        <meta
-            property="og:image"
-            content="https://little-nemo-of-niya.vercel.app/logo/apple-touch-icon.png"
-        />
+        <meta property="og:image" content="https://little-nemo-of-niya.vercel.app/logo/apple-touch-icon.png" />
         <meta property="og:site_name" content="Niya BNK48 Fan Site" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta
-            name="twitter:image"
-            content="https://little-nemo-of-niya.vercel.app/logo/apple-touch-icon.png"
-        />
+        <meta name="twitter:image" content="https://little-nemo-of-niya.vercel.app/logo/apple-touch-icon.png" />
 
         <meta name="theme-color" content="#ffffff" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-            name="apple-mobile-web-app-status-bar-style"
-            content="black-translucent"
-        />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
         <link rel="canonical" href={Astro.url} />
         <link rel="alternate" hreflang="th" href={Astro.url} />
@@ -177,89 +165,48 @@ const schemaData = {
 
         <title>{title}</title>
 
-        <meta
-            name="google-site-verification"
-            content="LND_1q1wO4RiVRx123fm8FVWPBYCW2EWkpnWWH_hPjY"
-        />
+        <meta name="google-site-verification" content="LND_1q1wO4RiVRx123fm8FVWPBYCW2EWkpnWWH_hPjY" />
 
         <!-- Schema Markup for SEO -->
-        <script
-            type="application/ld+json"
-            set:html={JSON.stringify(schemaData.personSchema)}
-        />
-        <script
-            type="application/ld+json"
-            set:html={JSON.stringify(schemaData.websiteSchema)}
-        />
-        <script
-            type="application/ld+json"
-            set:html={JSON.stringify(schemaData.breadcrumbSchema)}
-        />
-        <script
-            type="application/ld+json"
-            set:html={JSON.stringify(schemaData.organizationSchema)}
-        />
+        <script type="application/ld+json" set:html={JSON.stringify(schemaData.personSchema)} />
+        <script type="application/ld+json" set:html={JSON.stringify(schemaData.websiteSchema)} />
+        <script type="application/ld+json" set:html={JSON.stringify(schemaData.breadcrumbSchema)} />
+        <script type="application/ld+json" set:html={JSON.stringify(schemaData.organizationSchema)} />
 
         <!-- Preload critical resources -->
-        <link
-            rel="preload"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            as="style"
-            crossorigin="anonymous"
-        />
+        <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" as="style"
+            crossorigin="anonymous" />
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Noto+Sans+Thai:wght@100..900&display=swap"
-            rel="stylesheet"
-            media="print"
-            onload="this.setAttribute('media','all')"
-            crossorigin="anonymous"
-        />
-        <noscript
-            ><link
+            rel="stylesheet" media="print" onload="this.setAttribute('media','all')" crossorigin="anonymous" />
+        <noscript>
+            <link
                 href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Noto+Sans+Thai:wght@100..900&display=swap"
-                rel="stylesheet"
-                crossorigin="anonymous"
-            /></noscript
-        >
+                rel="stylesheet" crossorigin="anonymous" />
+        </noscript>
 
         <!-- Bootstrap CSS -->
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            media="print"
-            onload="this?.setAttribute('media','all')"
-            crossorigin="anonymous"
-        />
-        <noscript
-            ><link
-                href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-                rel="stylesheet"
-                crossorigin="anonymous"
-            /></noscript
-        >
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" media="print"
+            onload="this?.setAttribute('media','all')" crossorigin="anonymous" />
+        <noscript>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+                crossorigin="anonymous" />
+        </noscript>
 
         <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
         <!-- Font Awesome -->
-        <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"
-            integrity="sha256-4rTIfo5GQTi/7UJqoyUJQKzxW8VN/YBH31+Cy+vTZj4="
-            crossorigin="anonymous"
-            media="print"
-            onload="this?.setAttribute('media','all')"
-        />
-        <noscript
-            ><link
-                rel="stylesheet"
-                href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"
-                crossorigin="anonymous"
-            /></noscript
-        >
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"
+            integrity="sha256-4rTIfo5GQTi/7UJqoyUJQKzxW8VN/YBH31+Cy+vTZj4=" crossorigin="anonymous" media="print"
+            onload="this?.setAttribute('media','all')" />
+        <noscript>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"
+                crossorigin="anonymous" />
+        </noscript>
 
 
         <!-- Google Tag Manager -->
@@ -286,10 +233,7 @@ const schemaData = {
             })(window, document, "script", "dataLayer", "GTM-P3G8VXDF");
         </script>
 
-        <script
-            async
-            src="https://www.googletagmanager.com/gtag/js?id=G-E1FESF3403"
-        ></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-E1FESF3403"></script>
         <script is:inline>
             // @ts-nocheck
             window.dataLayer = window.dataLayer || [];
@@ -304,43 +248,22 @@ const schemaData = {
 
         <!-- ✅ THEME VARIABLES INJECTION -->
         {
-            theme && (
-                <style
-                    is:global
-                    set:html={`
-                :root {
-                    --c-primary: ${theme.primary} !important;
-                    --c-primary-gradient: ${theme.primaryGradient ?? theme.primary} !important;
-                    --c-primary-hover: ${theme.primaryHover} !important;
-
-                    --c-bg: ${theme.bg} !important;
-                    --c-surface: ${theme.surface} !important;
-                    --c-surface-alt: ${theme.surfaceAlt} !important;
-                    --c-border: ${theme.border} !important;
-
-                    --c-content: ${theme.content} !important;
-                    --c-content-muted: ${theme.textMuted} !important;
-                    --c-content-secondary: ${theme.content} !important;
-
-                    /* Ranking game variables */
-                    --ranking-primary: ${theme.primary} !important;
-                    --ranking-primary-gradient: ${theme.primaryGradient ?? theme.primary} !important;
-                    --ranking-primary-alpha: ${theme.primary}33 !important;
-                }
-            `}
-                />
-            )
+        theme && (
+        <style is:global set:html={` :root { --c-primary: ${theme.primary} !important; --c-primary-gradient:
+            ${theme.primaryGradient ?? theme.primary} !important; --c-primary-hover: ${theme.primaryHover} !important;
+            --c-bg: ${theme.bg} !important; --c-surface: ${theme.surface} !important; --c-surface-alt: ${theme.surfaceAlt}
+            !important; --c-border: ${theme.border} !important; --c-content: ${theme.content} !important; --c-content-muted:
+            ${theme.textMuted} !important; --c-content-secondary: ${theme.content} !important; /* Ranking game variables */
+            --ranking-primary: ${theme.primary} !important; --ranking-primary-gradient: ${theme.primaryGradient ??
+            theme.primary} !important; --ranking-primary-alpha: ${theme.primary}33 !important; } `} />
+        )
         }
     </head>
+
     <body>
         <!-- Google Tag Manager (noscript) -->
-        <noscript
-            ><iframe
-                src="https://www.googletagmanager.com/ns.html?id=GTM-P3G8VXDF"
-                height="0"
-                width="0"
-                style="display:none;visibility:hidden"></iframe></noscript
-        >
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P3G8VXDF" height="0" width="0"
+                style="display:none;visibility:hidden"></iframe></noscript>
 
         <IconSprite />
 
@@ -349,22 +272,10 @@ const schemaData = {
                 <!-- Logo & Branding -->
                 <a href="/" class="logo-brand d-flex align-items-center" aria-label="Niya BNK48 — Home">
                     <span class="logo-brand__mark" aria-hidden="true">
-                        <img
-                            src="/logo/WHITE.png"
-                            alt="white-logo"
-                            class="logo-img logo-img--on-hero"
-                            width="256"
-                            height="256"
-                            decoding="async"
-                        />
-                        <img
-                            src="/logo/BLACK.png"
-                            alt="black-logo"
-                            class="logo-img logo-img--on-bar"
-                            width="256"
-                            height="256"
-                            decoding="async"
-                        />
+                        <img src="/logo/WHITE.png" alt="white-logo" class="logo-img logo-img--on-hero" width="256"
+                            height="256" decoding="async" />
+                        <img src="/logo/BLACK.png" alt="black-logo" class="logo-img logo-img--on-bar" width="256"
+                            height="256" decoding="async" />
                     </span>
                     <span class="logo-text">Niya BNK48</span>
                 </a>
@@ -375,26 +286,15 @@ const schemaData = {
                     <a href="/#social" class="nav-link">Social Media</a>
                     <a href="/#library" class="nav-link">Highlights</a>
                     <a href="/#fanclub" class="nav-link">Fanclub</a>
-                    <a href="/schedule" class="nav-link nav-link--app"
-                        ><i
-                            class="fa-solid fa-calendar nav-icon"
-                            aria-hidden="true"></i>Schedule</a
-                    >
-                    <a href="/planner" class="nav-link nav-link--app"
-                        ><i
-                            class="fa-solid fa-gamepad nav-icon"
-                            aria-hidden="true"></i>Planner</a
-                    >
+                    <a href="/schedule" class="nav-link nav-link--app"><i class="fa-solid fa-calendar nav-icon"
+                            aria-hidden="true"></i>Schedule</a>
+                    <a href="/planner" class="nav-link nav-link--app"><i class="fa-solid fa-gamepad nav-icon"
+                            aria-hidden="true"></i>Planner</a>
                 </nav>
 
                 <!-- Mobile Toggle -->
-                <button
-                    type="button"
-                    class="menu-toggle flex-column"
-                    aria-label="Open menu"
-                    aria-expanded="false"
-                    aria-controls="site-nav-mobile"
-                >
+                <button type="button" class="menu-toggle flex-column" aria-label="Open menu" aria-expanded="false"
+                    aria-controls="site-nav-mobile">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -423,13 +323,11 @@ const schemaData = {
                 </a>
                 <hr class="nav-mobile-divider" />
                 <a href="/schedule" class="nav-link-mobile d-flex align-items-center">
-                    <i class="fa-solid fa-calendar nav-icon" aria-hidden="true"
-                    ></i>
+                    <i class="fa-solid fa-calendar nav-icon" aria-hidden="true"></i>
                     <span>Schedule</span>
                 </a>
                 <a href="/planner" class="nav-link-mobile d-flex align-items-center">
-                    <i class="fa-solid fa-gamepad nav-icon" aria-hidden="true"
-                    ></i>
+                    <i class="fa-solid fa-gamepad nav-icon" aria-hidden="true"></i>
                     <span>Planner</span>
                 </a>
             </nav>
@@ -446,22 +344,14 @@ const schemaData = {
             <div class="collaboration text-center py-2 px-4">
                 Collaboration Project<br />
                 <strong class="text-nowrap">
-                    Little nemo of niya × <a href="https://napheao.vercel.app/"
-                        >Baby Naphaeo's</a
-                    >
+                    Little nemo of niya × <a href="https://napheao.vercel.app/">Baby Naphaeo's</a>
                 </strong>
             </div>
 
             <div class="site-info cs-bg-dark">
                 <nav class="navbar-footer">
-                    <img
-                        src="/logo/NAVY.png"
-                        alt="Niya Logo"
-                        class="footer-logo"
-                        width="222"
-                        height="80"
-                        decoding="async"
-                    />
+                    <img src="/logo/NAVY.png" alt="Niya Logo" class="footer-logo" width="222" height="80"
+                        decoding="async" />
                     <ul class="mt-4">
                         <li>
                             <a href="/cookies-policy">นโยบายเกี่ยวกับคุกกี้</a>
@@ -475,50 +365,28 @@ const schemaData = {
                     </ul>
                     <ul class="mt-4">
                         <li>
-                            <a
-                                href="https://www.facebook.com/profile.php?id=61556940780361"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                ><i class="fab fa-facebook"></i></a
-                            >
+                            <a href="https://www.facebook.com/profile.php?id=61556940780361" target="_blank"
+                                rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
                         </li>
                         <li>
-                            <a
-                                href="https://www.instagram.com/niyabnk48_thfc/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                ><i class="fab fa-instagram"></i></a
-                            >
+                            <a href="https://www.instagram.com/niyabnk48_thfc/" target="_blank" rel="noopener noreferrer"><i
+                                    class="fab fa-instagram"></i></a>
                         </li>
                         <li>
-                            <a
-                                href="https://www.youtube.com/@NiyaBNK48ThailandFanclub"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                ><i class="fab fa-youtube"></i></a
-                            >
+                            <a href="https://www.youtube.com/@NiyaBNK48ThailandFanclub" target="_blank"
+                                rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
                         </li>
                         <li>
-                            <a
-                                href="https://x.com/niyabnk48_thfc"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                ><i class="fa-brands fa-x-twitter"></i></a
-                            >
+                            <a href="https://x.com/niyabnk48_thfc" target="_blank" rel="noopener noreferrer"><i
+                                    class="fa-brands fa-x-twitter"></i></a>
                         </li>
                         <li>
-                            <a
-                                href="https://www.tiktok.com/@niya.bnk48.thfc"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                ><i class="fab fa-tiktok"></i></a
-                            >
+                            <a href="https://www.tiktok.com/@niya.bnk48.thfc" target="_blank" rel="noopener noreferrer"><i
+                                    class="fab fa-tiktok"></i></a>
                         </li>
                         <li>
-                            <a
-                                href="https://line.me/ti/g2/YYQYpuFlsvlTQz6KyvKM7m0zmLJ39JlzdphDqA?utm_"
-                                ><i class="fa-solid fa-comment-dots"></i></a
-                            >
+                            <a href="https://line.me/ti/g2/YYQYpuFlsvlTQz6KyvKM7m0zmLJ39JlzdphDqA?utm_"><i
+                                    class="fa-solid fa-comment-dots"></i></a>
                         </li>
                     </ul>
                 </nav>
@@ -537,7 +405,7 @@ const schemaData = {
     {
         enableVercelSpeedInsights ? (
             <script is:inline>
-            // @ts-nocheck
+                // @ts-nocheck
                 (function () {
                     var script = document.createElement("script");
                     script.src = "/_vercel/speed-insights/script.js";

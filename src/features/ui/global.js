@@ -191,7 +191,7 @@ function scrollToSection(sectionId) {
   if (!section) return;
 
   const targetPosition = section.getBoundingClientRect().top + window.scrollY - HEADER_HEIGHT;
-  
+
   // Use native smooth scroll with fallback
   window.scrollTo({
     top: targetPosition,
@@ -278,10 +278,10 @@ function initAnimations() {
 
   // Configure animations by section
   const sections = [
-    { id: 'home',    index: 0 },
-    { id: 'event',   index: 0 },
-    { id: 'info',    index: 1 },
-    { id: 'social',  index: 2 },
+    { id: 'home', index: 0 },
+    { id: 'event', index: 0 },
+    { id: 'info', index: 1 },
+    { id: 'social', index: 2 },
     { id: 'library', index: 3 },
     { id: 'fanclub', index: 4 },
   ];
@@ -346,17 +346,17 @@ function initLazyImages() {
           // Add loading class for CSS transitions
           img.classList.add('loading');
           img.src = img.dataset.src;
-          
+
           img.onload = () => {
             img.classList.remove('loading');
             img.classList.add('loaded');
           };
-          
+
           img.onerror = () => {
             img.classList.remove('loading');
             img.classList.add('error');
           };
-          
+
           delete img.dataset.src;
         }
         observer.unobserve(img);
@@ -401,8 +401,8 @@ function initMobileEnhancements() {
   // Detect if device supports touch
   const isTouchDevice = () => {
     return (('ontouchstart' in window) ||
-            (navigator.maxTouchPoints > 0) ||
-            (navigator.msMaxTouchPoints > 0));
+      (navigator.maxTouchPoints > 0) ||
+      (navigator.msMaxTouchPoints > 0));
   };
 
   // Add touch class to body for CSS targeting
@@ -413,10 +413,10 @@ function initMobileEnhancements() {
   // Improve button responsiveness on mobile
   const buttons = document.querySelectorAll('button, a.btn, a.social-link');
   buttons.forEach(btn => {
-    btn.addEventListener('touchstart', function() {
+    btn.addEventListener('touchstart', function () {
       this.style.opacity = '0.8';
     });
-    btn.addEventListener('touchend', function() {
+    btn.addEventListener('touchend', function () {
       this.style.opacity = '1';
     });
   });
@@ -429,11 +429,11 @@ function initMobileEnhancements() {
 function openPopup() {
   const overlay = document.getElementById('popup-overlay');
   if (!overlay) return;
-  
+
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
   document.body.style.paddingRight = getScrollbarWidth() + 'px';
-  
+
   // Focus first interactive element in popup
   const firstFocusable = overlay.querySelector('a, button, input');
   if (firstFocusable) firstFocusable.focus();
@@ -442,7 +442,7 @@ function openPopup() {
 function closePopup() {
   const overlay = document.getElementById('popup-overlay');
   if (!overlay) return;
-  
+
   overlay.classList.remove('active');
   document.body.style.overflow = '';
   document.body.style.paddingRight = '';
