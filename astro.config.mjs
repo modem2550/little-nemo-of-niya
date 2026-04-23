@@ -4,6 +4,7 @@ import react from '@astrojs/react';
 import cdnTransformer from './src/integrations/cdn-transformer.js';
 
 export default defineConfig({
+  site: 'https://little-nemo-of-niya.vercel.app',
   output: 'server',
   adapter: vercel({
     webAnalytics: { enabled: true },

@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const CDN_DOMAIN = 'https://48thcms.demmo.com';
+const CDN_DOMAIN = ''; // Empty string for local serving
 const ASSET_OUT_DIR = 'transformed-assets';
 const CACHE_DIR = '.cache/cdn-assets';
 
@@ -121,7 +121,7 @@ export default function cdnTransformer() {
 
         // ---------- transform URL ----------
         const transformUrl = (url) => {
-          if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith(CDN_DOMAIN)) return url;
+          if (!url || url.startsWith('data:') || url.startsWith('blob:') || (CDN_DOMAIN && url.startsWith(CDN_DOMAIN))) return url;
 
           if (url.includes('/logo/') || url.includes('/public/logo/')) {
             stats.skipped++;
@@ -149,7 +149,7 @@ export default function cdnTransformer() {
           const name = safeName(url);
           const newFile = `${name}-${h}${finalExt}`;
 
-          const cdnUrl = `${CDN_DOMAIN}/${newFile}`;
+          const cdnUrl = `/${ASSET_OUT_DIR}/${newFile}`;
 
           if (!assets.has(url)) {
             assets.set(url, { url, newFile, isImg, isVid, isDoc });

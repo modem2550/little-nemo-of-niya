@@ -128,13 +128,11 @@ const schemaData = {
 ---
 
 <!doctype html>
-    <meta name="title" content={title} />
-    <meta name="description" content={description} />
-
     <html lang="th">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="title" content={title} />
         <meta name="description" content={description} />
         <meta name="keywords" content="niya, niya bnk48, นีญ่า, นีญ่า bnk48, bnk48 niya, niya thai idol, บีเอ็นเค48" />
         <meta name="robots" content="index, follow" />
@@ -156,8 +154,8 @@ const schemaData = {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-        <link rel="canonical" href={Astro.url} />
-        <link rel="alternate" hreflang="th" href={Astro.url} />
+        <link rel="canonical" href={Astro.url.href} />
+        <link rel="alternate" hreflang="th" href={Astro.url.href} />
 
         <link rel="icon" href="/logo/logo 32x32.png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
