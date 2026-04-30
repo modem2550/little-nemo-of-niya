@@ -1,14 +1,13 @@
-node_modulescat .github/workflows/deploy.yml
+node_modules
 .vercel
 .astro
 dist
 .DS_Store
 .env
-.envcat src/lib/global.js
 path.tree
 halloween.astro
 Untitled-1.html
 public/video/output.mp4
 public/video/BG-video.mp4
-node_modules
-.cache/
+.cache
+.vercel/output

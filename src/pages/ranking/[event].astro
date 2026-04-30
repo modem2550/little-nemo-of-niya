@@ -1,13 +1,14 @@
 ---
 export const prerender = true;
-import MainLayout from "@/layouts/MainLayout.astro";
-import MemberRankingGame from "@/features/ranking/ui/MemberRankingGame";
+import MainLayout from "@/app/layouts/MainLayout.astro";
+import MemberRankingGame from "@/features/ranking/components/MemberGame";
+import SongRankingGame from "@/features/ranking/components/SongGame";
 import { getRankingEvents } from "@/features/events/eventEngine";
-import "@/styles/ranking.scss";
+import "@/shared/styles/ranking.scss";
 import { getSupabase } from "@/services/supabase/server";
 
 export async function getStaticPaths() {
-    const events = getRankingEvents();
+    const events = await getRankingEvents();
     return events.map((e) => ({
         params: { event: e.slug },
         props: { eventData: e },
@@ -15,24 +16,50 @@ export async function getStaticPaths() {
 }
 
 const { eventData } = Astro.props;
-const config = eventData.features.ranking;
+const memberConfig = eventData.features.ranking;
+const songConfig = eventData.features.songRanking;
+const gameType = songConfig?.enabled ? "song" : "member";
+const config = gameType === "song" ? songConfig : memberConfig;
 
 if (!config) {
     throw new Error(`Ranking data missing for event ${eventData.slug}`);
 }
 
+// Optimized: Dynamic import for large songs dataset
+const { songs } = await import("@/features/ranking/data/songs");
+
 const supabase = getSupabase();
 let membersData: any[] | null = null;
+const memberBrandTarget = memberConfig?.brandTarget ?? "48th";
 
-if (supabase) {
+const isSongByBrand = (artist: string, brand: "BNK48" | "CGM48" | "48th") => {
+    const hasBNK = artist.includes("BNK48");
+    const hasCGM = artist.includes("CGM48");
+    const hasOther48Sister = artist.includes("TSH48");
+    const isMixedCredit = artist.includes("&");
+
+    if (brand === "BNK48") {
+        return hasBNK && !hasCGM && !hasOther48Sister && !isMixedCredit;
+    }
+
+    if (brand === "CGM48") {
+        return hasCGM && !hasBNK && !isMixedCredit;
+    }
+
+    return hasBNK || hasCGM;
+};
+
+if (supabase && gameType === "member" && memberConfig) {
     let query = supabase
         .from("members")
         .select("id,name,brand,gen,team,profile_image_url")
         .is("graduated_at", null)
         .order("name");
 
-    if (config.brandTarget !== "48th") {
-        query = query.eq("brand", config.brandTarget);
+    if (memberBrandTarget !== "48th") {
+        query = query.eq("brand", memberBrandTarget);
+    } else {
+        query = query.in("brand", ["BNK48", "CGM48"]);
     }
 
     const { data } = await query;
@@ -50,11 +77,33 @@ const members = (membersData ?? []).map((m: any) => ({
 
 const title = config.pageTitle;
 const description = config.description;
-const rankingVariants = [
-    { slug: "BNK48", label: "BNK48" },
-    { slug: "CGM48", label: "CGM48" },
-    { slug: "48th", label: "48TH" },
-].filter((variant) => variant.slug !== eventData.slug);
+const songListForGame =
+    gameType === "song"
+        ? songs.filter((s) =>
+              isSongByBrand(
+                  s.artist,
+                  ((config.brandTarget ?? "48th") as "BNK48" | "CGM48" | "48th")
+              )
+          )
+        : songs.filter((s) => isSongByBrand(s.artist, memberBrandTarget as "BNK48" | "CGM48" | "48th"));
+const activeMemberCount = members.length;
+const activeSongCount = songListForGame.length;
+const activeBrandTarget = ((config.brandTarget ?? memberBrandTarget ?? "48th") as "BNK48" | "CGM48" | "48th");
+const showBNKReference = activeBrandTarget === "BNK48" || activeBrandTarget === "48th";
+const showCGMReference = activeBrandTarget === "CGM48" || activeBrandTarget === "48th";
+const rankingVariants = (
+    gameType === "song"
+        ? [
+              { slug: "bnk48-song", label: "BNK48" },
+              { slug: "cgm48-song", label: "CGM48" },
+              { slug: "48th-song", label: "48TH" },
+          ]
+        : [
+              { slug: "bnk48-member", label: "BNK48" },
+              { slug: "cgm48-member", label: "CGM48" },
+              { slug: "48th-member", label: "48TH" },
+          ]
+).filter((variant) => variant.slug !== eventData.slug);
 ---
 
 <MainLayout title={title} description={description} theme={eventData.theme}>
@@ -84,7 +133,85 @@ const rankingVariants = [
     </nav>
 
     <div class="ranking-page-shell">
-        <MemberRankingGame client:visible members={members} storageKey={config.storageKey} totalRounds={config.rounds}
-            primaryColor={eventData.primaryColor} primaryGradient={config.primaryGradient} brand={config.brandTarget} />
+        {
+            gameType === "song" ? (
+                <SongRankingGame
+                    client:idle
+                    songs={songListForGame}
+                    storageKey={config.storageKey}
+                    totalRounds={config.rounds}
+                    primaryColor={eventData.primaryColor}
+                    primaryGradient={config.primaryGradient}
+                />
+            ) : (
+                <MemberRankingGame
+                    client:idle
+                    members={members}
+                    storageKey={config.storageKey}
+                    totalRounds={config.rounds}
+                    primaryColor={eventData.primaryColor}
+                    primaryGradient={config.primaryGradient}
+                    brand={memberConfig?.brandTarget ?? "48th"}
+                />
+            )
+        }
     </div>
+
+    <section class="p-4 py-0">
+        <div class="ranking-disclaimer">
+            <hr class="ranking-divider" />
+            <div class="mx-auto">
+                <div class="ranking-disclaimer__title">
+                    <i class="fa-solid fa-circle-info"></i> หมายเหตุการจัดอันดับ
+                </div>
+                <ul class="ranking-disclaimer__list">
+                    {
+                        gameType === "member" ? (
+                            <li>
+                                รายชื่อเมมเบอร์ในการจัดอันดับ จะเป็นเมมเบอร์ที่ยังไม่มีการจบการศึกษา หากจบการศึกษาจะไม่มีการนำมาจัดอันดับ ทั้งใน BNK48 และ CGM48
+                                ทั้งหมด {activeMemberCount.toLocaleString()} คน (อ้างอิงจาก{" "}
+                                {showBNKReference && <a href="https://akb48.fandom.com/wiki/BNK48_Members" target="_blank" rel="noopener noreferrer"><strong>akb48.fandom.com/wiki/BNK48</strong></a>}
+                                {showBNKReference && showCGMReference ? " และ " : ""}
+                                {showCGMReference && <a href="https://akb48.fandom.com/wiki/CGM48_Members" target="_blank" rel="noopener noreferrer"><strong>akb48.fandom.com/wiki/CGM48</strong></a>}
+                                )
+                            </li>
+                        ) : (
+                            <li>
+                                รายชื่อเพลงในการจัดอันดับ นำมาจาก Singles, Albums, Digital Singles และ Special Single ของ BNK48/CGM48 จำนวน
+                                {` ${activeSongCount.toLocaleString()} `}
+                                เพลง ไม่รวมเพลงในหมวด Unreleased และเพลงอื่น ๆ
+                                (อ้างอิงจาก{" "}
+                                {showBNKReference && <a href="https://akb48.fandom.com/wiki/BNK48#Discography" target="_blank" rel="noopener noreferrer"><strong>akb48.fandom.com/wiki/BNK48</strong></a>}
+                                {showBNKReference && showCGMReference ? " และ " : ""}
+                                {showCGMReference && <a href="https://akb48.fandom.com/wiki/CGM48#Discography" target="_blank" rel="noopener noreferrer"><strong>akb48.fandom.com/wiki/CGM48</strong></a>}
+                                )
+                            </li>
+                        )
+                    }
+                </ul>
+
+                {
+                    gameType === "member" ? (
+                        <details class="mt-3">
+                            <summary class="ranking-disclaimer__summary">ดูรายชื่อเมมเบอร์ในการจัดอันดับ</summary>
+                            <ul class="ranking-disclaimer__list mt-2">
+                                {members.map((member) => (
+                                    <li>{member.name} - {member.brand}</li>
+                                ))}
+                            </ul>
+                        </details>
+                    ) : (
+                        <details class="mt-3">
+                            <summary class="fw-semibold">ดูรายชื่อเพลงในการจัดอันดับ</summary>
+                            <ul class="ranking-disclaimer__list mt-2">
+                                {songListForGame.map((song) => (
+                                    <li>{song.name} - {song.artist}</li>
+                                ))}
+                            </ul>
+                        </details>
+                    )
+                }
+            </div>
+        </div>
+    </section>
 </MainLayout>

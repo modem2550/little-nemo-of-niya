@@ -1,20 +1,21 @@
-import type { PriceConfig, DayConfig, ActivityConfig, ScheduleEntry } from '@/features/planner/plannerUtils';
+/* types/event.ts */
+import type { PriceConfig, DayConfig, ActivityConfig, ScheduleEntry } from '@/features/planner/logic/plannerUtils';
 
 export interface Event {
-  id: string;
-  title?: string;
-  description?: string;
-  date: string;
-  end_date?: string | null;
-  location?: string;
-  live?: string;
-  link?: string;
-  image_url?: string;
-  image_urls?: {
-    medium?: string;
-    large?: string;
-  };
-  [key: string]: any;
+    id: string;
+    title?: string;
+    description?: string;
+    date: string;
+    end_date?: string | null;
+    location?: string;
+    live?: string;
+    link?: string;
+    image_url?: string;
+    image_urls?: {
+        medium?: string;
+        large?: string;
+    };
+    [key: string]: any;
 }
 
 export interface PlannerConfig {
@@ -31,7 +32,10 @@ export interface PlannerConfig {
     days?: DayConfig[];
     activities?: ActivityConfig[];
     schedule?: ScheduleEntry[];
+    forcedTheme?: 'light' | 'dark';
+    fallbackEmbedHtml?: string;
 }
+
 
 export interface RankingConfig {
     enabled: boolean;
@@ -39,9 +43,20 @@ export interface RankingConfig {
     description: string;
     storageKey: string;
     brandTarget: "BNK48" | "CGM48" | "48th";
-    rounds: number;
     primaryGradient?: string;
     listingImage?: string;
+    rounds?: number;
+}
+
+export interface SongRankingConfig {
+    enabled: boolean;
+    pageTitle: string;
+    description: string;
+    storageKey: string;
+    brandTarget?: "BNK48" | "CGM48" | "48th";
+    primaryGradient?: string;
+    listingImage?: string;
+    rounds?: number;
 }
 
 export interface ThemeConfig {
@@ -76,5 +91,6 @@ export interface EventPlugin {
     features: {
         planner?: PlannerConfig;
         ranking?: RankingConfig;
+        songRanking?: SongRankingConfig;
     };
 }

@@ -1,9 +1,9 @@
 ---
 // src/pages/cookies-policy.astro
-import MainLayout from "../layouts/MainLayout.astro";
+import MainLayout from "@/app/layouts/MainLayout.astro";
 
 export interface Props {
-title?: string;
+    title?: string;
 }
 
 const { title = "นโยบายการใช้คุกกี้ (Cookies Policy)" } = Astro.props;
@@ -42,14 +42,17 @@ const { title = "นโยบายการใช้คุกกี้ (Cookies
                         อาจใช้คุกกี้ด้านความปลอดภัย (เช่น __cfduid) ซึ่งถือว่าจำเป็นเพื่อป้องกันการโจมตีทางไซเบอร์
                     </li>
                     <li>
-                        <strong>คุกกี้เพื่อการวิเคราะห์ (Analytics/Performance
-                            Cookies):</strong> ใช้เก็บสถิติเกี่ยวกับจำนวนผู้เข้าใช้งาน พฤติกรรมการท่องเว็บ
+                        <strong
+                            >คุกกี้เพื่อการวิเคราะห์ (Analytics/Performance
+                            Cookies):</strong
+                        > ใช้เก็บสถิติเกี่ยวกับจำนวนผู้เข้าใช้งาน พฤติกรรมการท่องเว็บ
                         (หน้าเว็บที่เข้าชมบ่อย, เวลาที่ใช้ในแต่ละหน้า, ลิงก์ที่คลิก)
                         โดยไม่ระบุตัวตน ซึ่งช่วยให้เราปรับปรุงเนื้อหาและโครงสร้างเว็บไซต์ให้ดีขึ้น
                     </li>
                     <li>
-                        <strong>คุกกี้จากบุคคลที่สาม (Third-party Cookies):</strong> เกิดจากบริการภายนอกที่เราฝังไว้
-                        เช่น วิดีโอ YouTube, โพสต์จาก
+                        <strong
+                            >คุกกี้จากบุคคลที่สาม (Third-party Cookies):</strong
+                        > เกิดจากบริการภายนอกที่เราฝังไว้ เช่น วิดีโอ YouTube, โพสต์จาก
                         Twitter/X หรือ Instagram รวมถึงฟอนต์จาก Google Fonts
                     </li>
                 </ul>
@@ -68,7 +71,10 @@ const { title = "นโยบายการใช้คุกกี้ (Cookies
                         _gid, _gat_UA-xxxxxx-x เพื่อบันทึกข้อมูลการใช้งานแบบไม่ระบุตัวตน
                         อ่านเพิ่มเติมเกี่ยวกับคุกกี้ของ Google Analytics ได้ที่ <a
                             href="https://developers.google.com/analytics/devguides/collection/analyticsjs/cookie-usage"
-                            target="_blank" rel="noopener noreferrer">Google Analytics Cookie Usage</a>
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Google Analytics Cookie Usage</a
+                        >
                     </li>
                     <li>
                         <strong>Vercel Analytics:</strong> ใช้คุกกี้ที่ไม่ระบุตัวตนเพื่อวัดประสิทธิภาพของหน้าเว็บและ
@@ -77,8 +83,12 @@ const { title = "นโยบายการใช้คุกกี้ (Cookies
                 </ul>
                 <p>
                     คุณสามารถปฏิเสธการเก็บข้อมูลของ Google Analytics
-                    ได้โดยติดตั้ง <a href="https://tools.google.com/dlpage/gaoptout" target="_blank"
-                        rel="noopener noreferrer">Google Analytics Opt-out Browser Add-on</a>
+                    ได้โดยติดตั้ง <a
+                        href="https://tools.google.com/dlpage/gaoptout"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Google Analytics Opt-out Browser Add-on</a
+                    >
                 </p>
             </section>
 
@@ -114,11 +124,19 @@ const { title = "นโยบายการใช้คุกกี้ (Cookies
                 </ul>
                 <p>
                     โปรดตรวจสอบนโยบายคุกกี้ของบริการเหล่านั้นสำหรับข้อมูลเพิ่มเติม:
-                    <a href="https://policies.google.com/technologies/cookies" target="_blank"
-                        rel="noopener noreferrer">Google</a>, <a
-                        href="https://help.twitter.com/en/rules-and-policies/twitter-cookies" target="_blank"
-                        rel="noopener noreferrer">Twitter</a>, <a href="https://help.instagram.com/1896641480634370"
-                        target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a
+                        href="https://policies.google.com/technologies/cookies"
+                        target="_blank"
+                        rel="noopener noreferrer">Google</a
+                    >, <a
+                        href="https://help.twitter.com/en/rules-and-policies/twitter-cookies"
+                        target="_blank"
+                        rel="noopener noreferrer">Twitter</a
+                    >, <a
+                        href="https://help.instagram.com/1896641480634370"
+                        target="_blank"
+                        rel="noopener noreferrer">Instagram</a
+                    >
                 </p>
             </section>
 
@@ -147,20 +165,32 @@ const { title = "นโยบายการใช้คุกกี้ (Cookies
                 </p>
                 <ul class="policy-list">
                     <li>
-                        <a href="https://support.google.com/chrome/answer/95647" target="_blank"
-                            rel="noopener noreferrer">Google Chrome</a>
+                        <a
+                            href="https://support.google.com/chrome/answer/95647"
+                            target="_blank"
+                            rel="noopener noreferrer">Google Chrome</a
+                        >
                     </li>
                     <li>
-                        <a href="https://support.mozilla.org/th/kb/clear-cookies-and-site-data-firefox" target="_blank"
-                            rel="noopener noreferrer">Mozilla Firefox</a>
+                        <a
+                            href="https://support.mozilla.org/th/kb/clear-cookies-and-site-data-firefox"
+                            target="_blank"
+                            rel="noopener noreferrer">Mozilla Firefox</a
+                        >
                     </li>
                     <li>
-                        <a href="https://support.apple.com/th-th/guide/safari/sfri11471/mac" target="_blank"
-                            rel="noopener noreferrer">Safari</a>
+                        <a
+                            href="https://support.apple.com/th-th/guide/safari/sfri11471/mac"
+                            target="_blank"
+                            rel="noopener noreferrer">Safari</a
+                        >
                     </li>
                     <li>
-                        <a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09"
-                            target="_blank" rel="noopener noreferrer">Microsoft Edge</a>
+                        <a
+                            href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09"
+                            target="_blank"
+                            rel="noopener noreferrer">Microsoft Edge</a
+                        >
                     </li>
                 </ul>
                 <p>
@@ -187,12 +217,16 @@ const { title = "นโยบายการใช้คุกกี้ (Cookies
                     กรุณาติดต่อ:
                 </p>
                 <address>
-                    อีเมล: <a href="mailto:teamniya.thfc1402@gmail.com">teamniya.thfc1402@gmail.com</a>
+                    อีเมล: <a href="mailto:teamniya.thfc1402@gmail.com"
+                        >teamniya.thfc1402@gmail.com</a
+                    >
                     <br />
-                    เว็บไซต์: <a
-                        href="https://little-nemo-of-niya.vercel.app">https://little-nemo-of-niya.vercel.app</a>
+                    เว็บไซต์: <a href="https://little-nemo-of-niya.vercel.app"
+                        >https://little-nemo-of-niya.vercel.app</a
+                    >
                     <br />
-                    X: <a href="https://x.com/niyabnk48_thfc">@niyabnk48_thfc</a>
+                    X: <a href="https://x.com/niyabnk48_thfc">@niyabnk48_thfc</a
+                    >
                 </address>
             </section>
         </div>

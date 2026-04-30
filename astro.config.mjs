@@ -36,10 +36,20 @@ export default defineConfig({
       minify: 'esbuild',
       rollupOptions: {
         output: {
-          manualChunks: {},
+          // แยก React/ReactDOM เป็น vendor chunk เพื่อให้ browser cache ได้นาน
+          // ไม่ต้องโหลดซ้ำเมื่อ navigate ระหว่างหน้า
+          manualChunks(id) {
+            if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) {
+              return 'vendor-react';
+            }
+          },
         },
       },
       target: 'es2020',
+      // โหลด CSS เฉพาะหน้าที่ใช้ ไม่ bundle รวมทุกอย่างไว้ในไฟล์เดียว
+      cssCodeSplit: true,
+      // แจ้งเตือนเฉพาะ chunk ที่ใหญ่มากจริงๆ
+      chunkSizeWarningLimit: 600,
     },
     css: {
       devSourcemap: false,

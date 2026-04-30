@@ -2,7 +2,7 @@
 // CONFIGURATION
 // ============================================================
 
-const HEADER_HEIGHT = 70;
+const HEADER_HEIGHT = 60;
 const SCROLL_THRESHOLD = 0.5; // Trigger at 50% of hero height
 const ANIMATION_CONFIG = {
   staggerStep: 80,
@@ -11,6 +11,86 @@ const ANIMATION_CONFIG = {
   offsetY: 30,
   duration: 500,
 };
+const THEME_STORAGE_KEY = 'niya-theme';
+const THEME_COLORS = {
+  light: '#ffffff',
+  dark: '#10131a',
+};
+
+// ============================================================
+// THEME (LIGHT / DARK)
+// ============================================================
+
+function resolveTheme() {
+  const saved = localStorage.getItem(THEME_STORAGE_KEY);
+  if (saved === 'light' || saved === 'dark') return saved;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function updateThemeToggles(theme) {
+  const isDark = theme === 'dark';
+  const toggles = document.querySelectorAll('[data-theme-toggle]');
+
+  toggles.forEach((el) => {
+    if (el.type === 'checkbox') {
+      el.checked = isDark;
+    }
+    el.setAttribute('aria-pressed', String(isDark));
+    el.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+  });
+}
+
+function applyTheme(theme, { persist = true } = {}) {
+  const root = document.documentElement;
+  
+  // ✅ IMPORTANT: If page has a forced theme, do NOT apply anything else
+  const forcedTheme = root.getAttribute('data-forced-theme');
+  if (forcedTheme === 'light' || forcedTheme === 'dark') {
+    theme = forcedTheme;
+    persist = false; // Never persist forced theme
+  }
+
+  root.setAttribute('data-theme', theme);
+  root.style.colorScheme = theme;
+
+  if (persist) {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }
+
+  const themeMeta = document.getElementById('themeColorMeta');
+  if (themeMeta) {
+    themeMeta.setAttribute("content", theme === "dark" ? "#10131a" : "#ffffff");
+  }
+
+  updateThemeToggles(theme);
+}
+
+function initThemeToggle() {
+  const root = document.documentElement;
+  const forcedTheme = root.getAttribute('data-forced-theme');
+  const toggles = document.querySelectorAll('[data-theme-toggle]');
+
+  // Case 1: Forced Theme (Hidden toggles or disabled toggles)
+  if (forcedTheme === 'light' || forcedTheme === 'dark') {
+    applyTheme(forcedTheme, { persist: false });
+    return;
+  }
+
+  // Case 2: Standard Theme Logic
+  const activeTheme = resolveTheme();
+  applyTheme(activeTheme, { persist: false });
+
+  if (!toggles.length) return;
+
+  toggles.forEach((el) => {
+    const eventType = el.type === 'checkbox' ? 'change' : 'click';
+    el.addEventListener(eventType, () => {
+      const currentTheme = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+  });
+}
+
 
 // ============================================================
 // HEADER & NAVIGATION - IMPROVED
@@ -35,7 +115,6 @@ function initHeader() {
   // State management
   let isMenuOpen = false;
   let headerActive = false;
-  let scrollTimeout;
 
   // หน้าอื่นที่ไม่มี hero — ให้แถบหัวอ่านง่ายตลอด (ไม่ทับเนื้อหาแบบโปร่งใส)
   if (!onHome || !heroSection) {
@@ -43,10 +122,12 @@ function initHeader() {
     headerActive = true;
   }
 
-  // Throttled scroll handler
+  // rAF-based scroll handler: sync กับ browser paint cycle พอดี ไม่เกิน 1 ครั้ง/frame
+  let rafId = 0;
   const handleScroll = () => {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
+    if (rafId) return; // มี frame pending อยู่แล้ว ไม่ต้องเพิ่ม
+    rafId = requestAnimationFrame(() => {
+      rafId = 0;
       if (!onHome || !heroSection) return;
 
       const scrollY = window.scrollY;
@@ -57,7 +138,7 @@ function initHeader() {
         headerActive = shouldActivate;
         header.classList.toggle('active', headerActive);
       }
-    }, 10);
+    });
   };
 
   // Toggle menu with prevent body scroll
@@ -408,18 +489,19 @@ function initMobileEnhancements() {
   // Add touch class to body for CSS targeting
   if (isTouchDevice()) {
     document.body.classList.add('touch-enabled');
-  }
 
-  // Improve button responsiveness on mobile
-  const buttons = document.querySelectorAll('button, a.btn, a.social-link');
-  buttons.forEach(btn => {
-    btn.addEventListener('touchstart', function () {
-      this.style.opacity = '0.8';
-    });
-    btn.addEventListener('touchend', function () {
-      this.style.opacity = '1';
-    });
-  });
+    // Event delegation: ใช้ 2 listeners แทน N listeners บน element แต่ละตัว
+    // ลด memory footprint และรองรับ dynamic elements ด้วย
+    document.body.addEventListener('touchstart', (e) => {
+      const target = e.target.closest('button, a.btn, a.social-link');
+      if (target) target.style.opacity = '0.8';
+    }, { passive: true });
+
+    document.body.addEventListener('touchend', (e) => {
+      const target = e.target.closest('button, a.btn, a.social-link');
+      if (target) target.style.opacity = '';
+    }, { passive: true });
+  }
 }
 
 // ============================================================
@@ -473,12 +555,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Re-apply theme after Astro client-side navigation.
+// This ensures forcedTheme on /planner/[event] always wins over previous page theme.
+document.addEventListener('astro:page-load', () => {
+  initThemeToggle();
+});
+
 // ============================================================
 // INIT - IMPROVED TIMING
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
   // Priority order for initialization
+  initThemeToggle();
   initHeader();
   initActiveNav();
   initSmoothScroll();

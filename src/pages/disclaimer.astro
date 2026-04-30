@@ -1,9 +1,9 @@
 ---
 // src/pages/disclaimer.astro
-import MainLayout from "../layouts/MainLayout.astro";
+import MainLayout from "@/app/layouts/MainLayout.astro";
 
 export interface Props {
-title?: string;
+    title?: string;
 }
 
 const { title = "คำชี้แจงสำหรับแฟนไซต์ (Fan Site Disclaimer)" } = Astro.props;
@@ -19,13 +19,17 @@ const { title = "คำชี้แจงสำหรับแฟนไซต์
                 <h2 class="wp-block-heading">สถานะของเว็บไซต์</h2>
                 <p>
                     <strong>Niya BNK48 – Fan Website</strong> (URL: <a
-                        href="https://little-nemo-of-niya.vercel.app">https://little-nemo-of-niya.vercel.app</a>)
-                    เป็นเว็บไซต์ที่สร้างขึ้นโดยกลุ่มแฟนคลับ (Fan Project)
+                        href="https://little-nemo-of-niya.vercel.app"
+                        >https://little-nemo-of-niya.vercel.app</a
+                    >) เป็นเว็บไซต์ที่สร้างขึ้นโดยกลุ่มแฟนคลับ (Fan Project)
                     เพื่อสนับสนุนและให้ข้อมูลเกี่ยวกับศิลปินไอดอลวง BNK48
-                    โดยเฉพาะสมาชิก “นีญ่า” (Niya) เว็บไซต์นี้ <strong>ไม่มีความเกี่ยวข้อง ไม่ได้เป็นตัวแทน
-                        และไม่ได้รับการรับรองอย่างเป็นทางการจาก BNK48, CGM48 หรือ iAM
-                        (บริษัทผู้ดูแล BNK48 และ CGM48), ผู้สนับสนุนอย่างเป็นทางการ
-                        หรือหน่วยงานใด ๆ ที่เกี่ยวข้องกับวง BNK48 และ CGM48</strong>
+                    โดยเฉพาะสมาชิก “นีญ่า” (Niya) เว็บไซต์นี้ <strong
+                        >ไม่มีความเกี่ยวข้อง ไม่ได้เป็นตัวแทน
+                        และไม่ได้รับการรับรองอย่างเป็นทางการจาก BNK48, CGM48
+                        หรือ iAM (บริษัทผู้ดูแล BNK48 และ CGM48),
+                        ผู้สนับสนุนอย่างเป็นทางการ หรือหน่วยงานใด ๆ
+                        ที่เกี่ยวข้องกับวง BNK48 และ CGM48</strong
+                    >
                 </p>
                 <p>
                     ข้อมูล ความคิดเห็น
@@ -77,10 +81,11 @@ const { title = "คำชี้แจงสำหรับแฟนไซต์
                     ตารางกิจกรรม, ผลงาน, และข่าวสารต่าง ๆ
                     มีความถูกต้องและเป็นปัจจุบัน อย่างไรก็ตาม
                     เนื่องจากเป็นเว็บไซต์ที่ดำเนินการโดยแฟนคลับอาสาสมัคร
-                    อาจมีความคลาดเคลื่อนหรือความล่าช้าในการอัปเดตได้ <strong>เราไม่รับประกันความถูกต้องสมบูรณ์ของข้อมูล
+                    อาจมีความคลาดเคลื่อนหรือความล่าช้าในการอัปเดตได้ <strong
+                        >เราไม่รับประกันความถูกต้องสมบูรณ์ของข้อมูล
                         และจะไม่รับผิดชอบต่อความเสียหายใด ๆ
-                        ที่เกิดจากการใช้ข้อมูลดังกล่าว</strong> สำหรับข้อมูลที่ต้องการความแน่นอนสูงสุด
-                    โปรดอ้างอิงจากช่องทางทางการของ
+                        ที่เกิดจากการใช้ข้อมูลดังกล่าว</strong
+                    > สำหรับข้อมูลที่ต้องการความแน่นอนสูงสุด โปรดอ้างอิงจากช่องทางทางการของ
                     BNK48 หรือแหล่งข้อมูลจาก iAM เท่านั้น
                 </p>
             </section>
@@ -104,7 +109,9 @@ const { title = "คำชี้แจงสำหรับแฟนไซต์
                     เราไม่ขายข้อมูลผู้ใช้งานให้กับบุคคลที่สาม
                     และไม่ใช้ข้อมูลของคุณเพื่อวัตถุประสงค์ทางการค้าใด ๆ (เช่น
                     การตลาดแบบเจาะจงบุคคล) การเก็บข้อมูลผ่าน LocalStorage,
-                    Analytics หรือ Supabase เป็นไปตามที่อธิบายไว้ใน <a href="/privacy-policy">นโยบายความเป็นส่วนตัว</a>
+                    Analytics หรือ Supabase เป็นไปตามที่อธิบายไว้ใน <a
+                        href="/privacy-policy">นโยบายความเป็นส่วนตัว</a
+                    >
                     และใช้เพื่อการพัฒนาเว็บไซต์แฟนคลับเท่านั้น
                 </p>
             </section>
@@ -129,7 +136,10 @@ const { title = "คำชี้แจงสำหรับแฟนไซต์
                     </li>
                 </ul>
                 <p>
-                    ส่งข้อมูลมาที่อีเมล <a href="mailto:teamniya.thfc1402@gmail.com">teamniya.thfc1402@gmail.com</a>
+                    ส่งข้อมูลมาที่อีเมล <a
+                        href="mailto:teamniya.thfc1402@gmail.com"
+                        >teamniya.thfc1402@gmail.com</a
+                    >
                     เราจะดำเนินการลบหรือปิดการเข้าถึงเนื้อหาภายใน 7-14
                 </p>
             </section>
@@ -163,19 +173,25 @@ const { title = "คำชี้แจงสำหรับแฟนไซต์
                 <h2 class="wp-block-heading">ติดต่อเรา</h2>
                 <p>สำหรับข้อสงสัยทั่วไปหรือเรื่องลิขสิทธิ์:</p>
                 <address>
-                    อีเมล: <a href="mailto:teamniya.thfc1402@gmail.com">teamniya.thfc1402@gmail.com</a>
+                    อีเมล: <a href="mailto:teamniya.thfc1402@gmail.com"
+                        >teamniya.thfc1402@gmail.com</a
+                    >
                     <br />
-                    เว็บไซต์: <a
-                        href="https://little-nemo-of-niya.vercel.app">https://little-nemo-of-niya.vercel.app</a>
+                    เว็บไซต์: <a href="https://little-nemo-of-niya.vercel.app"
+                        >https://little-nemo-of-niya.vercel.app</a
+                    >
                     <br />
-                    X: <a href="https://x.com/niyabnk48_thfc">@niyabnk48_thfc</a>
+                    X: <a href="https://x.com/niyabnk48_thfc">@niyabnk48_thfc</a
+                    >
                 </address>
             </section>
 
-            <p style="margin-top: 2rem;">
-                <strong>“แฟนไซต์นี้สร้างขึ้นด้วยความรักที่มีต่อนีญ่าและ BNK48
+            <p style="margin-top: 2rem; color: var(--c-content-secondary);">
+                <strong
+                    >“แฟนไซต์นี้สร้างขึ้นด้วยความรักที่มีต่อนีญ่าและ BNK48
                     ไม่มีเจตนาแอบอ้างเป็นทางการ
-                    ขอเชิญร่วมเชียร์และสนับสนุนศิลปินอย่างถูกกฎหมาย”</strong>
+                    ขอเชิญร่วมเชียร์และสนับสนุนศิลปินอย่างถูกกฎหมาย”</strong
+                >
             </p>
         </div>
     </div>

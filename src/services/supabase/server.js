@@ -1,6 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
+let supabaseInstance = null;
+
 export function getSupabase() {
+  if (supabaseInstance) return supabaseInstance;
+
   const url = import.meta.env.SUPABASE_URL;
   const key = import.meta.env.SUPABASE_ANON_KEY;
 
@@ -9,5 +13,6 @@ export function getSupabase() {
     return null;
   }
 
-  return createClient(url, key);
+  supabaseInstance = createClient(url, key);
+  return supabaseInstance;
 }

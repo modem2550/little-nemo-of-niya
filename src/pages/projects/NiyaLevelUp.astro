@@ -1,0 +1,708 @@
+---
+import MainLayout from "@/app/layouts/MainLayout.astro";
+
+const projectTitle = "Niya Level Up";
+const projectDesc =
+    "ร่วมสนับสนุนและส่งกำลังใจให้ Niya BNK48 ผ่านโปรเจคพิเศษนี้";
+
+const currentAmount = 10000;
+const goalAmount = 10000;
+const percent = Math.min(Math.round((currentAmount / goalAmount) * 100), 100);
+
+const milestones = [
+    { amount: 1000, label: "฿1,000", reached: currentAmount >= 1000 },
+    { amount: 3000, label: "฿3,000", reached: currentAmount >= 3000 },
+    { amount: 5000, label: "฿5,000", reached: currentAmount >= 5000 },
+    { amount: 7500, label: "฿7,500", reached: currentAmount >= 7500 },
+    { amount: 10000, label: "฿10,000", reached: currentAmount >= 10000 },
+];
+---
+
+<MainLayout title={`${projectTitle} — Niya BNK48`} description={projectDesc}>
+    <link
+        rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+        as="style"
+        slot="head"
+    />
+
+    <style is:global>
+        @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+        .pixel-page {
+            font-family: "Press Start 2P", monospace;
+            background: #ffffff;
+            min-height: 100vh;
+            margin-top: 100px;
+        }
+
+        /* ── Hero ── */
+        .nlu-hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .nlu-mushroom {
+            display: block;
+            margin: 0 auto 1.5rem;
+            image-rendering: pixelated;
+            width: 80px;
+            height: 80px;
+        }
+
+        .nlu-title img {
+            width: 450px;
+        }
+
+        .nlu-subtitle {
+            font-size: 0.5rem;
+            color: #888899;
+            letter-spacing: 2px;
+            line-height: 2.5;
+        }
+
+        /* ── Layout ── */
+        .nlu-container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* ── Pixel Card ── */
+        .nlu-card {
+            background: #ffffff;
+            border: 4px solid #fc809f;
+            box-shadow: 6px 6px 0 #fb4774;
+            padding: 1.75rem 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .nlu-card-label {
+            font-size: 0.45rem;
+            color: #fc809f;
+            letter-spacing: 2px;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nlu-card-label::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #fc809f;
+            flex-shrink: 0;
+        }
+
+        /* ── Progress ── */
+        .nlu-amount {
+            font-size: 2rem;
+            color: #222233;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .nlu-amount-unit {
+            font-size: 0.7rem;
+            color: #fc809f;
+        }
+
+        .nlu-goal-text {
+            font-size: 0.4rem;
+            color: #888899;
+            letter-spacing: 1px;
+            margin-bottom: 1.25rem;
+        }
+
+        .nlu-bar-wrap {
+            background: #f4ebef;
+            border: 4px solid #222233;
+            height: 32px;
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .nlu-bar-fill {
+            height: 100%;
+            background: #fc809f;
+            width: var(--pct, 0%);
+            position: relative;
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .nlu-bar-cursor {
+            position: absolute;
+            right: -2px;
+            top: 4px;
+            width: 4px;
+            height: 20px;
+            background: #fb4774;
+            animation: cur-blink 0.9s step-end infinite;
+        }
+
+        @keyframes cur-blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .nlu-bar-pct {
+            font-size: 0.4rem;
+            color: #888899;
+            text-align: right;
+            letter-spacing: 1px;
+            margin-bottom: 1.25rem;
+        }
+
+        /* ── Milestones ── */
+        .nlu-milestones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .nlu-milestone {
+            font-size: 0.4rem;
+            padding: 6px 10px;
+            border: 3px solid #e7e7e7;
+            color: #aaaaaa;
+            background: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .nlu-milestone.reached {
+            border-color: #fc809f;
+            color: #fc809f;
+            background: #fff0f4;
+        }
+
+        .nlu-milestone.reached::before {
+            content: "★ ";
+        }
+
+        /* ── Divider ── */
+        .nlu-divider {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0.5rem 0 2rem;
+        }
+
+        .nlu-divider span {
+            display: block;
+            height: 4px;
+            flex: 1;
+            background: #f4ebef;
+        }
+
+        .nlu-divider b {
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: #fc809f;
+            flex-shrink: 0;
+        }
+
+        /* ── QR Section ── */
+        .nlu-qr-row {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .nlu-qr-box {
+            flex-shrink: 0;
+            width: 150px;
+            height: 150px;
+            border: 4px solid #fc809f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nlu-qr-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+            padding: 8px;
+        }
+
+        .nlu-qr-placeholder {
+            font-size: 0.4rem;
+            color: #cccccc;
+            text-align: center;
+            letter-spacing: 1px;
+            line-height: 2.5;
+        }
+
+        .nlu-qr-info {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .nlu-qr-title {
+            font-size: 0.45rem;
+            color: #fc809f;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            line-height: 2;
+        }
+
+        .nlu-step {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .nlu-step-num {
+            display: inline-block;
+            background: #fc809f;
+            color: #ffffff;
+            font-size: 0.4rem;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            text-align: center;
+            line-height: 18px;
+        }
+
+        .nlu-step-text {
+            font-size: 0.4rem;
+            color: #555566;
+            line-height: 2.2;
+        }
+
+        .nlu-qr-note {
+            font-size: 0.38rem;
+            color: #888899;
+            margin-top: 1rem;
+            border-left: 4px solid #fc809f;
+            padding-left: 8px;
+            line-height: 2.5;
+        }
+
+        .nlu-badge-note {
+            font-size: 0.38rem;
+            color: #888899;
+            background: #fff0f4;
+            border: 2px dashed #fc809f;
+            padding: 10px 14px;
+            text-align: center;
+            line-height: 2.8;
+            margin-top: 1.25rem;
+            letter-spacing: 1px;
+        }
+
+        /* ── Footer ── */
+        .nlu-footer {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .nlu-hearts {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .nlu-footer-text {
+            font-size: 0.4rem;
+            color: #aaaaaa;
+            line-height: 3;
+            letter-spacing: 1px;
+        }
+
+        .nlu-press-start {
+            font-size: 0.45rem;
+            color: #fc809f;
+            letter-spacing: 2px;
+            margin-top: 1.5rem;
+            animation: cur-blink 1.2s step-end infinite;
+        }
+
+        /* ── Pixel heart SVG inline ── */
+        .ph {
+            display: inline-block;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 480px) {
+            .nlu-card {
+                padding: 1.25rem 1rem;
+            }
+
+            .nlu-amount {
+                font-size: 1.4rem;
+            }
+
+            .nlu-title {
+                font-size: 1.2rem;
+            }
+
+            .nlu-qr-row {
+                flex-direction: column;
+            }
+
+            .nlu-qr-box {
+                width: 100%;
+                height: 200px;
+            }
+        }
+    </style>
+
+    <div class="container pixel-page">
+        <div class="row">
+            <div class="col-12">
+                <div class="nlu-container">
+                    <!-- Hero -->
+                    <div class="nlu-hero">
+                        <svg
+                            class="nlu-mushroom"
+                            viewBox="0 0 16 16"
+                            xmlns="http://www.w3.org/2000/svg"
+                            style="image-rendering:pixelated"
+                            aria-hidden="true"
+                        >
+                            <rect
+                                x="5"
+                                y="0"
+                                width="6"
+                                height="1"
+                                fill="#222233"></rect>
+                            <rect
+                                x="3"
+                                y="1"
+                                width="10"
+                                height="1"
+                                fill="#222233"></rect>
+                            <rect
+                                x="2"
+                                y="2"
+                                width="12"
+                                height="1"
+                                fill="#222233"></rect>
+                            <rect
+                                x="1"
+                                y="3"
+                                width="14"
+                                height="2"
+                                fill="#222233"></rect>
+                            <rect
+                                x="2"
+                                y="5"
+                                width="12"
+                                height="1"
+                                fill="#222233"></rect>
+                            <rect
+                                x="3"
+                                y="6"
+                                width="10"
+                                height="1"
+                                fill="#222233"></rect>
+                            <rect
+                                x="5"
+                                y="7"
+                                width="6"
+                                height="1"
+                                fill="#222233"></rect>
+                            <rect
+                                x="3"
+                                y="1"
+                                width="2"
+                                height="6"
+                                fill="#fc9fa8"></rect>
+                            <rect
+                                x="5"
+                                y="1"
+                                width="6"
+                                height="6"
+                                fill="#fc9fa8"></rect>
+                            <rect
+                                x="11"
+                                y="1"
+                                width="2"
+                                height="6"
+                                fill="#fc9fa8"></rect>
+                            <rect
+                                x="5"
+                                y="1"
+                                width="2"
+                                height="3"
+                                fill="#ffffff"></rect>
+                            <rect
+                                x="9"
+                                y="2"
+                                width="2"
+                                height="2"
+                                fill="#ffffff"></rect>
+                            <rect
+                                x="6"
+                                y="8"
+                                width="4"
+                                height="1"
+                                fill="#222233"></rect>
+                            <rect
+                                x="6"
+                                y="8"
+                                width="4"
+                                height="4"
+                                fill="#ffffff"></rect>
+                            <rect
+                                x="5"
+                                y="9"
+                                width="6"
+                                height="1"
+                                fill="#222233"></rect>
+                            <rect
+                                x="5"
+                                y="10"
+                                width="1"
+                                height="2"
+                                fill="#222233"></rect>
+                            <rect
+                                x="10"
+                                y="10"
+                                width="1"
+                                height="2"
+                                fill="#222233"></rect>
+                            <rect
+                                x="4"
+                                y="11"
+                                width="8"
+                                height="1"
+                                fill="#222233"></rect>
+                        </svg>
+                        <div class="nlu-title">
+                            <img src="/img/nlu-title.png" alt="Niya Level Up" />
+                        </div>
+                        <p class="nlu-subtitle">PROJECT DONATION CAMPAIGN</p>
+                    </div>
+
+                    <!-- Progress Card -->
+                    <div class="nlu-card">
+                        <div class="nlu-card-label">DONATION PROGRESS</div>
+
+                        <div class="nlu-amount">
+                            <span class="nlu-amount-unit">฿</span>{
+                                currentAmount.toLocaleString()
+                            }
+                        </div>
+                        <div class="nlu-goal-text">
+                            GOAL: ฿{goalAmount.toLocaleString()}
+                        </div>
+
+                        <div class="nlu-bar-wrap">
+                            <div
+                                class="nlu-bar-fill"
+                                id="nlu-bar"
+                                style={`--pct: 0%`}
+                                data-target={`${percent}%`}
+                            >
+                                <div class="nlu-bar-cursor"></div>
+                            </div>
+                        </div>
+                        <div class="nlu-bar-pct">{percent}% COMPLETE</div>
+
+                        <div class="nlu-milestones">
+                            {
+                                milestones.map((m) => (
+                                    <div
+                                        class={`nlu-milestone${m.reached ? " reached" : ""}`}
+                                    >
+                                        {m.label}
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="nlu-divider">
+                        <span></span><b></b><span></span><b></b><span></span><b
+                        ></b><span></span>
+                    </div>
+
+                    <!-- QR Card -->
+                    <div class="nlu-card">
+                        <div class="nlu-card-label">DONATE VIA QR CODE</div>
+
+                        <div class="nlu-qr-row">
+                            <div class="nlu-qr-box">
+                                <!--
+              วางรูป QR จริงตรงนี้:
+              <img src="/img/qr-donate.png" alt="QR Code โดเนท Niya Level Up" class="nlu-qr-img" />
+            -->
+                                <div class="nlu-qr-placeholder">
+                                    QR<br />CODE<br />HERE
+                                </div>
+                            </div>
+
+                            <div class="nlu-qr-info">
+                                <div class="nlu-qr-title">วิธีโดเนท</div>
+                                <div class="nlu-step">
+                                    <span class="nlu-step-num">1</span>
+                                    <span class="nlu-step-text"
+                                        >เปิดแอป PromptPay<br />หรือ Mobile
+                                        Banking</span
+                                    >
+                                </div>
+                                <div class="nlu-step">
+                                    <span class="nlu-step-num">2</span>
+                                    <span class="nlu-step-text"
+                                        >สแกน QR Code<br />ด้านซ้าย</span
+                                    >
+                                </div>
+                                <div class="nlu-step">
+                                    <span class="nlu-step-num">3</span>
+                                    <span class="nlu-step-text"
+                                        >กรอกจำนวนเงิน<br />ที่ต้องการ</span
+                                    >
+                                </div>
+                                <div class="nlu-step">
+                                    <span class="nlu-step-num">4</span>
+                                    <span class="nlu-step-text"
+                                        >ยืนยันการโอน<br
+                                        />แล้วส่งสลิปหาทีมงาน</span
+                                    >
+                                </div>
+                                <div class="nlu-qr-note">
+                                    ทุกยอดไม่มีขั้นต่ำ<br />
+                                    ขอบคุณทุกกำลังใจ
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="nlu-badge-note">
+                            ★ เงินโดเนทจะถูกนำไปใช้เพื่อ Niya BNK48 ทั้งหมด ★
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="nlu-footer">
+                        <div class="nlu-hearts" aria-hidden="true">
+                            {
+                                [0, 1, 2].map((i) => (
+                                    <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 14 14"
+                                        class="ph"
+                                    >
+                                        <rect
+                                            x="2"
+                                            y="1"
+                                            width="3"
+                                            height="2"
+                                            fill={
+                                                i === 1 ? "#fb4774" : "#fc809f"
+                                            }
+                                        />
+                                        <rect
+                                            x="9"
+                                            y="1"
+                                            width="3"
+                                            height="2"
+                                            fill={
+                                                i === 1 ? "#fb4774" : "#fc809f"
+                                            }
+                                        />
+                                        <rect
+                                            x="1"
+                                            y="3"
+                                            width="12"
+                                            height="3"
+                                            fill={
+                                                i === 1 ? "#fb4774" : "#fc809f"
+                                            }
+                                        />
+                                        <rect
+                                            x="2"
+                                            y="6"
+                                            width="10"
+                                            height="3"
+                                            fill={
+                                                i === 1 ? "#fb4774" : "#fc809f"
+                                            }
+                                        />
+                                        <rect
+                                            x="3"
+                                            y="9"
+                                            width="8"
+                                            height="2"
+                                            fill={
+                                                i === 1 ? "#fb4774" : "#fc809f"
+                                            }
+                                        />
+                                        <rect
+                                            x="4"
+                                            y="11"
+                                            width="6"
+                                            height="1"
+                                            fill={
+                                                i === 1 ? "#fb4774" : "#fc809f"
+                                            }
+                                        />
+                                        <rect
+                                            x="5"
+                                            y="12"
+                                            width="4"
+                                            height="1"
+                                            fill={
+                                                i === 1 ? "#fb4774" : "#fc809f"
+                                            }
+                                        />
+                                        <rect
+                                            x="6"
+                                            y="13"
+                                            width="2"
+                                            height="1"
+                                            fill={
+                                                i === 1 ? "#fb4774" : "#fc809f"
+                                            }
+                                        />
+                                    </svg>
+                                ))
+                            }
+                        </div>
+                        <div class="nlu-footer-text">
+                            Little Nemo of Niya<br />
+                            Fan Project 2026
+                        </div>
+                        <div class="nlu-press-start">
+                            ▶ PRESS START TO SUPPORT ◀
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    const bar = document.getElementById("nlu-bar");
+                    if (bar) {
+                        const target = bar.dataset.target ?? "0%";
+                        requestAnimationFrame(() => {
+                            setTimeout(() => {
+                                bar.style.setProperty("--pct", target);
+                            }, 200);
+                        });
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</MainLayout>

@@ -1,54 +1,200 @@
 ---
 export const prerender = true;
-import MainLayout from "@/layouts/MainLayout.astro";
-import EventPlanner from "@/features/planner/EventPlanner.astro";
+import MainLayout from "@/app/layouts/MainLayout.astro";
+import EventPlanner from "@/features/planner/ui/EventPlanner.astro";
 import { getPlannerEvents } from "@/features/events/eventEngine";
 import { getSupabase } from "@/services/supabase/server";
+import "@/shared/styles/planner.scss";
 
 export async function getStaticPaths() {
-const events = getPlannerEvents();
-const plannerOnlyEvents = events.filter(e => !e.features.planner?.href);
-return plannerOnlyEvents.map(e => ({
-params: { event: e.slug },
-props: { eventData: e },
-}));
+    const events = await getPlannerEvents();
+    const plannerOnlyEvents = events.filter((e) => !e.features.planner?.href);
+    return plannerOnlyEvents.map((e) => ({
+        params: { event: e.slug },
+        props: { eventData: e },
+    }));
 }
 
-const { eventData } = Astro.props;
-const plannerData = eventData.features.planner;
+const { eventData: staticEventData } = Astro.props;
+const currentSlug = Astro.params.event;
+const liveEventData = (await getPlannerEvents()).find((e) => e.slug === currentSlug);
+const eventData = liveEventData ?? staticEventData;
+const plannerData = eventData?.features?.planner;
+
 
 if (!plannerData) {
-throw new Error(`Planner data missing for event ${eventData.slug}`);
+    throw new Error(`Planner data missing for event ${eventData.slug}`);
 }
 
-const supabase = getSupabase();
-let membersData: any[] | null = null;
+const hasActivities = (plannerData.activities?.length ?? 0) > 0;
+const hasSchedule = (plannerData.schedule?.length ?? 0) > 0;
+const shouldShowFallbackEmbed =
+    !hasActivities && !hasSchedule && Boolean(plannerData.fallbackEmbedHtml);
+const fallbackEmbedTheme =
+    plannerData.forcedTheme === "light" ? "light" : "dark";
+const socialImage = plannerData.listingImage ?? plannerData.heroImage;
 
-if (supabase) {
-const { data } = await supabase
-.from("members")
-.select("id,name,brand,gen,team,profile_image_url")
-.is("graduated_at", null)
-.order("name");
-membersData = data;
+let members: any[] = [];
+if (!shouldShowFallbackEmbed) {
+    const supabase = getSupabase();
+    let membersData: any[] | null = null;
+
+    if (supabase) {
+        const { data } = await supabase
+            .from("members")
+            .select("id,name,brand,gen,team,profile_image_url")
+            .is("graduated_at", null)
+            .order("name");
+        membersData = data;
+    }
+
+    members = (membersData ?? []).map((m: any) => ({
+        ...m,
+        brand: m.brand ?? "CGM48",
+        gen: m.gen ?? "Unknown",
+        team: m.team ?? "Trainee",
+    }));
 }
-
-const members = (membersData ?? []).map((m: any) => ({
-...m,
-brand: m.brand ?? "CGM48",
-gen: m.gen ?? "Unknown",
-team: m.team ?? "Trainee",
-}));
 ---
 
-<MainLayout title={plannerData.pageTitle} theme={eventData.theme}>
+<MainLayout
+    title={plannerData.pageTitle}
+    theme={eventData.theme}
+    forcedTheme={plannerData.forcedTheme}
+    socialImage={socialImage}
+>
     <h1 class="visually-hidden">{plannerData.pageTitle}</h1>
 
     <article id="planner-main" aria-label={plannerData.pageTitle}>
-        <EventPlanner eventSlug={eventData.slug} eventName={eventData.name} pageTitle={plannerData.pageTitle}
-            officialLink={plannerData.officialLink} storageKey={plannerData.storageKey}
-            heroImage={plannerData.heroImage} primaryColor={eventData.primaryColor}
-            primaryHover={eventData.primaryHover} prices={plannerData.prices} members={members} days={plannerData.days}
-            activities={plannerData.activities} schedule={plannerData.schedule} />
+        {
+            shouldShowFallbackEmbed ? (
+                <>
+                    <div
+                        class="sf-hero sf-hero--cover"
+                        style={`--sf-hero-image: url('${plannerData.heroImage}')`}
+                    >
+                        <div class="sf-hero__overlay" />
+                        <div class="container sf-hero__container">
+                            <div class="sf-hero-card slide-up">
+                                <p class="sf-hero__eyebrow">BNK48 & CGM48</p>
+                                <h1 class="sf-hero__title">{eventData.name}</h1>
+                                <div class="sf-hero__meta">
+                                    <span>รายละเอียด&nbsp;:&nbsp;</span>
+                                    <a
+                                        href={plannerData.officialLink}
+                                        class="sf-hero__link"
+                                        target="_blank"
+                                    >
+                                        BNK48 & CGM48 Official{" "}
+                                        <i class="fa-solid fa-arrow-up-right-from-square ms-1 u-fs-10" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sf-panel" style="display: block;">
+                        <div class="sf-section-shell mx-auto p-4 pb-0">
+                            <section class="container py-5">
+                                <div
+                                    class="mx-auto"
+                                    style="max-width: 640px;"
+                                    set:html={(
+                                        plannerData.fallbackEmbedHtml ?? ""
+                                    ).replace(
+                                        'data-theme="dark"',
+                                        `data-theme="${fallbackEmbedTheme}"`,
+                                    )}
+                                />
+                                <script
+                                    async
+                                    src="https://platform.twitter.com/widgets.js"
+                                    charset="utf-8"
+                                />
+                            </section>
+                        </div>
+                    </div>
+
+                    <div class="sf-panel" style="display: block;">
+                        <div class="sf-section-shell mx-auto p-4 pb-0">
+                            <div class="sf-disclaimer">
+                                <hr class="filter-divider" />
+                                <div class="mx-auto">
+                                    <div class="sf-disclaimer__title">
+                                        <i class="fa-solid fa-circle-info" />{" "}
+                                        หมายเหตุ
+                                    </div>
+                                    <ul class="sf-disclaimer__list">
+                                        <li>
+                                            ตารางกิจกรรมและรูปแบบกิจกรรมอาจมีการเปลี่ยนแปลงได้ตามความเหมาะสม
+                                        </li>
+                                        <li>
+                                            กิจกรรมอาจมีการปรับรูปแบบหรือเลื่อนเวลาตามความเหมาะสม
+                                            โปรดติดตามข้อมูลจาก{" "}
+                                            <a
+                                                href={plannerData.officialLink}
+                                                target="_blank"
+                                            >
+                                                <strong>
+                                                    BNK48 & CGM48 Official
+                                                </strong>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            เวลาที่แสดงใช้เพื่อประกอบการวางแผนเท่านั้น{" "}
+                                            <strong>
+                                                ผู้ใช้งานควรบริหารการใช้บัตรกิจกรรมด้วยตนเอง
+                                            </strong>
+                                        </li>
+                                        <li>
+                                            ข้อมูลการวางแผนจะถูกบันทึกไว้ในเบราว์เซอร์ของผู้ใช้งาน
+                                            (localStorage)
+                                            และอาจต้องปรับแก้ด้วยตนเองหากมีการเปลี่ยนแปลงข้อมูล
+                                        </li>
+                                    </ul>
+                                    <br />
+                                    <div class="sf-disclaimer__title">
+                                        <i class="fa-solid fa-circle-info" />
+                                        <strong>Disclaimer</strong>
+                                    </div>
+                                    <ul class="sf-disclaimer__list">
+                                        <li>
+                                            เว็บไซต์นี้จัดทำโดยแฟนคลับเพื่อช่วยวางแผนการเข้าร่วมกิจกรรมเท่านั้น
+                                            ไม่มีความเกี่ยวข้องหรือการรับรองอย่างเป็นทางการจาก
+                                            BNK48 หรือ CGM48
+                                            หรือหน่วยงานที่เกี่ยวข้อง
+                                            หากพบปัญหาสามารถแจ้งได้ที่ —{" "}
+                                            <a href="https://www.facebook.com/profile.php?id=61556940780361">
+                                                <strong>
+                                                    little nemo of Niya
+                                                </strong>{" "}
+                                                (Niya BNK48 Thailand Fanclub)
+                                            </a>{" "}
+                                            ทุกช่องทาง
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <EventPlanner
+                    eventSlug={eventData.slug}
+                    eventName={eventData.name}
+                    pageTitle={plannerData.pageTitle}
+                    officialLink={plannerData.officialLink}
+                    storageKey={plannerData.storageKey}
+                    heroImage={plannerData.heroImage}
+                    primaryColor={eventData.primaryColor}
+                    primaryHover={eventData.primaryHover}
+                    prices={plannerData.prices}
+                    members={members}
+                    days={plannerData.days}
+                    activities={plannerData.activities}
+                    schedule={plannerData.schedule}
+                />
+            )
+        }
     </article>
 </MainLayout>

@@ -1,29 +1,29 @@
 ---
 // src/pages/planner/index.astro
-import MainLayout from "../../layouts/MainLayout.astro";
+import MainLayout from "@/app/layouts/MainLayout.astro";
 import {
-getPlannerEvents,
-getRankingEvents,
+    getPlannerEvents,
+    getRankingEvents,
 } from "@/features/events/eventEngine";
-import "../../styles/planner.scss";
+import PlannerCard from "@/features/planner/ui/PlannerCard.astro";
+import "@/shared/styles/planner.scss";
 
-const ALL_PLANNER_EVENTS = getPlannerEvents();
+const ALL_PLANNER_EVENTS = await getPlannerEvents();
 const MAIN_PLANNERS = ALL_PLANNER_EVENTS.filter(
-(e) => !e.features.planner?.href,
+    (e) => !e.features.planner?.href,
 );
-//const FAN_PROJECTS = ALL_PLANNER_EVENTS.filter(
-// (e) => !!e.features.planner?.href,
-//);
+const FAN_PROJECTS = ALL_PLANNER_EVENTS.filter((e) => e.features.planner?.href);
 
-const RANKING_EVENTS = getRankingEvents();
+const RANKING_EVENTS = await getRankingEvents();
 
-const title = "Event Planners - Niya BNK48";
+const title = "Planners - Niya BNK48";
 const description =
-"เลือกอีเวนต์แล้ววางแผนตาราง กิจกรรม และเมมเบอร์ที่อยากเจอ — เครื่องมือสำหรับแฟนคลับ";
+    "เลือกอีเวนต์แล้ววางแผนตาราง กิจกรรม และเมมเบอร์ที่อยากเจอ — เครื่องมือสำหรับแฟนคลับ";
 ---
 
 <MainLayout title={title} description={description}>
-    <div class="container planner-hub" aria-labelledby="planner-hub-heading">
+    <div class="planner-hub" aria-labelledby="planner-hub-heading">
+        <!-- ── Event Planners ── -->
         <header class="planner-hub__intro">
             <div>
                 <h1 id="planner-hub-heading" class="planner-hub__title mb-2">
@@ -34,130 +34,185 @@ const description =
                 </p>
             </div>
         </header>
-        <div class="mb-5 planner-hub__inner">
+        <div class="mb-5 ranking-ad" aria-labelledby="planner-heading">
             {
-            MAIN_PLANNERS.length === 0 ? (
-            <p class="planner-hub__empty mb-0">
-                ยังไม่มีแพลนเนอร์ให้เลือกในขณะนี้ —
-                โปรดกลับมาดูใหม่ภายหลัง
-            </p>
-            ) : (
-            <section class="ranking-ad__grid">
-                {MAIN_PLANNERS.map((event) => (
-                <div class="row row-cols-1 row-cols-sm-2 g-4">
-                    <div class="col d-flex justify-content-center">
-                        <article class="planner-card__article d-flex flex-column h-100 overflow-hidden"
-                            style={`--planner-accent: ${event.primaryColor};`}>
-                            <a class="planner-card__media" href={ event.features.planner?.href ||
-                                `/planner/${event.slug}` } aria-label={`Open planner for ${event.name}`}>
-                                <img src={ event.features.planner ?.listingImage ?? event.features.planner ?.heroImage }
-                                    alt={event.name} width="960" height="540" loading="lazy" decoding="async" />
-                                <span class="planner-card__badge" aria-hidden="false">
-                                    <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true" />
-                                    <span>Planner</span>
-                                </span>
-                            </a>
-                            <div class="planner-card__body d-flex flex-column flex-grow-1">
-                                <h2 class="h6 planner-card__title">
-                                    <a href={ event.features.planner ?.href || `/planner/${event.slug}` }>
-                                        {event.name}
-                                    </a>
-                                </h2>
-                                <p class="planner-card__desc">
-                                    {
-                                    event.features.planner
-                                    ?.description
-                                    }
-                                </p>
-                                <div class="planner-card__actions d-flex flex-wrap align-items-center">
-                                    <a class="btn planner-card__cta" href={ event.features.planner ?.href ||
-                                        `/planner/${event.slug}` }>
-                                        เปิดแพลนเนอร์
-                                        <i class="fa-solid fa-arrow-right arrow-icon ms-1" aria-hidden="true" />
-                                    </a>
-                                    <a class="planner-card__official d-inline-flex align-items-center position-relative"
-                                        href={ event.features.planner ?.officialLink } target="_blank"
-                                        rel="noopener noreferrer">
-                                        ข้อมูลทางการ
-                                        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
-                                        <span class="sr-only">
-                                            (opens in new window)
-                                        </span>
-                                    </a>
+                MAIN_PLANNERS.length === 0 ? (
+                    <p class="planner-hub__empty mb-0">
+                        ยังไม่มีแพลนเนอร์ให้เลือกในขณะนี้ —
+                        โปรดกลับมาดูใหม่ภายหลัง
+                    </p>
+                ) : (
+                    <section class="p-0">
+                        <div class="row row-cols-1 row-cols-sm-2 g-4">
+                            {MAIN_PLANNERS.map((event) => (
+                                <div class="col d-flex justify-content-center">
+                                    <article
+                                        class="planner-card__article d-flex flex-column h-100 overflow-hidden"
+                                        style={`--planner-accent: ${event.primaryColor};`}
+                                    >
+                                        <a
+                                            class="planner-card__media"
+                                            href={`/planner/${event.slug}`}
+                                            aria-label={`Open planner for ${event.name}`}
+                                        >
+                                            <img
+                                                src={
+                                                    event.features.planner
+                                                        ?.listingImage ??
+                                                    event.features.planner
+                                                        ?.heroImage
+                                                }
+                                                alt={event.name}
+                                                width="960"
+                                                height="540"
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
+                                        </a>
+                                        <div class="planner-card__body d-flex flex-column flex-grow-1">
+                                            <h2 class="h6 planner-card__title">
+                                                <a
+                                                    href={`/planner/${event.slug}`}
+                                                >
+                                                    {event.name}
+                                                </a>
+                                            </h2>
+                                            <p class="planner-card__desc">
+                                                {
+                                                    event.features.planner
+                                                        ?.description
+                                                }
+                                            </p>
+                                            <div class="planner-card__actions d-flex flex-wrap align-items-center">
+                                                <a
+                                                    class="btn planner-card__cta"
+                                                    href={`/planner/${event.slug}`}
+                                                >
+                                                    เปิดแพลนเนอร์
+                                                    <i
+                                                        class="fa-solid fa-arrow-right arrow-icon ms-1"
+                                                        aria-hidden="true"
+                                                    />
+                                                </a>
+                                                <a
+                                                    class="planner-card__official d-inline-flex align-items-center position-relative"
+                                                    href={
+                                                        event.features.planner
+                                                            ?.officialLink
+                                                    }
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    ข้อมูลทางการ
+                                                    <i
+                                                        class="fa-solid fa-arrow-up-right-from-square"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span class="sr-only">
+                                                        (opens in new window)
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </article>
                                 </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                ))}
-            </section>
-            )
+                            ))}
+                        </div>
+                    </section>
+                )
             }
         </div>
 
-        {/* <header class="planner-hub__intro">
-            <div>
-                <h2 class="planner-hub__title mb-2">Fan Project</h2>
-                <p class="planner-hub__lead mb-0">
-                    โปรเจกต์แฟนคลับ ที่ทำให้นีญ่า
-                </p>
-            </div>
-        </header>
-        <div class="mb-5 planner-hub__inner">
-            {
-            FAN_PROJECTS.length === 0 ? (
-            <p class="planner-hub__empty mb-0">
-                ยังไม่มีโปรเจคให้เลือกในขณะนี้ — โปรดกลับมาดูใหม่ภายหลัง
-            </p>
-            ) : (
-            <section class="ranking-ad__grid">
-                {FAN_PROJECTS.map((event) => (
-                <div class="row row-cols-1 row-cols-sm-2 g-4">
-                    <div class="col d-flex justify-content-center">
-                        <article class="planner-card__article d-flex flex-column h-100 overflow-hidden"
-                            style={`--planner-accent: ${event.primaryColor};`}>
-                            <a class="planner-card__media" href={ event.features.planner?.href ||
-                                `/planner/${event.slug}` } aria-label={`Open planner for ${event.name}`}>
-                                <img src={ event.features.planner ?.listingImage ?? event.features.planner ?.heroImage }
-                                    alt={event.name} width="960" height="540" loading="lazy" decoding="async" />
-                                <span class="planner-card__badge" aria-hidden="false">
-                                    <i class="fa-solid fa-heart" aria-hidden="true" />
-                                    <span>Niya Level Up</span>
-                                </span>
-                            </a>
-                            <div class="planner-card__body d-flex flex-column flex-grow-1">
-                                <h2 class="h6 planner-card__title">
-                                    <a href={ event.features.planner ?.href || `/planner/${event.slug}` }>
-                                        {event.name}
-                                    </a>
-                                </h2>
-                                <p class="planner-card__desc">
-                                    {
-                                    event.features.planner
-                                    ?.description
-                                    }
-                                </p>
-                                <div class="planner-card__actions d-flex flex-wrap align-items-center">
-                                    <a class="btn planner-card__cta" href={ event.features.planner ?.href ||
-                                        `/planner/${event.slug}` }>
-                                        เปิดดูรายละเอียด
-                                        <i class="fa-solid fa-arrow-right arrow-icon ms-1" aria-hidden="true" />
-                                    </a>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                ))}
-            </section>
-            )
-            }
-        </div>*/}
-
-        <!-- ── Ranking Game Shortcut Ad ───────────────────────────────── -->
+        <!-- ── Fan's Projects ── -->
+        <!-- 
         <header class="planner-hub__intro">
             <div>
-                <h2 id="ranking-game-ad-heading" class="planner-hub__title mb-2">
+                <h2 id="fans-projects-heading" class="planner-hub__title mb-2">
+                    Fan's Projects
+                </h2>
+                <p class="planner-hub__lead mb-0">โปรเจกต์พิเศษจากแฟนคลับ</p>
+            </div>
+        </header>
+        <div class="mb-5 ranking-ad" aria-labelledby="fans-projects-heading">
+            <section class="p-0" aria-label="Fan's Project variants">
+                <div class="row row-cols-1 row-cols-sm-2 g-4">
+                    {
+                        FAN_PROJECTS.map((ev) => (
+                            <div class="col d-flex justify-content-center">
+                                <article
+                                    class="planner-card__article d-flex flex-column h-100 overflow-hidden"
+                                    style={`--planner-accent: ${ev.primaryColor};`}
+                                >
+                                    <a
+                                        class="planner-card__media"
+                                        href={ev.features.planner?.href}
+                                        aria-label={`Open ${ev.name}`}
+                                    >
+                                        <img
+                                            src={
+                                                ev.features.planner
+                                                    ?.listingImage ??
+                                                ev.features.planner?.heroImage
+                                            }
+                                            alt={ev.name}
+                                            width="960"
+                                            height="540"
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                    </a>
+                                    <div class="planner-card__body d-flex flex-column flex-grow-1">
+                                        <h3 class="h6 planner-card__title">
+                                            <a href={ev.features.planner?.href}>
+                                                {ev.name}
+                                            </a>
+                                        </h3>
+                                        <p class="planner-card__desc">
+                                            {ev.features.planner?.description}
+                                        </p>
+                                        <div class="planner-card__actions d-flex flex-wrap align-items-center">
+                                            <a
+                                                class="btn planner-card__cta"
+                                                href={ev.features.planner?.href}
+                                            >
+                                                ดูโปรเจกต์
+                                                <i
+                                                    class="fa-solid fa-arrow-right arrow-icon ms-1"
+                                                    aria-hidden="true"
+                                                />
+                                            </a>
+                                            <a
+                                                class="planner-card__official d-inline-flex align-items-center position-relative"
+                                                href={
+                                                    ev.features.planner
+                                                        ?.officialLink
+                                                }
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                ข้อมูลทางการ
+                                                <i
+                                                    class="fa-solid fa-arrow-up-right-from-square"
+                                                    aria-hidden="true"
+                                                />
+                                                <span class="sr-only">
+                                                    (opens in new window)
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+        </div>
+        -->
+        <!-- ── Games ── -->
+        <header class="planner-hub__intro">
+            <div>
+                <h2 id="games-heading" class="planner-hub__title mb-2">
                     Games
                 </h2>
                 <p class="planner-hub__lead mb-0">
@@ -166,48 +221,76 @@ const description =
                 </p>
             </div>
         </header>
-        <div class="mb-5 ranking-ad" aria-labelledby="ranking-ad-heading">
-            <section class="ranking-ad__grid" aria-label="Ranking game variants">
+        <div class="mb-5 ranking-ad" aria-labelledby="games-heading">
+            <section class="p-0" aria-label="Ranking game variants">
                 <div class="row row-cols-1 row-cols-sm-2 g-4">
                     {
-                    RANKING_EVENTS.map((ev) => (
-                    <div class="col d-flex justify-content-center">
-                        <article class="planner-card__article d-flex flex-column h-100 overflow-hidden"
-                            style={`--planner-accent: ${ev.primaryColor};`}>
-                            <a class="planner-card__media" href={`/ranking/${ev.slug}`} aria-label={`Play ${ev.name}
-                                ranking game`}>
-                                {ev.features.ranking?.listingImage && (
-                                <img src={ ev.features.ranking .listingImage } alt={ev.name} width="960" height="540"
-                                    loading="lazy" decoding="async" />
-                                )}
-                                <span class="planner-card__badge" aria-hidden="false">
-                                    <i class="fa-solid fa-gamepad" aria-hidden="true" />
-                                    <span>
-                                        {ev.features.ranking?.rounds}{" "}
-                                        รอบ
-                                    </span>
-                                </span>
-                            </a>
-                            <div class="planner-card__body d-flex flex-column flex-grow-1">
-                                <h3 class="h6 planner-card__title">
-                                    <a href={`/ranking/${ev.slug}`}>
-                                        {ev.name}
-                                    </a>
-                                </h3>
-                                <p class="planner-card__desc">
-                                    {ev.features.ranking?.description}
-                                </p>
-                                <div class="planner-card__actions d-flex flex-wrap align-items-center">
-                                    <a class="btn btn-sm btn-primary btn-rounded fw-700 planner-card__cta"
-                                        href={`/ranking/${ev.slug}`}>
-                                        เล่นเกม
-                                        <i class="fa-solid fa-arrow-right arrow-icon ms-1" aria-hidden="true" />
-                                    </a>
+                        RANKING_EVENTS.map((ev) => {
+                            const gameConfig = ev.features.songRanking?.enabled
+                                ? ev.features.songRanking
+                                : ev.features.ranking;
+                            const gameLabel = ev.features.songRanking?.enabled
+                                ? "Song Ranking"
+                                : "Member Ranking";
+                            return (
+                                <div class="col d-flex justify-content-center">
+                                    <article
+                                        class="planner-card__article d-flex flex-column h-100 overflow-hidden"
+                                        style={`--planner-accent: ${ev.primaryColor};`}
+                                    >
+                                        <a
+                                            class="planner-card__media"
+                                            href={`/ranking/${ev.slug}`}
+                                            aria-label={`Play ${ev.name} ranking game`}
+                                        >
+                                            {gameConfig?.listingImage && (
+                                                <img
+                                                    src={
+                                                        gameConfig.listingImage
+                                                    }
+                                                    alt={ev.name}
+                                                    width="960"
+                                                    height="540"
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                />
+                                            )}
+                                            <span
+                                                class="planner-card__badge"
+                                                aria-hidden="false"
+                                            >
+                                                <i
+                                                    class="fa-solid fa-gamepad"
+                                                    aria-hidden="true"
+                                                />
+                                            </span>
+                                        </a>
+                                        <div class="planner-card__body d-flex flex-column flex-grow-1">
+                                            <h3 class="h6 planner-card__title">
+                                                <a href={`/ranking/${ev.slug}`}>
+                                                    {ev.name} ({gameLabel})
+                                                </a>
+                                            </h3>
+                                            <p class="planner-card__desc">
+                                                {gameConfig?.description}
+                                            </p>
+                                            <div class="planner-card__actions d-flex flex-wrap align-items-center">
+                                                <a
+                                                    class="btn btn-sm btn-primary btn-rounded fw-700 planner-card__cta"
+                                                    href={`/ranking/${ev.slug}`}
+                                                >
+                                                    เล่นเกม
+                                                    <i
+                                                        class="fa-solid fa-arrow-right arrow-icon ms-1"
+                                                        aria-hidden="true"
+                                                    />
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </article>
                                 </div>
-                            </div>
-                        </article>
-                    </div>
-                    ))
+                            );
+                        })
                     }
                 </div>
             </section>
