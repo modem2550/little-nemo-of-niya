@@ -61,6 +61,12 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
     const cardRef = useRef<HTMLDivElement>(null);
     const [isDownloading, setIsDownloading] = useState(false);
 
+    // ✅ Preload background image เพื่อให้ browser cache ก่อน capture
+    useEffect(() => {
+      const img = new Image();
+      img.src = '/img/bg-ranking-song.png';
+    }, []);
+
     const generateImage = useCallback(async () => {
       if (!cardRef.current) throw new Error("Ref not ready");
       setIsDownloading(true);
@@ -303,7 +309,7 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
 
   return (
     <>
-      <a
+      
         ref={linkRef}
         href={imageUrl}
         download={`song-ranking-${new Date().getTime()}.png`}
@@ -655,7 +661,6 @@ const SongGame = memo(function SongGame({
 
 export default SongGame;
 
-// React.memo: SongChoice re-render เฉพาะเมื่อ song หรือ onClick เปลี่ยน
 const SongChoice = memo(function SongChoice({ song, onClick }: { song: Song; onClick: () => void }) {
   const artistColor = getArtistColor(song.artist);
   const isGradient = artistColor.includes('gradient');
