@@ -186,7 +186,7 @@ export default function cdnTransformer() {
           // CSS url()
           content = content.replace(/url\(["']?([^"'\)]+)["']?\)/gi, (m, val) => {
             const t = transformUrl(val);
-            if (t !== val) { changed = true; return `url("${t}")`; }
+            if (t !== val) { changed = true; return `url('${t}')`; }
             return m;
           });
 
