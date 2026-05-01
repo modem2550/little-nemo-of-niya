@@ -308,7 +308,7 @@ interface DownloadButtonProps {
 
 const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, primaryColor, primaryGradient }: DownloadButtonProps) {
     const [isPressed, setIsPressed] = useState(false);
-    const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const linkRef = useRef<HTMLAnchorElement>(null);
 
     const handlePressStart = useCallback(() => {
@@ -340,20 +340,23 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
                 style={{ background: primaryGradient ?? primaryColor, opacity: 0.65 }}
                 disabled
             >
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
                 กำลังเตรียมรูป...
             </button>
         );
     }
 
+    const downloadName = `oshi-ranking-${Date.now()}.png`;
+
     return (
         <>
-            
+            <a
                 ref={linkRef}
                 href={imageUrl}
-                download={`oshi-ranking-${new Date().getTime()}.png`}
+                download={downloadName}
                 style={{ display: 'none' }}
-            />
+            >
+            </a>
             <button
                 type="button"
                 className="ranking-planner-skin__ctaGhost"
@@ -365,7 +368,7 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
                 onTouchEnd={handlePressEnd}
                 aria-pressed={isPressed}
             >
-                <i className="fa-solid fa-download" aria-hidden="true"></i>
+                <i className="fa-solid fa-download" aria-hidden="true" />
                 บันทึกภาพ
             </button>
         </>
@@ -420,9 +423,9 @@ const ViewAllRanking = memo(function ViewAllRanking({ rankResults, primaryColor,
 });
 
 const RankingRow = memo(function RankingRow({ member, rank, primaryColor }: { member: Member; rank: number; primaryColor: string }) {
-    const rankStyle = useMemo(() => ({ 
-        width: '40px', 
-        color: rank <= 3 ? primaryColor : '#9ca3af' 
+    const rankStyle = useMemo(() => ({
+        width: '40px',
+        color: rank <= 3 ? primaryColor : '#9ca3af'
     }), [rank, primaryColor]);
 
     return (
@@ -481,14 +484,14 @@ const MemberGame = memo(function MemberGame({
         if (!isFinished || resultImageUrl || generationStartedRef.current) return;
 
         let mounted = true;
-        
+
         const triggerGen = async () => {
             generationStartedRef.current = true;
             setIsGeneratingImage(true);
             setErrorMessage(null);
 
             await new Promise(r => requestAnimationFrame(r));
-            
+
             if (!mounted) return;
 
             const executeGeneration = async () => {
@@ -539,8 +542,8 @@ const MemberGame = memo(function MemberGame({
 
         triggerGen();
 
-        return () => { 
-            mounted = false; 
+        return () => {
+            mounted = false;
         };
     }, [gameState, resultImageUrl]);
 
@@ -596,7 +599,7 @@ const MemberGame = memo(function MemberGame({
         const sourceData = gameState === 'finished' ? rankedItems.slice(0, 10) : (oldResults?.topRanking ?? []);
         const winner = sourceData[0];
         const twitterText = encodeURIComponent('TheBestmyOshi');
-        
+
         return (
             <section className="sec-result py-3" style={themeStyle}>
                 <div className="ranking-planner-skin__resultBlock">
@@ -694,9 +697,9 @@ const MemberGame = memo(function MemberGame({
 export default MemberGame;
 
 const MemberChoice = memo(function MemberChoice({ member, onClick }: { member: Member; onClick: () => void }) {
-    const brandColor = useMemo(() => 
+    const brandColor = useMemo(() =>
         member.brand === 'BNK48' ? 'var(--c-bnk)' : member.brand === 'CGM48' ? 'var(--c-cgm)' : 'var(--c-primary)',
-    [member.brand]);
+        [member.brand]);
 
     return (
         <button type="button" className="ranking-choice w-100 p-0 overflow-hidden text-start border-0" onClick={onClick}>

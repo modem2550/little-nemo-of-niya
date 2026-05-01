@@ -109,12 +109,12 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
     const top10 = useMemo(() => rankResults.slice(0, 10), [rankResults]);
 
     const groupTitle = useMemo(() => {
-        const isBNK = rankResults.some(s => s.artist.includes('BNK48'));
-        const isCGM = rankResults.some(s => s.artist.includes('CGM48'));
-        if (isBNK && isCGM) return "48TH GROUP'S SONGS";
-        if (isBNK) return "BNK48'S SONGS";
-        if (isCGM) return "CGM48'S SONGS";
-        return "MY TOP'S SONGS";
+      const isBNK = rankResults.some(s => s.artist.includes('BNK48'));
+      const isCGM = rankResults.some(s => s.artist.includes('CGM48'));
+      if (isBNK && isCGM) return "48TH GROUP'S SONGS";
+      if (isBNK) return "BNK48'S SONGS";
+      if (isCGM) return "CGM48'S SONGS";
+      return "MY TOP'S SONGS";
     }, [rankResults]);
 
     return (
@@ -269,7 +269,7 @@ interface DownloadButtonProps {
 
 const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, primaryColor, primaryGradient }: DownloadButtonProps) {
   const [isPressed, setIsPressed] = useState(false);
-  const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const linkRef = useRef<HTMLAnchorElement>(null);
 
   const handlePressStart = useCallback(() => {
@@ -301,20 +301,23 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
         style={{ background: primaryGradient ?? primaryColor, opacity: 0.65 }}
         disabled
       >
-        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
         กำลังเตรียมรูป...
       </button>
     );
   }
 
+  const downloadName = `song-ranking-${Date.now()}.png`;
+
   return (
     <>
-      
+      <a
         ref={linkRef}
         href={imageUrl}
-        download={`song-ranking-${new Date().getTime()}.png`}
+        download={downloadName}
         style={{ display: 'none' }}
-      />
+      >
+      </a>
       <button
         type="button"
         className="ranking-planner-skin__ctaGhost"
@@ -326,7 +329,7 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
         onTouchEnd={handlePressEnd}
         aria-pressed={isPressed}
       >
-        <i className="fa-solid fa-download" aria-hidden="true"></i>
+        <i className="fa-solid fa-download" aria-hidden="true" />
         บันทึกภาพ
       </button>
     </>
@@ -383,10 +386,10 @@ const ViewAllRanking = memo(function ViewAllRanking({
 });
 
 const RankingRow = memo(function RankingRow({ song, rank, primaryColor }: { song: RankedSong; rank: number; primaryColor: string }) {
-    const rankStyle = useMemo(() => ({ 
-        width: '40px', 
-        color: rank <= 3 ? primaryColor : '#9ca3af' 
-    }), [rank, primaryColor]);
+  const rankStyle = useMemo(() => ({
+    width: '40px',
+    color: rank <= 3 ? primaryColor : '#9ca3af'
+  }), [rank, primaryColor]);
 
   return (
     <div className="d-flex align-items-center w-100 py-2 border-bottom ranking-result-row" style={{ gap: '0.75rem' }}>
@@ -442,14 +445,14 @@ const SongGame = memo(function SongGame({
     if (!isFinished || resultImageUrl || generationStartedRef.current) return;
 
     let mounted = true;
-    
+
     const triggerGen = async () => {
       generationStartedRef.current = true;
       setIsGeneratingImage(true);
       setErrorMessage(null);
 
       await new Promise(r => requestAnimationFrame(r));
-      
+
       if (!mounted) return;
 
       const executeGeneration = async () => {
@@ -513,16 +516,16 @@ const SongGame = memo(function SongGame({
     () => viewAllSource === 'old' ? (oldRankedItems as RankedSong[]) : (rankedItems as RankedSong[]),
     [viewAllSource, oldRankedItems, rankedItems]
   );
-  
+
   const handleBackFromViewAll = useCallback(
     () => setGameState(viewAllSource === 'old' ? 'old-results' : 'finished'),
     [setGameState, viewAllSource]
   );
 
   const handleShowOldResults = useCallback(() => setGameState('old-results'), [setGameState]);
-  const handleShowViewAll = useCallback(() => { 
-    setViewAllSource(gameState === 'old-results' ? 'old' : 'current'); 
-    setGameState('view-all-ranking'); 
+  const handleShowViewAll = useCallback(() => {
+    setViewAllSource(gameState === 'old-results' ? 'old' : 'current');
+    setGameState('view-all-ranking');
   }, [gameState, setGameState, setViewAllSource]);
 
   if (gameState === 'view-all-ranking') {
