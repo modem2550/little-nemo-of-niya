@@ -1,0 +1,39 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   POLICY PAGE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.policy-page {
+  padding-top: calc(70px + 4rem);
+  background: var(--c-bg);
+}
+
+.policy-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: var(--c-content);
+}
+
+.last-updated {
+  color: var(--c-content-secondary);
+}
+
+.policy-container {
+  padding: var(--r-large);
+}
+
+.policy-section {
+  padding: 0;
+  background-color: var(--c-bg);
+
+  p a,
+  address a,
+  ul li a {
+    color: var(--c-primary);
+    text-decoration: underline !important;
+  }
+}
+
+.wp-block-heading {
+  margin: 32px 0;
+}

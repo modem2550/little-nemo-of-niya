@@ -217,16 +217,4 @@
   }
 }
 
-/* =============================================================================
-   EVENT GRID — AUTO-FIT LAYOUT
-   ============================================================================= */
-
-.event-grid-auto {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(289.25px, 1fr));
-  gap: var(--r-large);
-  justify-items: center;
-  color: var(--c-content);
-}
-
 /* btn overrides → handled by main.css Bootstrap override */

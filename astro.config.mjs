@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
-import cdnTransformer from './src/integrations/cdn-transformer.js';
 
 export default defineConfig({
   site: 'https://little-nemo-of-niya.vercel.app',
@@ -9,10 +8,7 @@ export default defineConfig({
   adapter: vercel({
     webAnalytics: { enabled: true },
   }),
-  integrations: [
-    react(),
-    cdnTransformer(),
-  ],
+  integrations: [react()],
 
   redirects: {
     '/dem._.mo/:slug': '/api/dem._.mo/:slug'

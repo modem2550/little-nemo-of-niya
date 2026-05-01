@@ -1,0 +1,24 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BOOTSTRAP OVERRIDES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.btn {
+  --bs-btn-border-radius: var(--r-round) !important;
+}
+
+.btn-primary {
+  --bs-btn-color: var(--c-light) !important;
+  --bs-btn-bg: var(--c-primary) !important;
+  --bs-btn-border-color: var(--c-primary) !important;
+  --bs-btn-hover-color: var(--c-light) !important;
+  --bs-btn-hover-bg: var(--c-primary-hover) !important;
+  --bs-btn-hover-border-color: var(--c-primary-hover) !important;
+  --bs-btn-focus-shadow-rgb: 252, 128, 159 !important;
+  --bs-btn-active-color: var(--c-light) !important;
+  --bs-btn-active-bg: var(--c-primary-active) !important;
+  --bs-btn-active-border-color: var(--c-primary-active) !important;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+  --bs-btn-disabled-color: var(--c-light) !important;
+  --bs-btn-disabled-bg: var(--c-primary) !important;
+  --bs-btn-disabled-border-color: var(--c-primary) !important;
+}

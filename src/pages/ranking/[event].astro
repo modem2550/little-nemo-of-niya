@@ -106,7 +106,7 @@ const rankingVariants = (
 ).filter((variant) => variant.slug !== eventData.slug);
 ---
 
-<MainLayout title={title} description={description} theme={eventData.theme}>
+<MainLayout title={title} description={description} theme={eventData.theme} socialImage={config.listingImage}>
     <nav class="ranking-sub-nav border-0" aria-label="Ranking game variants">
         <div class="ranking-sub-nav-container d-flex flex-wrap align-items-center justify-content-between gap-3 px-3">
             <a href="/planner"

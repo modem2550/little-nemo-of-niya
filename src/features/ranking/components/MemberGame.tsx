@@ -42,11 +42,16 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
         const cardRef = useRef<HTMLDivElement>(null);
         const [isDownloading, setIsDownloading] = useState(false);
 
+        // ✅ Preload background image เพื่อให้ browser cache ก่อน capture
+        useEffect(() => {
+            const img = new Image();
+            img.src = '/img/bg-ranking-member.png';
+        }, []);
+
         const generateImage = useCallback(async () => {
             if (!cardRef.current) throw new Error("Ref not ready");
             setIsDownloading(true);
             try {
-                // Pre-wait for images to settle
                 await new Promise(resolve => setTimeout(resolve, 800));
 
                 if (!(window as any).domtoimage) {
@@ -471,7 +476,6 @@ const MemberGame = memo(function MemberGame({
     const shareCardRef = useRef<ShareCardRef>(null);
     const generationStartedRef = useRef(false);
 
-    // Optimized image generation effect
     useEffect(() => {
         const isFinished = gameState === 'finished' || gameState === 'old-results';
         if (!isFinished || resultImageUrl || generationStartedRef.current) return;
@@ -483,7 +487,6 @@ const MemberGame = memo(function MemberGame({
             setIsGeneratingImage(true);
             setErrorMessage(null);
 
-            // Give the DOM a moment to paint the share card
             await new Promise(r => requestAnimationFrame(r));
             
             if (!mounted) return;
@@ -504,7 +507,6 @@ const MemberGame = memo(function MemberGame({
                         }
                     }
                 } else {
-                    // If still not ready, try one more time after a short delay
                     setTimeout(async () => {
                         if (!mounted) return;
                         if (shareCardRef.current) {
@@ -691,8 +693,6 @@ const MemberGame = memo(function MemberGame({
 
 export default MemberGame;
 
-// React.memo: MemberChoice เปลี่ยนก็ต่อเมื่อ member หรือ onClick เปลี่ยนเท่านั้น
-// ใช้ memo + useCallback ใน parent แล้ว → ป้องกัน re-render จาก pair เดิมที่ยัง active
 const MemberChoice = memo(function MemberChoice({ member, onClick }: { member: Member; onClick: () => void }) {
     const brandColor = useMemo(() => 
         member.brand === 'BNK48' ? 'var(--c-bnk)' : member.brand === 'CGM48' ? 'var(--c-cgm)' : 'var(--c-primary)',

@@ -1,3 +1,4 @@
+@use 'utilities/mixins' as *;
 /* =============================================================================
    HERO & SHELL (PORTED FROM PLANNER)
    ============================================================================= */
@@ -630,19 +631,7 @@ body {
   align-items: center;
 }
 
-.ranking-keyboard-hint {
-  text-align: center;
-  font-size: 13px;
-  color: var(--c-content-muted, #888899);
-  margin: 0;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
 
-  strong {
-    font-weight: 600;
-  }
-}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    MENU & BUTTONS
@@ -659,19 +648,7 @@ body {
   animation: rankingFadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.ranking-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 1000px;
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  margin-bottom: 1.5rem;
-  text-transform: uppercase;
-}
+
 
 .ranking-title {
   font-size: clamp(1.75rem, 5vw, 2.5rem);
@@ -706,34 +683,7 @@ body {
   }
 }
 
-.ranking-btn {
-  width: 206px;
-  font-size: 15px;
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-  letter-spacing: 0.01em;
-  min-width: 160px;
 
-  &:active {
-    transform: scale(0.96);
-  }
-
-  &-primary {
-    background: var(--ranking-primary);
-    color: white;
-  }
-
-  &-secondary {
-    background: var(--c-surface, #f4ebef);
-    color: var(--c-content, #222233);
-    border: 1px solid var(--c-border, #D8D8DA);
-
-    &:hover {
-      background: var(--c-bg, #ffffff);
-      border-color: var(--ranking-primary);
-      color: var(--ranking-primary);
-    }
-  }
-}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    RESULTS & RANKINGS
@@ -782,136 +732,11 @@ body {
   font-weight: 500;
 }
 
-.ranking-winner-highlight {
-  background: var(--c-light);
-  border: 1px solid rgb(203, 150, 194);
-  animation: rankingFadeUp 0.6s var(--anim-easing) both;
-  max-width: 600px;
-  margin: auto;
-}
 
-.ranking-winner-photo {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  margin: 0 auto 1.5rem;
-  overflow: hidden;
-  border: 4px solid var(--c-bg);
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-  }
-}
 
-.ranking-winner-name {
-  font-size: 1.75rem;
-  font-weight: 900;
-  color: var(--c-content);
-  margin-bottom: 0.25rem;
-}
 
-.ranking-winner-pill {
-  font-size: 12px;
-  letter-spacing: 0.1em;
-}
 
-// ── Ranking Row
-.ranking-row {
-  display: grid;
-  grid-template-columns: 44px 48px 1fr auto;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: var(--c-surface);
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-  animation: rankingFadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-
-  // Stagger animation delays
-  @for $i from 1 through 10 {
-    &:nth-child(#{$i}) {
-      --anim-delay: #{($i - 1) * 60}ms;
-    }
-  }
-}
-
-.ranking-row-rank {
-  width: 36px;
-  height: 36px;
-  @include flex-center;
-  font-weight: 800;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.ranking-row-image {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--c-surface, #f4ebef);
-  flex-shrink: 0;
-}
-
-.ranking-row-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-  display: block;
-}
-
-.ranking-row-fallback {
-  width: 100%;
-  height: 100%;
-  @include flex-center;
-  font-size: 18px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.ranking-row-info {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.ranking-row-name {
-  font-weight: 800;
-  font-size: 14px;
-  color: var(--c-content, #222233);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ranking-row-meta {
-  font-size: 11px;
-  color: var(--c-content-muted, #888899);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.ranking-row-brand-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: inline-block;
-}
-
-.ranking-row-score {
-  font-size: 1.3rem;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-  text-align: right;
-}
 
 // ── Result Elements
 .ranking-result-row {
@@ -1169,32 +994,8 @@ body {
     font-size: 1.2rem;
   }
 
-  .ranking-row {
-    grid-template-columns: 36px 40px 1fr auto;
-    padding: 10px 12px;
-    gap: 10px;
-
-    &-image {
-      width: 40px;
-      height: 40px;
-    }
-
-    &-name {
-      font-size: 13px;
-    }
-
-    &-score {
-      font-size: 1.1rem;
-    }
-  }
-
   .ranking-actions-stacked {
     width: 100%;
-  }
-
-  .ranking-btn {
-    width: 100%;
-    max-width: 280px;
   }
 
   .ranking-planner-skin {

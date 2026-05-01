@@ -1,0 +1,72 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile (≤ 767.98px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+@use 'mixins' as *;
+
+@include bp-max(767.98px) {
+  .popup-container {
+    max-width: 100%;
+    height: 100%;
+    padding: 50px 20px;
+    border-radius: 0;
+    overflow-x: scroll;
+  }
+
+  :root {
+    --anim-offset-x: 30px;
+    --anim-offset-y: 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Tablet & Up (≤ 1200px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@include bp-max(1200px) {
+  #info {
+    height: 100%;
+    padding: 80px 20px;
+  }
+
+  .container {
+    --bs-gutter-x: 0 !important;
+    max-width: 720px !important;
+  }
+
+  .col-xl-6,
+  .col-lg-4,
+  .embed-block {
+    width: 100% !important;
+  }
+
+  .social-circle {
+    justify-content: center !important;
+  }
+
+  .bio-section-inner.container {
+    flex-direction: column;
+    margin: 0 auto;
+    border-radius: var(--r-base);
+    text-align: center;
+    height: 100%;
+  }
+
+  .hero-half-body-img {
+    display: none;
+  }
+
+  .bio-info-box {
+    padding: 90px 25px 50px !important;
+    margin-top: -75px;
+  }
+
+  .profile {
+    display: block !important;
+  }
+
+  .embed-row {
+    flex-direction: column;
+  }
+
+
+}

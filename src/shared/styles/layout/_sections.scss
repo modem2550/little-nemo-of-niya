@@ -1,0 +1,54 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   SECTION BLOCKS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.section-intro {
+  text-align: center;
+  max-width: 36rem;
+  margin: 0 auto 2.25rem;
+
+  &__title {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    color: var(--c-content);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  &__lead {
+    margin: 0;
+    font-size: var(--fs-h5);
+    color: var(--c-content-secondary);
+    line-height: 1.55;
+  }
+}
+
+section {
+  padding: var(--section-pad-y) var(--r-large);
+  background-color: var(--c-bg);
+  color: var(--c-content);
+}
+
+.section-heading {
+  color: var(--c-section-text) !important;
+}
+
+// Section variants
+#home {
+  padding: 0;
+  height: 100lvh;
+}
+
+#event {
+  min-height: 562px;
+}
+
+#info {
+  padding: 0 var(--r-large);
+  background-color: var(--c-surface);
+  height: calc(100vh - 70px);
+}
+
+#library {
+  background-color: var(--c-surface);
+}

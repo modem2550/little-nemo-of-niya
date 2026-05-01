@@ -1,0 +1,47 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FANCLUB BUTTON
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.fanclub-btn {
+  border: none;
+  padding: 15px;
+  background: var(--c-primary);
+  color: var(--bs-body-bg);
+  width: 100%;
+  border-radius: 100px;
+  transition: background-color 0.3s var(--t-ease-smooth);
+
+  &:hover {
+    background-color: var(--c-primary-hover) !important;
+  }
+
+  a {
+    color: var(--bs-body-bg);
+  }
+
+  &.line {
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    overflow: hidden;
+    background: line-gradient(0.65);
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: line-gradient(1);
+      opacity: 0;
+      transition: opacity 0.3s var(--t-ease-smooth);
+    }
+
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+}
+
+.slide-left img {
+  border-radius: var(--r-base);
+}

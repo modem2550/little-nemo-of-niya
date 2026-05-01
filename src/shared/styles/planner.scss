@@ -3,7 +3,7 @@
 // Refactored: Loops, mixins, nesting, and DRY principles applied
 // =============================================================================
 
-@use 'mixins' as *;
+@use 'utilities/mixins' as *;
 
 main {
   background: var(--c-bg);
@@ -124,12 +124,12 @@ main {
   font-size: 13px;
 }
 
-.summary-empty-title {
+.panel-empty__title {
   font-size: 16px;
   color: var(--c-content);
 }
 
-.summary-empty-subtitle {
+.panel-empty__lead {
   font-size: 13px;
   color: #b0a8c4;
 }
@@ -599,16 +599,7 @@ main {
   font-weight: 700;
 }
 
-.member-slot-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 0;
 
-  &.has-rounds span {
-    background: var(--act-color, var(--c-primary)) !important;
-  }
-}
 
 // ── TICKET FORMS ─────────────────────────────────────────────────────────
 
@@ -802,13 +793,7 @@ main {
   font-weight: 600;
 }
 
-// ── STATS DISPLAY ────────────────────────────────────────────────────────
 
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 12px;
-}
 
 .stat-card {
   background: var(--c-surface);
@@ -1268,38 +1253,7 @@ tr {
 
 // ── REALTIME ACTIVITY ────────────────────────────────────────────────────
 
-.now-live-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #ef4444;
-  flex-shrink: 0;
-  animation: liveDot 2s ease-in-out infinite;
-}
 
-@keyframes liveDot {
-
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.5;
-    transform: scale(0.8);
-  }
-}
-
-.now-date-row {
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-bottom: 4px;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
 
 .now-section-label {
   font-size: 11px;

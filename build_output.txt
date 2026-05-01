@@ -1,0 +1,138 @@
+
+> little-nemo-of-niya@0.0.1 build
+> astro build
+
+17:53:45 [types] Generated 28ms
+17:53:45 [build] output: "server"
+17:53:45 [build] mode: "server"
+17:53:45 [build] directory: /Users/moo/Desktop/little-nemo-of-niya/dist/
+17:53:45 [build] adapter: @astrojs/vercel
+17:53:45 [build] Collecting build info...
+17:53:45 [build] ✓ Completed in 145ms.
+17:53:45 [build] Building server entrypoints...
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+33 │ .btn-bnk { background-color: $c-bnk; color: #fff; border: none; &:hover { background-color: darken($c-bnk, 5%); color: #fff; } }
+   │                                                                                             ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/shared/styles/scss/components/_buttons.scss 33:93  @use
+    src/shared/styles/scss/main.scss 26:1                  root stylesheet
+
+DEPRECATION WARNING [color-functions]: darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -7.223796034%)
+color.adjust($color, $lightness: -5%)
+
+More info: https://sass-lang.com/d/color-functions
+
+   ╷
+33 │ .btn-bnk { background-color: $c-bnk; color: #fff; border: none; &:hover { background-color: darken($c-bnk, 5%); color: #fff; } }
+   │                                                                                             ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/shared/styles/scss/components/_buttons.scss 33:93  @use
+    src/shared/styles/scss/main.scss 26:1                  root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+34 │ .btn-cgm { background-color: $c-cgm; color: #fff; border: none; &:hover { background-color: darken($c-cgm, 5%); color: #fff; } }
+   │                                                                                             ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/shared/styles/scss/components/_buttons.scss 34:93  @use
+    src/shared/styles/scss/main.scss 26:1                  root stylesheet
+
+DEPRECATION WARNING [color-functions]: darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -10.0393700787%)
+color.adjust($color, $lightness: -5%)
+
+More info: https://sass-lang.com/d/color-functions
+
+   ╷
+34 │ .btn-cgm { background-color: $c-cgm; color: #fff; border: none; &:hover { background-color: darken($c-cgm, 5%); color: #fff; } }
+   │                                                                                             ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/shared/styles/scss/components/_buttons.scss 34:93  @use
+    src/shared/styles/scss/main.scss 26:1                  root stylesheet
+
+17:53:47 [vite] ✓ built in 2.28s
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+33 │ .btn-bnk { background-color: $c-bnk; color: #fff; border: none; &:hover { background-color: darken($c-bnk, 5%); color: #fff; } }
+   │                                                                                             ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/shared/styles/scss/components/_buttons.scss 33:93  @use
+    src/shared/styles/scss/main.scss 26:1                  root stylesheet
+
+DEPRECATION WARNING [color-functions]: darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -7.223796034%)
+color.adjust($color, $lightness: -5%)
+
+More info: https://sass-lang.com/d/color-functions
+
+   ╷
+33 │ .btn-bnk { background-color: $c-bnk; color: #fff; border: none; &:hover { background-color: darken($c-bnk, 5%); color: #fff; } }
+   │                                                                                             ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/shared/styles/scss/components/_buttons.scss 33:93  @use
+    src/shared/styles/scss/main.scss 26:1                  root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+34 │ .btn-cgm { background-color: $c-cgm; color: #fff; border: none; &:hover { background-color: darken($c-cgm, 5%); color: #fff; } }
+   │                                                                                             ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/shared/styles/scss/components/_buttons.scss 34:93  @use
+    src/shared/styles/scss/main.scss 26:1                  root stylesheet
+
+DEPRECATION WARNING [color-functions]: darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -10.0393700787%)
+color.adjust($color, $lightness: -5%)
+
+More info: https://sass-lang.com/d/color-functions
+
+   ╷
+34 │ .btn-cgm { background-color: $c-cgm; color: #fff; border: none; &:hover { background-color: darken($c-cgm, 5%); color: #fff; } }
+   │                                                                                             ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/shared/styles/scss/components/_buttons.scss 34:93  @use
+    src/shared/styles/scss/main.scss 26:1                  root stylesheet
+
+17:53:48 [vite] ✓ built in 765ms
+17:53:49 [vite] ✓ built in 1.22s
+
+ prerendering static routes 
+17:53:49   ├─ /planner/oncloud9/index.html (+38ms) 
+17:53:49   ├─ /planner/summerfest/index.html (+300ms) 
+17:53:49   ├─ /ranking/48th-member/index.html (+246ms) 
+17:53:50   ├─ /ranking/48th-song/index.html (+14ms) 
+17:53:50   ├─ /ranking/bnk48-member/index.html (+186ms) 
+17:53:50   ├─ /ranking/bnk48-song/index.html (+3ms) 
+17:53:50   ├─ /ranking/cgm48-member/index.html (+204ms) 
+17:53:50   ├─ /ranking/cgm48-song/index.html (+4ms) 
+17:53:50 ✓ Completed in 1.10s.
+
+17:53:50 [build] Rearranging server assets...
+17:53:50 [build] ✓ Completed in 5.50s.
+17:53:50 [@astrojs/vercel] Bundling function ../../../../dist/server/entry.mjs
+17:53:55 [build] Waiting for integration "cdn-transformer-final", hook "astro:build:done"...
+17:54:04 [@astrojs/vercel] Copying static files to .vercel/output/static
+17:54:05 [build] Server built in 20.23s
+17:54:05 [build] Complete!

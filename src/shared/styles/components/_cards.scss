@@ -1,0 +1,46 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BIO & INFO SECTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.hero-half-body-img {
+  height: 100%;
+}
+
+.bio-info-box {
+  font-size: var(--fs-body);
+  padding: 50px;
+  border-radius: var(--r-large);
+  background-color: var(--c-bg);
+  border: 1px solid var(--c-border);
+
+  ul {
+    text-align: start;
+
+    li a {
+      color: var(--c-section-text);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--c-primary-hover) !important;
+      }
+    }
+  }
+}
+
+.bio-section-inner.container {
+  display: flex;
+  align-items: center;
+  height: calc(100vh - 70px);
+}
+
+.profile {
+  z-index: 1;
+  display: none;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto;
+  max-width: none !important;
+  border: 1px solid color-mix(in srgb, var(--c-border) 80%, transparent);
+}

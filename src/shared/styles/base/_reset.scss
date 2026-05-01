@@ -1,0 +1,43 @@
+// =============================================================================
+// LAYOUT — Global structure, hero, bio, embeds, header, nav, footer, policy
+// Refactored: Nesting, variables, and consolidated rules
+// =============================================================================
+
+@use '../utilities/mixins' as *;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE & TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+html {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  line-height: 1.6;
+  font-family: 'Outfit', 'Noto Sans Thai', sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  min-height: 100dvh;
+  scroll-behavior: smooth;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+.lead {
+  font-size: var(--fs-h5) !important;
+}
+
+a {
+  text-decoration: none !important;
+}
