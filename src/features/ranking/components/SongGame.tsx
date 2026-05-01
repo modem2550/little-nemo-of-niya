@@ -309,7 +309,7 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
 
   return (
     <>
-      <a
+      
         ref={linkRef}
         href={imageUrl}
         download={`song-ranking-${new Date().getTime()}.png`}
