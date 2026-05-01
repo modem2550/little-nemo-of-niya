@@ -12,13 +12,13 @@ export const eventConfig: UnifiedEventConfig = {
         primaryHover: "#7e5fa8",
         theme: {
             primary: "#b986c8",
-            primaryHover: "#7e5fa8",
-            bg: "#0e0e10",
-            surface: "#1e1e24",
-            surfaceAlt: "#2a2a33",
-            border: "#222326",
-            content: "#ffffff",
-            textMuted: "#a1a1aa"
+            primaryHover: "#9b6fb0", // ปรับให้นุ่มขึ้น ไม่คล้ำจนเกินไป
+            bg: "#0d0d0f",           // เข้มขึ้นเล็กน้อย
+            surface: "#16161a",      // ปรับให้มีความ Deep Blue/Grey เล็กน้อย
+            surfaceAlt: "#1f1f24",
+            border: "#2d2d33",       // เพิ่มความสว่างของเส้นขอบให้เห็นชัดแต่ไม่โดด
+            content: "#f4f4f5",
+            textMuted: "#8a8a93"
         },
         features: {
             planner: {
@@ -30,7 +30,7 @@ export const eventConfig: UnifiedEventConfig = {
                 storageKey: "oncloud9_planner", // changed to lowercase
                 heroImage: "https://img2.pic.in.th/679067820_1538138747670766_1349428160000992650_n.png",
                 listingImage: "/img/OnCloud9Fest.png",
-                primaryHover: "#7e5fa8",
+                primaryHover: "#9b6fb0",
                 prices: { ticket: 250, hub: 200 },
                 days: [
                     { key: "sat", label: "SAT 30", short: "SAT 30", date: "2026-05-30" },
@@ -43,7 +43,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "YOU CAN DO IT!",
                         match: ["you_can_do_it", "ข้ามไปข้ามให้ได้"],
                         icon: "fa-solid fa-bridge",
-                        color: "#00a8e8",
+                        color: "#5bc0de",
                         tickets: 1,
                         desc: "เดินข้ามผ่านสะพานทางแคบและอุปสรรคต่าง ๆ ภายใน 10 วินาที เพื่อเจอกับ Member · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
@@ -52,7 +52,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "Hachi Cha",
                         match: ["ฮาจิฉะ", "hachicha", "hachi_cha", "Hachi Cha"],
                         icon: "fa-solid fa-mug-hot",
-                        color: "#0f766e",
+                        color: "#448a7d",
                         type: "merch",
                         desc: "กิจกรรมพิเศษ ฮาจิฉะ",
                     },
@@ -61,7 +61,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "WOH OH OH",
                         match: ["woh_oh_oh", "แข่งขำ"],
                         icon: "fa-regular fa-face-grin-tongue-wink",
-                        color: "#5adfcb",
+                        color: "#82e3d5",
                         tickets: 1,
                         desc: "แข่งกันทำหน้าตลกกับ Member 5 วินาที (มีฉากกั้น) · ใครหัวเราะก่อนแพ้ · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
@@ -70,7 +70,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "ใจมันสั่น",
                         match: ["jai_mun_sun", "เวลารอมองมา"],
                         icon: "fa-solid fa-eye",
-                        color: "#f86cc2",
+                        color: "#e07ab4",
                         tickets: 1,
                         desc: "เกมจ้องตากับ Member 15 วินาที พร้อมวัด Heart Rate · HR ขึ้นเกิน 20 bpm (โดนตกถาวร) ชนะ · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
@@ -79,7 +79,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "BLUE WHITE BLUE",
                         match: ["blue_white_blue", "ช่วยฉันทีสีอะไร"],
                         icon: "fa-solid fa-baseball",
-                        color: "#fbe9a1",
+                        color: "#e9d18b",
                         tickets: 1,
                         desc: "เกมโยนบอลลงตาราง 9 ช่อง ให้ครบแนว 3 ช่องก่อนชนะ (มีบอล 5 ลูก) · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
@@ -88,7 +88,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "LIP ของเธอ",
                         match: ["lip_no_lip", "งดงามอยู่เสมอ"],
                         icon: "fa-solid fa-kiss-wink-heart",
-                        color: "#f60100",
+                        color: "#d9534f",
                         tickets: 1,
                         desc: "กิจกรรมแปะ Tattoo กับ Member · หลังร่วมกิจกรรมรับ Photo จากมือเมมเบอร์ · 1 Ticket",
                     },
@@ -97,7 +97,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "SNS ลองอัพรูปถ่ายไป",
                         match: ["sns", "photo_booth"],
                         icon: "fa-solid fa-camera-retro",
-                        color: "#ffcfea",
+                        color: "#f2c2d4",
                         tickets: 5,
                         desc: "ถ่าย Photo booth ใส่กรอบลาย Concept BNK48 & CGM48 ทั้ง 9 Album · หลังร่วมกิจกรรมรับ Photo จาก Staff · 5 Tickets",
                     },
@@ -106,7 +106,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "บนเนินเขา",
                         match: ["on_the_hill", "พัตต์กอล์ฟ"],
                         icon: "fa-solid fa-mountain",
-                        color: "#6d8bd1",
+                        color: "#7ba1e3",
                         tickets: 1,
                         desc: "เกมพัตต์กอล์ฟขึ้นเนินให้ลงหลุม (ตีได้ 1 ครั้ง) · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
@@ -115,7 +115,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "PONYTAIL",
                         match: ["ponytail", "มัดผม"],
                         icon: "fa-solid fa-eye-slash",
-                        color: "#fb6cbe",
+                        color: "#c688eb",
                         tickets: 1,
                         desc: "เกมปิดตา ติดหางม้า บนหัวหุ่น · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
