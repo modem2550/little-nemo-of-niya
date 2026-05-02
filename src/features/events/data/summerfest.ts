@@ -10,10 +10,10 @@ export const eventConfig: UnifiedEventConfig = {
         slug: "summerfest",
         name: "BNK48 & CGM48 Siam-Nippon Summer Fest 2026",
         primaryColor: "#292848",
-        primaryHover: "#d5efff",
+        primaryHover: "#535289",
         theme: {
             primary: "#292848",
-            primaryHover: "#d5efff",
+            primaryHover: "#535289",
             bg: "#ffffff",
             surface: "#ffffff",
             surfaceAlt: "#f6f4fb",
@@ -32,7 +32,7 @@ export const eventConfig: UnifiedEventConfig = {
                 storageKey: "sf2026_planner",
                 heroImage: "https://img2.pic.in.th/Untitled-1656a008758cf5461.png",
                 listingImage: "/img/SummerFest2026.png",
-                primaryHover: "#d5efff",
+                primaryHover: "#535289",
                 prices: { ticket: 250, hub: 200 },
                 days: [
                     { key: "fri", label: "FRI 27", short: "FRI 27", date: "2026-03-27" },

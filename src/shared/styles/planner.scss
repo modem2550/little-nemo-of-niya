@@ -1048,7 +1048,8 @@ tr {
   $days: (
     'fri': var(--c-fri),
     'sat': var(--c-sat),
-    'sun': var(--c-sun)
+    'sun': var(--c-sun),
+    'mon': var(--c-mon),
   );
 
 @each $day, $col in $days {

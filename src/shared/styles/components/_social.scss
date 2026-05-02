@@ -40,9 +40,9 @@
 
 .embed-block {
   width: 50%;
-  min-height: 640px;
+  max-height: 582px;
   margin-bottom: 20px;
-  background-color: var(--c-surface);
+  background-color: var(--c-light);
   border-radius: var(--r-large);
   border: 1px solid var(--c-border);
   overflow: hidden;
@@ -61,7 +61,6 @@
 
 .embed-tiktok {
   width: 100%;
-  min-height: 559px;
   position: relative;
   overflow: hidden;
 
