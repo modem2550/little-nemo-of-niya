@@ -40,7 +40,7 @@
 
 .embed-block {
   width: 50%;
-  max-height: 581px;
+  min-height: 640px;
   margin-bottom: 20px;
   background-color: var(--c-surface);
   border-radius: var(--r-large);
@@ -51,6 +51,7 @@
 .embed-ig {
   background-color: #fff;
   width: 100%;
+  min-height: 559px;
 
   iframe {
     min-width: 0 !important;
@@ -60,6 +61,7 @@
 
 .embed-tiktok {
   width: 100%;
+  min-height: 559px;
   position: relative;
   overflow: hidden;
 

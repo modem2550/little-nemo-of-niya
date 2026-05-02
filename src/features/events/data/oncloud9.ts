@@ -9,14 +9,14 @@ export const eventConfig: UnifiedEventConfig = {
         slug: "oncloud9", // changed to lowercase
         name: "BNK48 & CGM48 On Cloud 9 Festival",
         primaryColor: "#b986c8",
-        primaryHover: "#7e5fa8",
+        primaryHover: "#e4b2eb",
         theme: {
             primary: "#b986c8",
-            primaryHover: "#9b6fb0", // ปรับให้นุ่มขึ้น ไม่คล้ำจนเกินไป
+            primaryHover: "#e4b2eb", // ปรับให้นุ่มขึ้น ไม่คล้ำจนเกินไป
             bg: "#0d0d0f",           // เข้มขึ้นเล็กน้อย
             surface: "#16161a",      // ปรับให้มีความ Deep Blue/Grey เล็กน้อย
-            surfaceAlt: "#1f1f24",
-            border: "#2d2d33",       // เพิ่มความสว่างของเส้นขอบให้เห็นชัดแต่ไม่โดด
+            surfaceAlt: "#191c21",
+            border: "#242934",       // เพิ่มความสว่างของเส้นขอบให้เห็นชัดแต่ไม่โดด
             content: "#f4f4f5",
             textMuted: "#8a8a93"
         },
@@ -30,7 +30,7 @@ export const eventConfig: UnifiedEventConfig = {
                 storageKey: "oncloud9_planner", // changed to lowercase
                 heroImage: "https://img2.pic.in.th/679067820_1538138747670766_1349428160000992650_n.png",
                 listingImage: "/img/OnCloud9Fest.png",
-                primaryHover: "#9b6fb0",
+                primaryHover: "#e4b2eb",
                 prices: { ticket: 250, hub: 200 },
                 days: [
                     { key: "sat", label: "SAT 30", short: "SAT 30", date: "2026-05-30" },
@@ -60,8 +60,8 @@ export const eventConfig: UnifiedEventConfig = {
                         slug: "woh_oh_oh",
                         name: "WOH OH OH",
                         match: ["woh_oh_oh", "แข่งขำ"],
-                        icon: "fa-regular fa-face-grin-tongue-wink",
-                        color: "#82e3d5",
+                        icon: "fa-solid fa-face-grin-tongue-wink",
+                        color: "#51ab9e",
                         tickets: 1,
                         desc: "แข่งกันทำหน้าตลกกับ Member 5 วินาที (มีฉากกั้น) · ใครหัวเราะก่อนแพ้ · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
@@ -79,7 +79,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "BLUE WHITE BLUE",
                         match: ["blue_white_blue", "ช่วยฉันทีสีอะไร"],
                         icon: "fa-solid fa-baseball",
-                        color: "#e9d18b",
+                        color: "#d9a818",
                         tickets: 1,
                         desc: "เกมโยนบอลลงตาราง 9 ช่อง ให้ครบแนว 3 ช่องก่อนชนะ (มีบอล 5 ลูก) · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
@@ -97,7 +97,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "SNS ลองอัพรูปถ่ายไป",
                         match: ["sns", "photo_booth"],
                         icon: "fa-solid fa-camera-retro",
-                        color: "#f2c2d4",
+                        color: "#ef699b",
                         tickets: 5,
                         desc: "ถ่าย Photo booth ใส่กรอบลาย Concept BNK48 & CGM48 ทั้ง 9 Album · หลังร่วมกิจกรรมรับ Photo จาก Staff · 5 Tickets",
                     },
@@ -106,7 +106,7 @@ export const eventConfig: UnifiedEventConfig = {
                         name: "บนเนินเขา",
                         match: ["on_the_hill", "พัตต์กอล์ฟ"],
                         icon: "fa-solid fa-mountain",
-                        color: "#7ba1e3",
+                        color: "#4371d6",
                         tickets: 1,
                         desc: "เกมพัตต์กอล์ฟขึ้นเนินให้ลงหลุม (ตีได้ 1 ครั้ง) · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
                     },
@@ -118,6 +118,14 @@ export const eventConfig: UnifiedEventConfig = {
                         color: "#c688eb",
                         tickets: 1,
                         desc: "เกมปิดตา ติดหางม้า บนหัวหุ่น · ชนะรับ Photo จากมือ Member / แพ้รับจาก Staff · 1 Ticket",
+                    },
+                    {
+                        slug: "booth_activity",
+                        name: "BOOTH ACTIVITY",
+                        match: ["booth_activity", "บูธ"],
+                        icon: "fa-solid fa-music",
+                        color: "#10b981",
+                        desc: "กิจกรรมตามบูธต่าง ๆ",
                     },
                 ],
                 schedule: [
@@ -426,6 +434,16 @@ export const eventConfig: UnifiedEventConfig = {
                             { day: "mon", time: "18:30–19:30", members: ["Neen", "Galeya", "Jew"] },
                             { day: "mon", time: "19:30–20:30", members: ["Nammonn", "Monet", "Jingjing"] },
                         ],
+                    },
+                    {
+                        activitySlug: "booth_activity",
+                        slots: [
+                            { day: "sat", time: "17:30–19:30", members: ["Emma", "Ginna", "Jingjing", "Lookked", "Nana", "Chifa", "Lewlew", "Namphet", "Punpon", "Tara"] },
+                            { day: "sun", time: "12:30–14:30", members: ["Berry", "Emmy", "Janry", "L", "Marine", "Micha", "Palmmy", "Patt", "Sindy", "Wawa"] },
+                            { day: "sun", time: "17:30–19:30", members: ["Arlee", "Galeya", "Jew", "Khaimook", "Mayji", "Nall", "Nammonn", "Neen", "Niya", "Proud", "Saonoi"] },
+                            { day: "mon", time: "12:30–14:30", members: ["Blythe", "Cartoon", "Grape", "Inkcha", "Khowjow", "Luksorn", "Mail", "Mint", "Mirin", "Praew", "Rose"] },
+                            { day: "mon", time: "17:30–19:30", members: ["Kwan", "Lingling", "Ploen", "Prae", "Else", "Hongyok", "Nisha", "Praifa", "Satangpound", "Shenae", "Valentine"] },
+                        ]
                     },
                 ],
             }

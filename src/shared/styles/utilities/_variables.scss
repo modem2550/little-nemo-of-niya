@@ -40,6 +40,15 @@
     --c-sat: #8b5cf6;
     --c-sun: #ef4444;
 
+    // ── Day-of-week gradients ─────────────────────────────────────────────────
+    --g-mon: linear-gradient(90deg, var(--c-mon), #fbbf24);
+    --g-tue: linear-gradient(90deg, var(--c-tue), #f472b6);
+    --g-wed: linear-gradient(90deg, var(--c-wed), #34d399);
+    --g-thu: linear-gradient(90deg, var(--c-thu), #fb923c);
+    --g-fri: linear-gradient(90deg, var(--c-fri), #38bdf8);
+    --g-sat: linear-gradient(90deg, var(--c-sat), #a78bfa);
+    --g-sun: linear-gradient(90deg, var(--c-sun), #f87171);
+
     // ── Transitions ───────────────────────────────────────────────────────────
     --t-duration: 0.3s;
     --t-ease-smooth: 0.3s ease;

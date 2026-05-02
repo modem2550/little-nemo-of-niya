@@ -13,7 +13,8 @@ main {
 
 .sf-tabs-wrap {
   position: sticky;
-  top: 56px;
+  top: 60px;
+  min-height: 52px;
   z-index: 900;
   background: var(--c-bg);
   border-bottom: 1px solid var(--c-border);
@@ -57,7 +58,7 @@ main {
 }
 
 .tab-badge {
-  background: var(--c-primary);
+  background: linear-gradient(90deg, var(--c-primary), var(--c-primary-hover));
   color: #fff;
   border-radius: 100px;
   padding: 1px 7px;
@@ -66,7 +67,7 @@ main {
   line-height: 1.4;
 
   &--live {
-    background: #ef4444;
+    background: linear-gradient(90deg, #ef4444, #f97316);
     animation: livePulse 2s ease-in-out infinite;
     padding: 1px 6px;
   }
@@ -210,12 +211,12 @@ main {
   }
 
   &.active {
-    --bg: var(--c-primary);
+    --bg: linear-gradient(90deg, var(--c-primary), var(--c-primary-hover));
     --tb: transparent;
     --tc: #fff;
 
     &:hover {
-      filter: brightness(0.95);
+      filter: brightness(0.90);
     }
   }
 
@@ -230,8 +231,9 @@ main {
     --tm: #{$col};
 
     &:hover {
+      --bg: var(--tm);
       --tb: var(--tm);
-      --tc: var(--tm);
+      --tc: #fff;
     }
 
     &.active {
@@ -287,7 +289,7 @@ main {
   white-space: normal;
 }
 
-.filter-box{
+.filter-box {
   border: 1px solid var(--c-border);
 }
 
@@ -300,72 +302,75 @@ main {
   justify-content: center;
   border: 1px solid var(--c-border);
   border-radius: 100px;
+  padding: .5rem 1.15rem;
+  font-size: 14px;
   font-weight: 700;
+  line-height: 1;
   cursor: pointer;
   background: var(--c-surface-alt);
-  color: var(--c-content);
+  color: var(--c-primary);
   transition: all 0.2s;
   white-space: nowrap;
 
   &:hover {
-    border-color: var(--c-primary);
-    color: var(--c-primary);
+    background-color: var(--c-primary);
+    border: 1px solid var(--c-primary);
+    color: #fff;
   }
 
   &.active {
-    background: var(--c-primary);
-    border-color: var(--c-primary);
+    background: linear-gradient(270deg, var(--c-primary-hover), var(--c-primary));
+    border-color: transparent;
     color: #fff;
   }
 
   // Days loop
   $days: (
+    'mon': var(--c-mon),
+    'tue': var(--c-tue),
+    'wed': var(--c-wed),
+    'thu': var(--c-thu),
     'fri': var(--c-fri),
     'sat': var(--c-sat),
-    'sun': var(--c-sun),
-    'mon': var(--c-mon)
+    'sun': var(--c-sun)
   );
 
 @each $day, $col in $days {
   &--#{$day} {
     --dc: #{$col};
     background: color-mix(in srgb, var(--dc) 30%, transparent);
-    border-color: color-mix(in srgb, var(--dc) 30%, transparent);
+    border-color: color-mix(in srgb, var(--dc) 0%, transparent);
     color: var(--dc);
 
     &:hover {
-      border-color: var(--dc);
+      background: color-mix(in srgb, var(--dc) 100%, transparent);
+      border-color: color-mix(in srgb, var(--dc) 0%, transparent);
       color: var(--c-light);
-      background: var(--dc);
     }
 
     &.active {
-      background: var(--dc);
-      border-color: var(--dc);
+      background: var(--g-#{$day}, linear-gradient(90deg, var(--dc), color-mix(in srgb, var(--dc) 80%, #000000)));
+      border-color: color-mix(in srgb, var(--dc) 0%, transparent);
       color: #fff;
     }
   }
 }
 }
 
-.day-ftab {
-  padding: 0.5rem 1.15rem;
-  font-size: 14px;
-  line-height: 1;
-}
+// Redundant styles removed //
 
 .day-tab {
   padding: 0.5rem 1.15rem;
   font-size: 14px;
 }
 
-// ── PILLS & BUTTONS ──────────────────────────────────────────────────────
+// ── PILLS & BUTTONS ──────────────────────────────────────────────────────//
 
 .sel-pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: var(--c-primary);
+  background: linear-gradient(270deg, var(--c-primary-hover), var(--c-primary));
   color: #fff;
   border-radius: 100px;
   padding: 4px 10px 4px 5px;
@@ -404,7 +409,8 @@ main {
   gap: 6px;
   background: 0;
   border: 2px solid var(--c-primary);
-  color: var(--c-primary);
+  background-color: var(--c-primary);
+  color: var(--c-light);
   border-radius: 100px;
   padding: 9px 22px;
   font-size: 13px;
@@ -413,7 +419,7 @@ main {
   transition: all 0.18s;
 
   &:hover {
-    background: var(--c-primary);
+    filter: brightness(0.90);
     color: #fff;
   }
 }
@@ -467,6 +473,10 @@ main {
   letter-spacing: 0.5px;
 
   $days: (
+    'mon': var(--c-mon),
+    'tue': var(--c-tue),
+    'wed': var(--c-wed),
+    'thu': var(--c-thu),
     'fri': var(--c-fri),
     'sat': var(--c-sat),
     'sun': var(--c-sun)
@@ -474,15 +484,15 @@ main {
 
 @each $day, $col in $days {
   &.#{$day} {
-    background: #{$col};
+    background: var(--g-#{$day});
   }
 }
 }
 
 .act-block {
   opacity: 1;
-  background: var(--c-bg);
   overflow: hidden;
+  background-color: var(--c-bg);
   transition: box-shadow var(--t-duration);
   --anim-offset-y: 0px;
   --anim-duration: 600ms;
@@ -493,7 +503,7 @@ main {
     justify-content: space-between;
     gap: 12px;
     padding: 14px 20px;
-    background: var(--c-surface);
+    background: color-mix(in srgb, var(--act-color, var(--c-surface)), transparent 92%);
     border-bottom: 1px solid var(--c-border);
     border-top: 1px solid var(--c-border);
   }
@@ -514,6 +524,7 @@ main {
     font-size: 14px;
     color: #fff;
     flex-shrink: 0;
+    background: var(--act-color);
   }
 
   &__name {
@@ -712,7 +723,6 @@ main {
   }
 
   &__info {
-    padding: 12px 14px 10px;
     flex: 1;
   }
 
@@ -747,7 +757,7 @@ main {
 
     &:hover,
     &.active {
-      background: var(--c-primary);
+      background: linear-gradient(90deg, var(--c-primary), var(--c-primary-hover));
       color: #fff;
     }
   }
@@ -1043,8 +1053,9 @@ tr {
 
 @each $day, $col in $days {
   &.#{$day} {
-    background: color-mix(in srgb, #{$col} 15%, transparent);
-    color: #{$col};
+    background: var(--g-#{$day});
+    color: #fff;
+    border: none;
   }
 }
 }

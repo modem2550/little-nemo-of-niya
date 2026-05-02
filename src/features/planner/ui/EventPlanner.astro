@@ -80,8 +80,8 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
 </div>
 
 <!-- TABS -->
-<div class="container px-3">
-    <div class="sf-tabs-wrap">
+<div class="sf-tabs-wrap">
+    <div class="container px-3">
         <div class="sf-tabs d-flex justify-content-center overflow-auto">
             {
                 [
@@ -1110,7 +1110,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             .map((m) => {
                 const isSelected = entry.members.includes(m);
                 if (isSelected) {
-                    return `<span style="background:var(--c-primary);color:#fff;border-radius:100px;padding:1px 8px;font-size:11px;font-weight:700">${m}</span>`;
+                    return `<span style="background: var(--c-primary);color:#fff;border-radius:100px;padding:1px 8px;font-size:11px;font-weight:700">${m}</span>`;
                 } else {
                     return `<span style="background:var(--c-surface-alt);color:var(--c-content);border-radius:100px;padding:1px 8px;font-size:11px;font-weight:500">${m}</span>`;
                 }
@@ -1168,10 +1168,10 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
             )
             .join("");
 
-        return `<div class="act-block slide-up">
-            <div class="act-block__header" style="background-color: color-mix(in srgb, ${cfg.color}, transparent 90%)">
+        return `<div class="act-block slide-up" style="--act-color: ${cfg.color}">
+            <div class="act-block__header" style="background-color: color-mix(in srgb, ${cfg.color}, transparent 92%)">
                 <div class="act-block__left">
-                    <div class="act-block__icon" style="background:${cfg.color}"><i class="${cfg.icon}"></i></div>
+                    <div class="act-block__icon" style="background: ${cfg.color}"><i class="${cfg.icon}"></i></div>
                     <span class="act-block__name">${firstRow.activity_name}</span>
                 </div>
             </div>
