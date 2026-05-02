@@ -4,6 +4,9 @@
 
 .hero-half-body-img {
   height: 100%;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .bio-info-box {

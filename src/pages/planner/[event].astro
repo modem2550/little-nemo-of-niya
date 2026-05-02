@@ -4,6 +4,7 @@ import MainLayout from "@/app/layouts/MainLayout.astro";
 import EventPlanner from "@/features/planner/ui/EventPlanner.astro";
 import { getPlannerEvents } from "@/features/events/eventEngine";
 import { getSupabase } from "@/services/supabase/server";
+import { getImage } from "astro:assets";
 import "@/shared/styles/planner.scss";
 
 export async function getStaticPaths() {
@@ -55,6 +56,15 @@ if (!shouldShowFallbackEmbed) {
         team: m.team ?? "Trainee",
     }));
 }
+
+const optimizedHero = await getImage({
+    src: plannerData.heroImage,
+    width: 1200,
+    inferSize: true,
+    format: "webp",
+    quality: 80,
+});
+const heroUrl = optimizedHero.src;
 ---
 
 <MainLayout
@@ -63,6 +73,7 @@ if (!shouldShowFallbackEmbed) {
     forcedTheme={plannerData.forcedTheme}
     socialImage={socialImage}
 >
+    <link rel="preload" href={heroUrl} as="image" fetchpriority="high" slot="head" />
     <h1 class="visually-hidden">{plannerData.pageTitle}</h1>
 
     <article id="planner-main" aria-label={plannerData.pageTitle}>
@@ -185,7 +196,7 @@ if (!shouldShowFallbackEmbed) {
                     pageTitle={plannerData.pageTitle}
                     officialLink={plannerData.officialLink}
                     storageKey={plannerData.storageKey}
-                    heroImage={plannerData.heroImage}
+                    heroImage={heroUrl}
                     primaryColor={eventData.primaryColor}
                     primaryHover={eventData.primaryHover}
                     prices={plannerData.prices}

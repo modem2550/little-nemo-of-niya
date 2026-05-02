@@ -21,7 +21,8 @@ export default defineConfig({
       'img5.pic.in.th',
       'f.ptcdn.info',
       'p-u.popcdn.net',
-      'encrypted-tbn0.gstatic.com'
+      'encrypted-tbn0.gstatic.com',
+      'static.wikia.nocookie.net'
     ],
   },
 

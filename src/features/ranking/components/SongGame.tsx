@@ -593,7 +593,7 @@ const SongGame = memo(function SongGame({
               <hr style={{ maxWidth: '500px', margin: '1.5rem auto' }} />
               <p className='mb-1'>แชร์ Ranking ของคุณบน <i className="fa-brands fa-x-twitter"></i></p>
               <a className="h3 fw-bold" style={{ color: primaryGradient ?? primaryColor }} href='https://x.com/hashtag/TheBestmySong?src=hashtag_click'>#TheBestmySong</a>
-              <div className="ranking-planner-skin__actions">
+              <div className="ranking-planner-skin__actions mt-4">
                 <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('#TheBestmySong')}`} target="_blank" rel="noopener noreferrer" className="ranking-planner-skin__ctaX">แชร์ไปยัง <i className="fa-brands fa-x-twitter"></i></a>
                 <button type="button" className="ranking-planner-skin__ctaGhost" onClick={handleShowViewAll}>
                   <i className="fa-solid fa-list" aria-hidden="true"></i> ดู Ranking ทั้งหมด

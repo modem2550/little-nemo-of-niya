@@ -5,6 +5,10 @@ import type { ThemeConfig } from "@/types/event";
 
 import "@/shared/styles/main.scss";
 import IconSprite from "@/shared/components/IconSprite.astro";
+import { Image } from "astro:assets";
+import logoWhite from "@/shared/assets/logo/WHITE.png";
+import logoBlack from "@/shared/assets/logo/BLACK.png";
+import logoNavy from "@/shared/assets/logo/NAVY.png";
 
 interface Props {
     title?: string;
@@ -363,6 +367,7 @@ const schemaData = {
         )
         }
 
+        <slot name="head" />
     </head>
 
     <body>
@@ -377,10 +382,10 @@ const schemaData = {
                 <!-- Logo & Branding -->
                 <a href="/" class="logo-brand d-flex align-items-center" aria-label="Niya BNK48 — Home">
                     <span class="logo-brand__mark" aria-hidden="true">
-                        <img src="/logo/WHITE.png" alt="white-logo" class="logo-img logo-img--on-hero" width="256"
-                            height="256" decoding="async" />
-                        <img src="/logo/BLACK.png" alt="black-logo" class="logo-img logo-img--on-bar" width="256"
-                            height="256" decoding="async" />
+                        <Image src={logoWhite} alt="white-logo" class="logo-img logo-img--on-hero" width={100}
+                            loading="eager" />
+                        <Image src={logoBlack} alt="black-logo" class="logo-img logo-img--on-bar" width={100}
+                            loading="eager" />
                     </span>
                     <span class="logo-text">Niya BNK48</span>
                 </a>
@@ -491,10 +496,8 @@ const schemaData = {
 
             <div class="site-info footer-surface">
                 <nav class="navbar-footer">
-                    <img src="/logo/NAVY.png" alt="Niya Logo" class="footer-logo footer-logo--dark" width="222" height="80"
-                        decoding="async" />
-                    <img src="/logo/WHITE.png" alt="Niya Logo" class="footer-logo footer-logo--light" width="222" height="80"
-                        decoding="async" />
+                    <Image src={logoNavy} alt="Niya Logo" class="footer-logo footer-logo--dark" width={180} />
+                    <Image src={logoWhite} alt="Niya Logo" class="footer-logo footer-logo--light" width={180} />
                     <ul class="mt-4">
                         <li>
                             <a href="/cookies-policy">นโยบายเกี่ยวกับคุกกี้</a>

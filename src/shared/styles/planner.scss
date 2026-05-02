@@ -16,7 +16,7 @@ main {
   top: 60px;
   min-height: 52px;
   z-index: 900;
-  background: var(--c-bg);
+  background: color-mix(in srgb, var(--c-bg, var(--c-surface)), transparent 20%);
   border-bottom: 1px solid var(--c-border);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);

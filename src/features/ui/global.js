@@ -349,12 +349,7 @@ function initAnimations() {
   const animElements = document.querySelectorAll('.slide-right, .fade-in, .slide-left, .slide-up');
 
   animElements.forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight * 0.85) {
-      el.classList.add('show');
-    } else {
-      animationObserver.observe(el);
-    }
+    animationObserver.observe(el);
   });
 
   // Configure animations by section
