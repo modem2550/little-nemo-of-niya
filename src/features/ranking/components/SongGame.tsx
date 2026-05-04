@@ -60,43 +60,133 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
   ({ winner, rankResults, primaryColor, primaryGradient, cardId }, ref) => {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isDownloading, setIsDownloading] = useState(false);
+    const [bgBase64, setBgBase64] = useState<string | null>(null);
+    const bgBase64Ref = useRef<string | null>(null);
 
-    // ✅ Preload background image เพื่อให้ browser cache ก่อน capture
+    // Convert bg → base64 via fetch (ไม่มี CORS/timing issue)
     useEffect(() => {
-      const img = new Image();
-      img.src = '/img/bg-ranking-song.png';
+      let cancelled = false;
+      console.log('[bgFetch] starting fetch /img/bg-ranking-song.png');
+      fetch('/img/bg-ranking-song.png')
+        .then(res => {
+          console.log('[bgFetch] fetch response:', res.status, res.ok);
+          return res.blob();
+        })
+        .then(blob => {
+          console.log('[bgFetch] blob size:', blob.size, 'type:', blob.type);
+          return new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        })
+        .then(dataUrl => {
+          if (!cancelled) {
+            console.log('[bgFetch] base64 ready, length:', dataUrl.length);
+            bgBase64Ref.current = dataUrl; // ← เขียน ref ก่อน
+            setBgBase64(dataUrl);
+          }
+        })
+        .catch(err => console.error('[bgFetch] FAILED:', err));
+      return () => { cancelled = true; };
     }, []);
 
     const generateImage = useCallback(async () => {
-      if (!cardRef.current) throw new Error("Ref not ready");
+      console.log('[generateImage] start');
+
+      if (!cardRef.current) {
+        console.error('[generateImage] cardRef is null');
+        throw new Error("Ref not ready");
+      }
+
+      // ใช้ ref แทน state เพื่อหลีกเลี่ยง stale closure
+      if (!bgBase64Ref.current) {
+        console.log('[generateImage] waiting for bgBase64Ref...');
+        await new Promise<void>((resolve, reject) => {
+          const start = Date.now();
+          const check = setInterval(() => {
+            if (bgBase64Ref.current) {
+              clearInterval(check);
+              console.log('[generateImage] bgBase64Ref ready');
+              resolve();
+            } else if (Date.now() - start > 5000) {
+              clearInterval(check);
+              reject(new Error('BG timeout'));
+            }
+          }, 100);
+        });
+      } else {
+        console.log('[generateImage] bgBase64Ref already ready');
+      }
+
       setIsDownloading(true);
       try {
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => requestAnimationFrame(r));
+        console.log('[generateImage] after rAF');
 
         if (!(window as any).domtoimage) {
+          console.log('[generateImage] loading dom-to-image...');
           await new Promise<void>((resolve, reject) => {
             const script = document.createElement('script');
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.4.0/dom-to-image-more.min.js';
-            script.onload = () => resolve();
+            script.onload = () => { console.log('[generateImage] dom-to-image loaded'); resolve(); };
             script.onerror = () => reject(new Error('Failed to load dom-to-image-more'));
             document.head.appendChild(script);
           });
+        } else {
+          console.log('[generateImage] dom-to-image already loaded');
         }
 
-        const dataUrl = await (window as any).domtoimage.toPng(cardRef.current, {
-          width: 1080,
-          height: 1920,
-          style: {
-            transform: 'scale(1)',
-            transformOrigin: 'top left',
-          },
-        });
+        const el = cardRef.current;
+        console.log('[generateImage] element size:', el.offsetWidth, 'x', el.offsetHeight);
+        console.log('[generateImage] element style:', el.style.cssText);
+
+        const prev = {
+          position: el.style.position,
+          top: el.style.top,
+          left: el.style.left,
+          zIndex: el.style.zIndex,
+        };
+
+        el.style.position = 'absolute';
+        el.style.top = '0px';
+        el.style.left = '-9999px';
+        el.style.zIndex = '-1';
+
+        await new Promise(r => setTimeout(r, 300));
+        console.log('[generateImage] starting toPng...');
+
+        let dataUrl: string;
+        try {
+          dataUrl = await (window as any).domtoimage.toPng(el, {
+            width: 1080,
+            height: 1920,
+            style: {
+              transform: 'scale(1)',
+              transformOrigin: 'top left',
+              position: 'absolute',
+              top: '0px',
+              left: '0px',
+            },
+          });
+          console.log('[generateImage] toPng success, dataUrl length:', dataUrl.length);
+        } finally {
+          el.style.position = prev.position;
+          el.style.top = prev.top;
+          el.style.left = prev.left;
+          el.style.zIndex = prev.zIndex;
+        }
 
         return dataUrl;
+      } catch (err) {
+        console.error('[generateImage] FAILED:', err);
+        throw err;
       } finally {
         setIsDownloading(false);
       }
-    }, []);
+    }, [bgBase64]);
 
     useEffect(() => {
       if (ref && typeof ref === 'object') {
@@ -135,7 +225,6 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
           backgroundColor: '#fff',
         }}
       >
-        {/* Import Local Font */}
         <style>
           {`
             @font-face {
@@ -147,9 +236,9 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
           `}
         </style>
 
-        {/* Background Frame */}
+        {/* Background — ใช้ base64 เพื่อให้ dom-to-image embed ได้แน่นอน */}
         <img
-          src="/img/bg-ranking-song.png"
+          src={bgBase64 ?? '/img/bg-ranking-song.png'}
           style={{
             position: 'absolute',
             inset: 0,
@@ -172,10 +261,10 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          color: '#334155', gap: '35px',
+          color: '#334155',
+          gap: '35px',
           paddingTop: '0px'
         }}>
-          {/* Group Title */}
           <div style={{
             fontSize: 42,
             fontWeight: 900,
@@ -190,7 +279,6 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
             {groupTitle}
           </div>
 
-          {/* Top 1-10 List on the paper */}
           <div style={{
             width: '100%',
             display: 'flex',
@@ -211,15 +299,13 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     borderBottom: '1px dashed rgba(0,0,0,0.1)',
                   }}
                 >
-                  <div
-                    style={{
-                      width: 70,
-                      fontWeight: 900,
-                      fontSize: 44,
-                      color: '#5e5952',
-                      textAlign: 'center',
-                    }}
-                  >
+                  <div style={{
+                    width: 70,
+                    fontWeight: 900,
+                    fontSize: 44,
+                    color: '#5e5952',
+                    textAlign: 'center',
+                  }}>
                     {rank}
                   </div>
                   <div style={{ minWidth: 0, flex: 1 }}>
@@ -268,30 +354,25 @@ interface DownloadButtonProps {
 }
 
 const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, primaryColor, primaryGradient }: DownloadButtonProps) {
-  const [isPressed, setIsPressed] = useState(false);
-  const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const linkRef = useRef<HTMLAnchorElement>(null);
+  const downloadName = `song-ranking-${Date.now()}.png`;
 
-  const handlePressStart = useCallback(() => {
-    setIsPressed(true);
-    pressTimerRef.current = setTimeout(() => {
-      if (linkRef.current) linkRef.current.click();
-    }, LONG_PRESS_THRESHOLD);
-  }, []);
-
-  const handlePressEnd = useCallback(() => {
-    setIsPressed(false);
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
-    };
-  }, []);
+  const handleDownload = useCallback(() => {
+    // แปลง data URL → Blob → Object URL (รองรับ Safari)
+    fetch(imageUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = downloadName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        // รอสักครู่แล้วค่อย revoke เพื่อให้ browser download ทัน
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+      })
+      .catch(err => console.error('Download failed:', err));
+  }, [imageUrl, downloadName]);
 
   if (isLoading) {
     return (
@@ -307,32 +388,15 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
     );
   }
 
-  const downloadName = `song-ranking-${Date.now()}.png`;
-
   return (
-    <>
-      <a
-        ref={linkRef}
-        href={imageUrl}
-        download={downloadName}
-        style={{ display: 'none' }}
-      >
-      </a>
-      <button
-        type="button"
-        className="ranking-planner-skin__ctaGhost"
-        onClick={() => linkRef.current?.click()}
-        onMouseDown={handlePressStart}
-        onMouseUp={handlePressEnd}
-        onMouseLeave={handlePressEnd}
-        onTouchStart={handlePressStart}
-        onTouchEnd={handlePressEnd}
-        aria-pressed={isPressed}
-      >
-        <i className="fa-solid fa-download" aria-hidden="true" />
-        บันทึกภาพ
-      </button>
-    </>
+    <button
+      type="button"
+      className="ranking-planner-skin__ctaGhost"
+      onClick={handleDownload}
+    >
+      <i className="fa-solid fa-download" aria-hidden="true" />
+      บันทึกภาพ
+    </button>
   );
 });
 
