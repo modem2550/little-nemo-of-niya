@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef, forwardRef, useImperativeHandle, memo, type CSSProperties } from 'react';
 import { useRankingEngine, STORAGE_VERSION, type GameState, type GameProgress, type TopRankingResult } from '../logic/rankingEngine';
 import type { Member } from '@/types/member';
-import { urlToBase64, ensureDomToImage, waitForFonts } from '@/shared/utils/imageCapture';
+import { urlToBase64, ensureDomToImage, waitForFonts, waitForImageElement } from '@/shared/utils/imageCapture';
 
 const LONG_PRESS_THRESHOLD = 500; // ms
 
@@ -84,21 +84,32 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
             if (!cardRef.current) throw new Error("Ref not ready");
             
             try {
-                // Wait for resources if not ready
-                if (!resourcesReadyRef.current) {
-                    const start = Date.now();
-                    while (!resourcesReadyRef.current && Date.now() - start < 10000) {
-                        await new Promise(r => setTimeout(r, 200));
-                    }
-                    if (!resourcesReadyRef.current) throw new Error("Resources timeout");
+                // 1. Wait for Base64 resources to be ready in state
+                const start = Date.now();
+                while (!resourcesReadyRef.current && Date.now() - start < 15000) {
+                    await new Promise(r => setTimeout(r, 200));
                 }
 
+                // 2. Load dependencies & Font
                 await Promise.all([
                     ensureDomToImage(),
                     waitForFonts(),
-                    new Promise(r => requestAnimationFrame(r)),
-                    new Promise(r => setTimeout(r, 500)) // Extra buffer for layout
                 ]);
+
+                // 3. DOM Rendering (2x RAF + buffer)
+                await new Promise(r => requestAnimationFrame(r));
+                await new Promise(r => requestAnimationFrame(r));
+                await new Promise(r => setTimeout(r, 800));
+
+                // 4. Image Elements Loading
+                const container = cardRef.current;
+                const images = Array.from(container.querySelectorAll('img'));
+                
+                await Promise.all(images.map(img => waitForImageElement(img, 5000)));
+
+                // 5. Final Render Pass
+                await new Promise(r => requestAnimationFrame(r));
+                await new Promise(r => setTimeout(r, 500));
 
                 const dataUrl = await (window as any).domtoimage.toPng(cardRef.current, {
                     width: 1080,
@@ -106,13 +117,14 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     style: {
                         transform: 'scale(1)',
                         transformOrigin: 'top left',
-                        visibility: 'visible', // Ensure it's visible during capture
+                        visibility: 'visible',
                     },
                 });
 
                 return dataUrl;
-            } finally {
-                // Done
+            } catch (err) {
+                console.error('[generateImage] FAILED:', err);
+                throw err;
             }
         }, []);
 
@@ -172,17 +184,18 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                         boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                     }}
                 >
-                    <div
+                    <img
+                        src={winnerBase64 || winner.profile_image_url}
                         style={{
                             position: 'absolute',
                             top: 0,
                             width: '100%',
                             height: '100%',
-                            backgroundImage: `url(${winnerBase64 || winner.profile_image_url})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center top',
+                            objectFit: 'cover',
+                            objectPosition: 'center top',
                             overflow: 'hidden',
                         }}
+                        alt="winner"
                     />
                 </div>
 
@@ -270,16 +283,18 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                                 }}
                             >
                                 <div style={{ position: 'relative' }}>
-                                    <div
+                                    <img
+                                        src={top10Base64[m.id] || m.profile_image_url}
                                         style={{
                                             width: 125,
                                             height: 125,
                                             borderRadius: '50%',
-                                            backgroundImage: `url(${top10Base64[m.id] || m.profile_image_url})`,
-                                            backgroundSize: 'cover',
-                                            backgroundPosition: 'center top',
-                                            boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                                            objectFit: 'cover',
+                                            objectPosition: 'center top',
+                                            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+                                            display: 'block'
                                         }}
+                                        alt={m.name}
                                     />
                                     <div
                                         style={{

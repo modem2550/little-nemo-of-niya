@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef, forwardRef, useImperativeHandle, memo, type CSSProperties } from 'react';
 import { useRankingEngine, STORAGE_VERSION } from '../logic/rankingEngine';
 import type { Song } from '@/types/song';
-import { urlToBase64, ensureDomToImage, waitForFonts } from '@/shared/utils/imageCapture';
+import { urlToBase64, ensureDomToImage, waitForFonts, waitForImageElement } from '@/shared/utils/imageCapture';
 
 const LONG_PRESS_THRESHOLD = 500; // ms
 
@@ -81,19 +81,34 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
       if (!cardRef.current) throw new Error("Ref not ready");
 
       try {
+        // 1. Wait for bgBase64 state ready
         if (!resourcesReadyRef.current) {
           const start = Date.now();
-          while (!resourcesReadyRef.current && Date.now() - start < 5000) {
+          while (!resourcesReadyRef.current && Date.now() - start < 10000) {
             await new Promise(r => setTimeout(r, 100));
           }
         }
 
+        // 2. Load dependencies & Font
         await Promise.all([
           ensureDomToImage(),
           waitForFonts(),
-          new Promise(r => requestAnimationFrame(r)),
-          new Promise(r => setTimeout(r, 500))
         ]);
+
+        // 3. DOM Rendering (2x RAF + buffer)
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => setTimeout(r, 600));
+
+        // 4. Background Image element actually loaded
+        const bgImg = cardRef.current.querySelector('img');
+        if (bgImg) {
+          await waitForImageElement(bgImg as HTMLImageElement, 5000);
+        }
+
+        // 5. Final Render Pass
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => setTimeout(r, 400));
 
         const el = cardRef.current;
         const dataUrl = await (window as any).domtoimage.toPng(el, {
@@ -111,7 +126,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
         console.error('[generateImage] FAILED:', err);
         throw err;
       }
-    }, []);
+    }, [bgBase64]);
 
     useImperativeHandle(ref, () => ({ generateImage }), [generateImage]);
 
