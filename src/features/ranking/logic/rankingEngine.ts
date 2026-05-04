@@ -30,6 +30,7 @@ export interface TopRankingResult<T extends RankedItemBase> {
   totalRounds: number;
   topRanking: T[];
   allScores: Record<number, number>;
+  allElo: Record<number, number>;
 }
 
 export function createEmptyProgress(): GameProgress {
@@ -66,6 +67,7 @@ export function useRankingEngine<T extends { id: number; name: string }>(
         totalRounds,
         topRanking,
         allScores: finalState.scores,
+        allElo: finalState.elo,
       };
       localStorage.setItem(storageKey, JSON.stringify(data));
       setOldResults(data);
@@ -111,16 +113,11 @@ export function useRankingEngine<T extends { id: number; name: string }>(
         setHistory((h) => [...h, prev]);
 
         if (nextRound >= totalRounds) {
-          saveResults(updatedState);
-          // Prefer requestAnimationFrame or microtask for state transitions
-          queueMicrotask(() => setGameState('finished'));
           return { ...updatedState, roundCount: nextRound, currentPair: [] };
         }
 
         const nextPair = getNextPair(itemIds, updatedState);
         if (nextPair.length !== 2) {
-          saveResults(updatedState);
-          queueMicrotask(() => setGameState('finished'));
           return { ...updatedState, roundCount: nextRound, currentPair: [] };
         }
 
@@ -151,8 +148,6 @@ export function useRankingEngine<T extends { id: number; name: string }>(
       const nextRound = prev.roundCount + 1;
 
       if (nextRound >= totalRounds) {
-        saveResults(prev);
-        queueMicrotask(() => setGameState('finished'));
         return { ...prev, roundCount: nextRound, currentPair: [] };
       }
 
@@ -160,8 +155,6 @@ export function useRankingEngine<T extends { id: number; name: string }>(
       const nextPair = getNextPair(itemIds, skippedState);
 
       if (nextPair.length !== 2) {
-        saveResults(skippedState);
-        queueMicrotask(() => setGameState('finished'));
         return { ...skippedState, roundCount: nextRound, currentPair: [] };
       }
 
@@ -187,27 +180,41 @@ export function useRankingEngine<T extends { id: number; name: string }>(
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameState, gameProgress.currentPair, handleChoice, handleSkip, handleUndo]);
 
+  // BUG 3: Finish condition in useEffect to ensure batched updates and avoid null flash
+  useEffect(() => {
+    if (gameState === 'playing' && gameProgress.roundCount >= totalRounds) {
+      saveResults(gameProgress);
+      setGameState('finished');
+    }
+  }, [gameState, gameProgress, totalRounds, saveResults]);
+
   // ดึงเฉพาะ scores ออกมาเป็น dependency เพื่อไม่ให้ recalculate ทุกครั้งที่ currentPair เปลี่ยน
   const scores = gameProgress.scores;
   const rankedItems = useMemo(
     () => calculateFinalRanking(items, gameProgress)
       .map((item) => ({ ...item, score: scores[item.id] || 0 }))
       .sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;  // score first
-        if (b.elo !== a.elo) return b.elo - a.elo;           // then ELO
+        if (b.elo !== a.elo) return b.elo - a.elo;           // ELO first (Scientific Real Ranking)
+        if (b.score !== a.score) return b.score - a.score;  // then Score
         return a.name.localeCompare(b.name);
-      }) as (T & RankedItemBase)[],
+      }) as (T & RankedItemBase & { elo: number })[],
     [items, scores]
   );
 
   const oldRankedItems = useMemo(() => {
     const allScores = oldResults?.allScores ?? {};
+    const allElo = oldResults?.allElo ?? {};
     return [...items]
-      .map((item) => ({ ...item, score: allScores[item.id] || 0 }))
+      .map((item) => ({ 
+        ...item, 
+        score: allScores[item.id] || 0,
+        elo: allElo[item.id] ?? 1200 
+      }))
       .sort((a, b) => {
+        if (b.elo !== a.elo) return b.elo - a.elo;
         if (b.score !== a.score) return b.score - a.score;
         return a.name.localeCompare(b.name);
-      }) as (T & RankedItemBase)[];
+      }) as (T & RankedItemBase & { elo: number })[];
   }, [items, oldResults]);
 
   // useMemo: หลีกเลี่ยงการหารซ้ำทุก render เมื่อ roundCount ไม่เปลี่ยน

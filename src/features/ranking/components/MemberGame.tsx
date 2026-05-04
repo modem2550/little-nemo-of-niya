@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, useMemo, useRef, forwardRef, memo, type CSSProperties } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, forwardRef, useImperativeHandle, memo, type CSSProperties } from 'react';
 import { useRankingEngine, STORAGE_VERSION, type GameState, type GameProgress, type TopRankingResult } from '../logic/rankingEngine';
 import type { Member } from '@/types/member';
+import { urlToBase64, ensureDomToImage, waitForFonts } from '@/shared/utils/imageCapture';
 
 const LONG_PRESS_THRESHOLD = 500; // ms
 
@@ -19,7 +20,7 @@ interface ShareCardRef {
 
 interface ResultShareCardProps {
     winner: Member;
-    rankResults: (Member & { score: number })[];
+    rankResults: (Member & { score: number; elo: number })[];
     primaryColor: string;
     primaryGradient?: string;
     brandName?: string;
@@ -40,29 +41,64 @@ type RankingThemeStyle = CSSProperties & {
 const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
     ({ winner, rankResults, primaryColor, primaryGradient, brandName = '48th Group', cardId }, ref) => {
         const cardRef = useRef<HTMLDivElement>(null);
-        const [isDownloading, setIsDownloading] = useState(false);
+        const [bgBase64, setBgBase64] = useState<string | null>(null);
+        const [winnerBase64, setWinnerBase64] = useState<string | null>(null);
+        const [top10Base64, setTop10Base64] = useState<Record<number, string>>({});
+        const resourcesReadyRef = useRef(false);
 
-        // ✅ Preload background image เพื่อให้ browser cache ก่อน capture
+        // ✅ Preload background and images to Base64
         useEffect(() => {
-            const img = new Image();
-            img.src = '/img/bg-ranking-member.png';
-        }, []);
+            let cancelled = false;
+            
+            const loadResources = async () => {
+                try {
+                    const [bg, winnerImg] = await Promise.all([
+                        urlToBase64('/img/bg-ranking-member.png'),
+                        urlToBase64(winner.profile_image_url)
+                    ]);
+                    
+                    if (cancelled) return;
+                    setBgBase64(bg);
+                    setWinnerBase64(winnerImg);
+                    
+                    const top10 = rankResults.slice(1, 10);
+                    const top10Results = await Promise.all(
+                        top10.map(async (m) => ({ id: m.id, data: await urlToBase64(m.profile_image_url) }))
+                    );
+                    
+                    if (cancelled) return;
+                    const top10Map: Record<number, string> = {};
+                    top10Results.forEach(r => top10Map[r.id] = r.data);
+                    setTop10Base64(top10Map);
+                    resourcesReadyRef.current = true;
+                } catch (err) {
+                    console.error('[ResultShareCard] Failed to load resources:', err);
+                }
+            };
+
+            loadResources();
+            return () => { cancelled = true; };
+        }, [winner.id, winner.profile_image_url, rankResults]);
 
         const generateImage = useCallback(async () => {
             if (!cardRef.current) throw new Error("Ref not ready");
-            setIsDownloading(true);
+            
             try {
-                await new Promise(resolve => setTimeout(resolve, 800));
-
-                if (!(window as any).domtoimage) {
-                    await new Promise<void>((resolve, reject) => {
-                        const script = document.createElement('script');
-                        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.4.0/dom-to-image-more.min.js';
-                        script.onload = () => resolve();
-                        script.onerror = () => reject(new Error('Failed to load dom-to-image-more'));
-                        document.head.appendChild(script);
-                    });
+                // Wait for resources if not ready
+                if (!resourcesReadyRef.current) {
+                    const start = Date.now();
+                    while (!resourcesReadyRef.current && Date.now() - start < 10000) {
+                        await new Promise(r => setTimeout(r, 200));
+                    }
+                    if (!resourcesReadyRef.current) throw new Error("Resources timeout");
                 }
+
+                await Promise.all([
+                    ensureDomToImage(),
+                    waitForFonts(),
+                    new Promise(r => requestAnimationFrame(r)),
+                    new Promise(r => setTimeout(r, 500)) // Extra buffer for layout
+                ]);
 
                 const dataUrl = await (window as any).domtoimage.toPng(cardRef.current, {
                     width: 1080,
@@ -70,25 +106,22 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     style: {
                         transform: 'scale(1)',
                         transformOrigin: 'top left',
+                        visibility: 'visible', // Ensure it's visible during capture
                     },
                 });
 
                 return dataUrl;
             } finally {
-                setIsDownloading(false);
+                // Done
             }
         }, []);
 
-        useEffect(() => {
-            if (ref && typeof ref === 'object') {
-                ref.current = { generateImage };
-            }
-        }, [generateImage, ref]);
-
-        if (!winner) return null;
+        useImperativeHandle(ref, () => ({ generateImage }), [generateImage]);
 
         const top10 = useMemo(() => rankResults.slice(0, 10), [rankResults]);
         const dateString = useMemo(() => new Date().toLocaleDateString('en-GB'), []);
+
+        if (!winner) return null;
 
         return (
             <div
@@ -108,9 +141,9 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     backgroundColor: '#fff',
                 }}
             >
+                {/* Background */}
                 <img
-                    src="/img/bg-ranking-member.png"
-                    crossOrigin="anonymous"
+                    src={bgBase64 || "/img/bg-ranking-member.png"}
                     style={{
                         position: 'absolute',
                         inset: 0,
@@ -124,6 +157,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     alt="card-background"
                 />
 
+                {/* Winner Image */}
                 <div
                     style={{
                         position: 'absolute',
@@ -144,7 +178,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                             top: 0,
                             width: '100%',
                             height: '100%',
-                            backgroundImage: `url(${winner.profile_image_url})`,
+                            backgroundImage: `url(${winnerBase64 || winner.profile_image_url})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center top',
                             overflow: 'hidden',
@@ -152,6 +186,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     />
                 </div>
 
+                {/* Winner Info */}
                 <div
                     style={{
                         position: 'absolute',
@@ -207,6 +242,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     </div>
                 </div>
 
+                {/* Top 10 Grid */}
                 <div
                     style={{
                         position: 'absolute',
@@ -239,7 +275,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                                             width: 125,
                                             height: 125,
                                             borderRadius: '50%',
-                                            backgroundImage: `url(${m.profile_image_url})`,
+                                            backgroundImage: `url(${top10Base64[m.id] || m.profile_image_url})`,
                                             backgroundSize: 'cover',
                                             backgroundPosition: 'center top',
                                             boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
@@ -280,6 +316,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     })}
                 </div>
 
+                {/* Date */}
                 <div style={{ position: 'absolute', top: '50px', right: '70px', textAlign: 'start', zIndex: 2 }}>
                     <p style={{ fontSize: 14, fontWeight: 800, margin: 0, color: '#d8d8d8ff', textTransform: 'uppercase', letterSpacing: 2 }}>
                         Date
@@ -380,7 +417,7 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
 // ═══════════════════════════════════════════════════════════════════════════
 
 interface ViewAllRankingProps {
-    rankResults: (Member & { score: number })[];
+    rankResults: (Member & { score: number; elo: number })[];
     primaryColor: string;
     onBack: () => void;
 }
@@ -396,7 +433,7 @@ const ViewAllRanking = memo(function ViewAllRanking({ rankResults, primaryColor,
             <div className="ranking-view-all__shell d-flex flex-column w-100">
                 <div className="ranking-view-all__header">
                     <div className="d-flex align-items-center justify-content-between gap-3">
-                        <h2 className="ranking-view-all__title">Oshi Ranking ทั้งหมด</h2>
+                        <h2 className="ranking-view-all__title">The Best my Oshi in Member Ranking ทั้งหมด</h2>
                         <button type="button" className="ranking-view-all__close" onClick={onBack} aria-label="ปิด">
                             <i className="fa-solid fa-times" aria-hidden="true"></i>
                         </button>
@@ -422,7 +459,7 @@ const ViewAllRanking = memo(function ViewAllRanking({ rankResults, primaryColor,
     );
 });
 
-const RankingRow = memo(function RankingRow({ member, rank, primaryColor }: { member: Member; rank: number; primaryColor: string }) {
+const RankingRow = memo(function RankingRow({ member, rank, primaryColor }: { member: Member & { score: number; elo: number }; rank: number; primaryColor: string }) {
     const rankStyle = useMemo(() => ({
         width: '40px',
         color: rank <= 3 ? primaryColor : '#9ca3af'
@@ -439,6 +476,10 @@ const RankingRow = memo(function RankingRow({ member, rank, primaryColor }: { me
             <div className="flex-grow-1 min-w-0">
                 <div className="fw-bolder text-truncate mb-1" style={{ fontSize: '1.1rem' }}>{member.name}</div>
                 <div className="fw-bold text-secondary" style={{ fontSize: '0.85rem' }}>{member.brand} • {member.gen}</div>
+            </div>
+            <div className="flex-shrink-0 text-end d-flex flex-column" style={{ minWidth: '60px' }}>
+                <div className="fw-bolder" style={{ color: primaryColor, fontSize: '1rem' }}>{member.score} <small style={{ fontSize: '0.65rem', opacity: 0.7 }}>WINS</small></div>
+                <div className="fw-bold text-muted" style={{ fontSize: '0.7rem' }}>{member.elo} <small style={{ fontSize: '0.55rem', opacity: 0.6 }}>ELO</small></div>
             </div>
         </div>
     );
@@ -462,7 +503,9 @@ const MemberGame = memo(function MemberGame({
         gameProgress,
         oldResults,
         history,
-        startGame,
+        viewAllSource,
+        setViewAllSource,
+        startGame: startGameEngine,
         handleChoice,
         handleUndo,
         handleSkip,
@@ -478,6 +521,12 @@ const MemberGame = memo(function MemberGame({
 
     const shareCardRef = useRef<ShareCardRef>(null);
     const generationStartedRef = useRef(false);
+
+    const startGame = useCallback(() => {
+        generationStartedRef.current = false;
+        setResultImageUrl(null);
+        startGameEngine();
+    }, [startGameEngine]);
 
     useEffect(() => {
         const isFinished = gameState === 'finished' || gameState === 'old-results';
@@ -554,14 +603,22 @@ const MemberGame = memo(function MemberGame({
         '--rp-accent': primaryColor,
     } as RankingThemeStyle), [primaryColor, primaryGradient]);
 
-    const handleBackFromViewAll = useCallback(() => setGameState('finished'), [setGameState]);
+    const handleBackFromViewAll = useCallback(() => setGameState(viewAllSource === 'old' ? 'old-results' : 'finished'), [setGameState, viewAllSource]);
     const handleShowOldResults = useCallback(() => setGameState('old-results'), [setGameState]);
-    const handleShowViewAll = useCallback(() => setGameState('view-all-ranking'), [setGameState]);
+    const handleShowViewAll = useCallback(() => {
+        setViewAllSource(gameState === 'old-results' ? 'old' : 'current');
+        setGameState('view-all-ranking');
+    }, [gameState, setGameState, setViewAllSource]);
+
+    const viewAllSourceData = useMemo(
+        () => viewAllSource === 'old' ? (oldRankedItems as (Member & { score: number; elo: number })[]) : (rankedItems as (Member & { score: number; elo: number })[]),
+        [viewAllSource, oldRankedItems, rankedItems]
+    );
 
     if (gameState === 'view-all-ranking') {
         return (
             <ViewAllRanking
-                rankResults={rankedItems}
+                rankResults={viewAllSourceData}
                 primaryColor={primaryColor}
                 onBack={handleBackFromViewAll}
             />
@@ -596,7 +653,7 @@ const MemberGame = memo(function MemberGame({
     }
 
     if (gameState === 'finished' || gameState === 'old-results') {
-        const sourceData = gameState === 'finished' ? rankedItems.slice(0, 10) : (oldResults?.topRanking ?? []);
+        const sourceData = (gameState === 'finished' ? rankedItems.slice(0, 10) : (oldResults?.topRanking ?? [])) as (Member & { score: number; elo: number })[];
         const winner = sourceData[0];
         const twitterText = encodeURIComponent('TheBestmyOshi');
 

@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, useMemo, useRef, forwardRef, memo, type CSSProperties } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, forwardRef, useImperativeHandle, memo, type CSSProperties } from 'react';
 import { useRankingEngine, STORAGE_VERSION } from '../logic/rankingEngine';
 import type { Song } from '@/types/song';
+import { urlToBase64, ensureDomToImage, waitForFonts } from '@/shared/utils/imageCapture';
 
 const LONG_PRESS_THRESHOLD = 500; // ms
 
@@ -14,6 +15,7 @@ interface SongRankingGameProps {
 
 interface RankedSong extends Song {
   score: number;
+  elo: number;
 }
 
 interface ShareCardRef {
@@ -35,21 +37,16 @@ type RankingThemeStyle = CSSProperties & {
   '--rp-accent': string;
 };
 
-const _artistColorCache = new Map<string, string>();
 function getArtistColor(artist: string): string {
-  if (_artistColorCache.has(artist)) return _artistColorCache.get(artist)!;
   const hasBNK = artist.includes('BNK48');
   const hasCGM = artist.includes('CGM48');
-  let color: string;
   if (hasBNK && hasCGM) {
-    color = 'linear-gradient(90deg, #cb96c2 0%, #3cc2b1 100%)';
+    return 'linear-gradient(90deg, #cb96c2 0%, #3cc2b1 100%)';
   } else if (hasCGM) {
-    color = '#3cc2b1';
+    return '#3cc2b1';
   } else {
-    color = '#cb96c2';
+    return '#cb96c2';
   }
-  _artistColorCache.set(artist, color);
-  return color;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -59,142 +56,64 @@ function getArtistColor(artist: string): string {
 const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
   ({ winner, rankResults, primaryColor, primaryGradient, cardId }, ref) => {
     const cardRef = useRef<HTMLDivElement>(null);
-    const [isDownloading, setIsDownloading] = useState(false);
     const [bgBase64, setBgBase64] = useState<string | null>(null);
-    const bgBase64Ref = useRef<string | null>(null);
+    const resourcesReadyRef = useRef(false);
 
-    // Convert bg → base64 via fetch (ไม่มี CORS/timing issue)
+    // Convert bg → base64
     useEffect(() => {
       let cancelled = false;
-      console.log('[bgFetch] starting fetch /img/bg-ranking-song.png');
-      fetch('/img/bg-ranking-song.png')
-        .then(res => {
-          console.log('[bgFetch] fetch response:', res.status, res.ok);
-          return res.blob();
-        })
-        .then(blob => {
-          console.log('[bgFetch] blob size:', blob.size, 'type:', blob.type);
-          return new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          });
-        })
-        .then(dataUrl => {
+      const loadResources = async () => {
+        try {
+          const bg = await urlToBase64('/img/bg-ranking-song.png');
           if (!cancelled) {
-            console.log('[bgFetch] base64 ready, length:', dataUrl.length);
-            bgBase64Ref.current = dataUrl; // ← เขียน ref ก่อน
-            setBgBase64(dataUrl);
+            setBgBase64(bg);
+            resourcesReadyRef.current = true;
           }
-        })
-        .catch(err => console.error('[bgFetch] FAILED:', err));
+        } catch (err) {
+          console.error('[ResultShareCard] Failed to load background:', err);
+        }
+      };
+      loadResources();
       return () => { cancelled = true; };
     }, []);
 
     const generateImage = useCallback(async () => {
-      console.log('[generateImage] start');
+      if (!cardRef.current) throw new Error("Ref not ready");
 
-      if (!cardRef.current) {
-        console.error('[generateImage] cardRef is null');
-        throw new Error("Ref not ready");
-      }
-
-      // ใช้ ref แทน state เพื่อหลีกเลี่ยง stale closure
-      if (!bgBase64Ref.current) {
-        console.log('[generateImage] waiting for bgBase64Ref...');
-        await new Promise<void>((resolve, reject) => {
-          const start = Date.now();
-          const check = setInterval(() => {
-            if (bgBase64Ref.current) {
-              clearInterval(check);
-              console.log('[generateImage] bgBase64Ref ready');
-              resolve();
-            } else if (Date.now() - start > 5000) {
-              clearInterval(check);
-              reject(new Error('BG timeout'));
-            }
-          }, 100);
-        });
-      } else {
-        console.log('[generateImage] bgBase64Ref already ready');
-      }
-
-      setIsDownloading(true);
       try {
-        await new Promise(r => requestAnimationFrame(r));
-        await new Promise(r => requestAnimationFrame(r));
-        console.log('[generateImage] after rAF');
-
-        if (!(window as any).domtoimage) {
-          console.log('[generateImage] loading dom-to-image...');
-          await new Promise<void>((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.4.0/dom-to-image-more.min.js';
-            script.onload = () => { console.log('[generateImage] dom-to-image loaded'); resolve(); };
-            script.onerror = () => reject(new Error('Failed to load dom-to-image-more'));
-            document.head.appendChild(script);
-          });
-        } else {
-          console.log('[generateImage] dom-to-image already loaded');
+        if (!resourcesReadyRef.current) {
+          const start = Date.now();
+          while (!resourcesReadyRef.current && Date.now() - start < 5000) {
+            await new Promise(r => setTimeout(r, 100));
+          }
         }
+
+        await Promise.all([
+          ensureDomToImage(),
+          waitForFonts(),
+          new Promise(r => requestAnimationFrame(r)),
+          new Promise(r => setTimeout(r, 500))
+        ]);
 
         const el = cardRef.current;
-        console.log('[generateImage] element size:', el.offsetWidth, 'x', el.offsetHeight);
-        console.log('[generateImage] element style:', el.style.cssText);
-
-        const prev = {
-          position: el.style.position,
-          top: el.style.top,
-          left: el.style.left,
-          zIndex: el.style.zIndex,
-        };
-
-        el.style.position = 'absolute';
-        el.style.top = '0px';
-        el.style.left = '-9999px';
-        el.style.zIndex = '-1';
-
-        await new Promise(r => setTimeout(r, 300));
-        console.log('[generateImage] starting toPng...');
-
-        let dataUrl: string;
-        try {
-          dataUrl = await (window as any).domtoimage.toPng(el, {
-            width: 1080,
-            height: 1920,
-            style: {
-              transform: 'scale(1)',
-              transformOrigin: 'top left',
-              position: 'absolute',
-              top: '0px',
-              left: '0px',
-            },
-          });
-          console.log('[generateImage] toPng success, dataUrl length:', dataUrl.length);
-        } finally {
-          el.style.position = prev.position;
-          el.style.top = prev.top;
-          el.style.left = prev.left;
-          el.style.zIndex = prev.zIndex;
-        }
+        const dataUrl = await (window as any).domtoimage.toPng(el, {
+          width: 1080,
+          height: 1920,
+          style: {
+            transform: 'scale(1)',
+            transformOrigin: 'top left',
+            visibility: 'visible',
+          },
+        });
 
         return dataUrl;
       } catch (err) {
         console.error('[generateImage] FAILED:', err);
         throw err;
-      } finally {
-        setIsDownloading(false);
       }
-    }, [bgBase64]);
+    }, []);
 
-    useEffect(() => {
-      if (ref && typeof ref === 'object') {
-        ref.current = { generateImage };
-      }
-    }, [generateImage, ref]);
-
-    if (!winner) return null;
+    useImperativeHandle(ref, () => ({ generateImage }), [generateImage]);
 
     const top10 = useMemo(() => rankResults.slice(0, 10), [rankResults]);
 
@@ -206,6 +125,8 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
       if (isCGM) return "CGM48'S SONGS";
       return "MY TOP'S SONGS";
     }, [rankResults]);
+
+    if (!winner) return null;
 
     return (
       <div
@@ -236,9 +157,9 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
           `}
         </style>
 
-        {/* Background — ใช้ base64 เพื่อให้ dom-to-image embed ได้แน่นอน */}
+        {/* Background */}
         <img
-          src={bgBase64 ?? '/img/bg-ranking-song.png'}
+          src={bgBase64 || '/img/bg-ranking-song.png'}
           style={{
             position: 'absolute',
             inset: 0,
@@ -409,7 +330,7 @@ const ViewAllRanking = memo(function ViewAllRanking({
   primaryColor,
   onBack,
 }: {
-  rankResults: RankedSong[];
+  rankResults: (RankedSong & { elo: number })[];
   primaryColor: string;
   onBack: () => void;
 }) {
@@ -423,7 +344,7 @@ const ViewAllRanking = memo(function ViewAllRanking({
       <div className="ranking-view-all__shell d-flex flex-column w-100">
         <div className="ranking-view-all__header">
           <div className="d-flex align-items-center justify-content-between gap-3">
-            <h2 className="ranking-view-all__title">Song Ranking ทั้งหมด</h2>
+            <h2 className="ranking-view-all__title">The Best my Oshi in Song Ranking ทั้งหมด</h2>
             <button type="button" className="ranking-view-all__close" onClick={onBack} aria-label="ปิด">
               <i className="fa-solid fa-times" aria-hidden="true"></i>
             </button>
@@ -449,7 +370,7 @@ const ViewAllRanking = memo(function ViewAllRanking({
   );
 });
 
-const RankingRow = memo(function RankingRow({ song, rank, primaryColor }: { song: RankedSong; rank: number; primaryColor: string }) {
+const RankingRow = memo(function RankingRow({ song, rank, primaryColor }: { song: RankedSong & { elo: number }; rank: number; primaryColor: string }) {
   const rankStyle = useMemo(() => ({
     width: '40px',
     color: rank <= 3 ? primaryColor : '#9ca3af'
@@ -463,6 +384,10 @@ const RankingRow = memo(function RankingRow({ song, rank, primaryColor }: { song
       <div className="flex-grow-1 min-w-0">
         <div className="fw-bolder text-wrap mb-1" style={{ fontSize: '1.1rem' }}>{song.name}</div>
         <div className="fw-bold text-secondary" style={{ fontSize: '0.85rem' }}>{song.artist}</div>
+      </div>
+      <div className="flex-shrink-0 text-end d-flex flex-column" style={{ minWidth: '60px' }}>
+        <div className="fw-bolder" style={{ color: primaryColor, fontSize: '1rem' }}>{song.score} <small style={{ fontSize: '0.65rem', opacity: 0.7 }}>WINS</small></div>
+        <div className="fw-bold text-muted" style={{ fontSize: '0.7rem' }}>{song.elo} <small style={{ fontSize: '0.55rem', opacity: 0.6 }}>ELO</small></div>
       </div>
     </div>
   );
@@ -487,7 +412,7 @@ const SongGame = memo(function SongGame({
     history,
     viewAllSource,
     setViewAllSource,
-    startGame,
+    startGame: startGameEngine,
     handleChoice,
     handleUndo,
     handleSkip,
@@ -503,6 +428,12 @@ const SongGame = memo(function SongGame({
 
   const shareCardRef = useRef<ShareCardRef>(null);
   const generationStartedRef = useRef(false);
+
+  const startGame = useCallback(() => {
+    generationStartedRef.current = false;
+    setResultImageUrl(null);
+    startGameEngine();
+  }, [startGameEngine]);
 
   useEffect(() => {
     const isFinished = gameState === 'finished' || gameState === 'old-results';
@@ -588,8 +519,12 @@ const SongGame = memo(function SongGame({
 
   const handleShowOldResults = useCallback(() => setGameState('old-results'), [setGameState]);
   const handleShowViewAll = useCallback(() => {
-    setViewAllSource(gameState === 'old-results' ? 'old' : 'current');
-    setGameState('view-all-ranking');
+    import('react').then(({ startTransition }) => {
+      startTransition(() => {
+        setViewAllSource(gameState === 'old-results' ? 'old' : 'current');
+        setGameState('view-all-ranking');
+      });
+    });
   }, [gameState, setGameState, setViewAllSource]);
 
   if (gameState === 'view-all-ranking') {
@@ -734,7 +669,7 @@ const SongChoice = memo(function SongChoice({ song, onClick }: { song: Song; onC
 
   return (
     <button type="button" className="ranking-choice w-100 p-0 overflow-hidden text-start border-0" onClick={onClick}>
-      <div className="flex-grow-1 ranking-choice-info" style={{ minHeight: '170px', borderRadius: 'var(--r-large) !important' }}>
+      <div className="flex-grow-1 ranking-choice-info" style={{ minHeight: '170px', borderRadius: 'var(--r-large)' }}>
         <div className='p-3 px-4'>
           <div
             className="fw-bolder text-wrap mb-1"
