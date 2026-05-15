@@ -26,7 +26,7 @@
     z-index: 1;
     cursor: pointer;
     overflow: hidden;
-    background: line-gradient(0.65);
+    background: line-gradient(1);
 
     &::after {
       content: '';
@@ -39,7 +39,7 @@
     }
 
     &:hover::after {
-      opacity: 1;
+      opacity: 0.9;
     }
   }
 }

@@ -2,7 +2,10 @@ import type { EventPlugin } from '@/types/event';
 import type { UnifiedEventConfig } from './logic/types';
 
 // Optimized: eager: false to avoid loading all event configs into the initial bundle
-const eventModules = import.meta.glob('./data/*.ts');
+const eventModules = import.meta.glob<{ eventConfig: UnifiedEventConfig }>(
+    './data/*.ts',
+    { eager: false }
+);
 
 /**
  * Loads all event configurations dynamically.
@@ -10,12 +13,12 @@ const eventModules = import.meta.glob('./data/*.ts');
  */
 export async function getAllUnifiedEvents(): Promise<UnifiedEventConfig[]> {
     const modules = await Promise.all(
-        Object.values(eventModules).map((loader: any) => loader())
+        Object.values(eventModules).map(loader => loader())
     );
     
     return modules
-        .map(mod => mod.default || mod.eventConfig)
-        .filter(Boolean);
+        .map(mod => mod.eventConfig)
+        .filter((config): config is UnifiedEventConfig => Boolean(config));
 }
 
 export async function getPlannerEvents(): Promise<EventPlugin[]> {

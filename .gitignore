@@ -7,10 +7,7 @@ path.tree
 public/video/output.mp4
 public/video/BG-video.mp4
 .cache
-.DS_Store
-public/.DS_Store
-public/logo/.DS_Store
-src/.DS_Store
-src/shared/.DS_Store
+**/.DS_Store
 .src.zip
-theme/.DS_Store
+.image-cache.json
+public/demmo/

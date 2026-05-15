@@ -2,9 +2,37 @@
 // CONFIGURATION
 // ============================================================
 
+// Make this file a module so `declare global` is valid
+export {};
+
+declare global {
+  interface Window {
+    openPopup: () => void;
+    closePopup: () => void;
+  }
+}
+
+type Theme = 'light' | 'dark';
+
+interface AnimConfig {
+  staggerStep: number;
+  sectionDelay: number;
+  offsetX: number;
+  offsetY: number;
+  duration: number;
+}
+
+interface AnimVarsConfig {
+  sectionIndex?: number;
+  staggerStep?: number;
+  offsetX?: number;
+  offsetY?: number;
+  duration?: number;
+}
+
 const HEADER_HEIGHT = 60;
 const SCROLL_THRESHOLD = 0.5; // Trigger at 50% of hero height
-const ANIMATION_CONFIG = {
+const ANIMATION_CONFIG: AnimConfig = {
   staggerStep: 80,
   sectionDelay: 60,
   offsetX: 60,
@@ -12,7 +40,7 @@ const ANIMATION_CONFIG = {
   duration: 500,
 };
 const THEME_STORAGE_KEY = 'niya-theme';
-const THEME_COLORS = {
+const THEME_COLORS: Record<Theme, string> = {
   light: '#ffffff',
   dark: '#10131a',
 };
@@ -21,18 +49,18 @@ const THEME_COLORS = {
 // THEME (LIGHT / DARK)
 // ============================================================
 
-function resolveTheme() {
+function resolveTheme(): Theme {
   const saved = localStorage.getItem(THEME_STORAGE_KEY);
   if (saved === 'light' || saved === 'dark') return saved;
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-function updateThemeToggles(theme) {
+function updateThemeToggles(theme: Theme): void {
   const isDark = theme === 'dark';
-  const toggles = document.querySelectorAll('[data-theme-toggle]');
+  const toggles = document.querySelectorAll<HTMLElement>('[data-theme-toggle]');
 
   toggles.forEach((el) => {
-    if (el.type === 'checkbox') {
+    if (el instanceof HTMLInputElement && el.type === 'checkbox') {
       el.checked = isDark;
     }
     el.setAttribute('aria-pressed', String(isDark));
@@ -40,7 +68,7 @@ function updateThemeToggles(theme) {
   });
 }
 
-function applyTheme(theme, { persist = true } = {}) {
+function applyTheme(theme: Theme, { persist = true } = {}): void {
   const root = document.documentElement;
   
   // ✅ IMPORTANT: If page has a forced theme, do NOT apply anything else
@@ -83,9 +111,9 @@ function initThemeToggle() {
   if (!toggles.length) return;
 
   toggles.forEach((el) => {
-    const eventType = el.type === 'checkbox' ? 'change' : 'click';
+    const eventType = (el instanceof HTMLInputElement && el.type === 'checkbox') ? 'change' : 'click';
     el.addEventListener(eventType, () => {
-      const currentTheme = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const currentTheme: Theme = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
       applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
     });
   });
@@ -96,15 +124,15 @@ function initThemeToggle() {
 // HEADER & NAVIGATION - IMPROVED
 // ============================================================
 
-function isHomePath() {
+function isHomePath(): boolean {
   const p = window.location.pathname;
   return p === '/' || p === '';
 }
 
-function initHeader() {
+function initHeader(): void {
   const header = document.querySelector('.site-header');
   const toggle = document.querySelector('.menu-toggle');
-  const navMobile = document.querySelector('.nav-mobile');
+  const navMobile = document.querySelector<HTMLElement>('.nav-mobile');
   const backdrop = document.querySelector('.nav-backdrop');
   const allNavLinks = document.querySelectorAll('.nav-link, .nav-link-mobile');
   const heroSection = document.querySelector('#home');
@@ -131,7 +159,7 @@ function initHeader() {
       if (!onHome || !heroSection) return;
 
       const scrollY = window.scrollY;
-      const heroHeight = heroSection.offsetHeight;
+      const heroHeight = (heroSection as HTMLElement).offsetHeight;
       const shouldActivate = scrollY > heroHeight * SCROLL_THRESHOLD;
 
       if (shouldActivate !== headerActive) {
@@ -142,28 +170,28 @@ function initHeader() {
   };
 
   // Toggle menu with prevent body scroll
-  function openMenu() {
+  function openMenu(): void {
     isMenuOpen = true;
-    toggle.classList.add('active');
-    navMobile.classList.add('active');
-    backdrop.classList.add('active');
-    toggle.setAttribute('aria-expanded', 'true');
+    toggle!.classList.add('active');
+    navMobile!.classList.add('active');
+    backdrop?.classList.add('active');
+    toggle!.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = getScrollbarWidth() + 'px';
   }
 
-  function closeMenu() {
+  function closeMenu(): void {
     isMenuOpen = false;
-    toggle.classList.remove('active');
-    navMobile.classList.remove('active');
-    backdrop.classList.remove('active');
-    toggle.setAttribute('aria-expanded', 'false');
+    toggle!.classList.remove('active');
+    navMobile!.classList.remove('active');
+    backdrop?.classList.remove('active');
+    toggle!.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
   }
 
   // Get scrollbar width to prevent layout shift
-  function getScrollbarWidth() {
+  function getScrollbarWidth(): number {
     return window.innerWidth - document.documentElement.clientWidth;
   }
 
@@ -173,7 +201,7 @@ function initHeader() {
   });
 
   // Close menu on backdrop click
-  backdrop.addEventListener('click', closeMenu);
+  backdrop?.addEventListener('click', closeMenu);
 
   // ปิดเมนูมือถือทุกครั้งที่เลือกลิงก์ (การเลื่อนไปยัง # จัดการใน initSmoothScroll)
   allNavLinks.forEach(link => {
@@ -196,8 +224,8 @@ function initHeader() {
   });
 
   // Close menu on focus out (accessibility)
-  navMobile.addEventListener('focusout', (e) => {
-    if (isMenuOpen && !navMobile.contains(e.relatedTarget) && !toggle.contains(e.relatedTarget)) {
+  navMobile!.addEventListener('focusout', (e: FocusEvent) => {
+    if (isMenuOpen && !navMobile!.contains(e.relatedTarget as Node) && !toggle!.contains(e.relatedTarget as Node)) {
       closeMenu();
     }
   });
@@ -213,12 +241,12 @@ function initHeader() {
 // ACTIVE NAV TRACKING - IMPROVED
 // ============================================================
 
-function initActiveNav() {
+function initActiveNav(): void {
   const sectionIds = ['home', 'info', 'event', 'social', 'library', 'fanclub'];
   const navLinks = document.querySelectorAll('.nav-link, .nav-link-mobile');
   let currentActive = 'home';
 
-  function setSectionActive(id) {
+  function setSectionActive(id: string): void {
     if (currentActive === id) return;
     currentActive = id;
 
@@ -267,7 +295,7 @@ function initActiveNav() {
 // SMOOTH SCROLL - IMPROVED
 // ============================================================
 
-function scrollToSection(sectionId) {
+function scrollToSection(sectionId: string): void {
   const section = document.getElementById(sectionId);
   if (!section) return;
 
@@ -284,8 +312,8 @@ function scrollToSection(sectionId) {
 }
 
 // Handle in-page anchors และลิงก์ /#section เมื่ออยู่หน้าแรก
-function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(link => {
+function initSmoothScroll(): void {
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
       if (href === '#' || !href) return;
@@ -296,7 +324,7 @@ function initSmoothScroll() {
     });
   });
 
-  document.querySelectorAll('a[href^="/#"]').forEach(link => {
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="/#"]').forEach(link => {
     link.addEventListener('click', (e) => {
       if (!isHomePath()) return;
       const id = link.hash ? link.hash.slice(1) : '';
@@ -311,7 +339,7 @@ function initSmoothScroll() {
 // ANIMATIONS - OPTIMIZED
 // ============================================================
 
-function assignAnimVars(elements, config = {}) {
+function assignAnimVars(elements: NodeListOf<Element>, config: AnimVarsConfig = {}): void {
   const {
     sectionIndex = 0,
     staggerStep = ANIMATION_CONFIG.staggerStep,
@@ -323,14 +351,15 @@ function assignAnimVars(elements, config = {}) {
   const baseDelay = sectionIndex * ANIMATION_CONFIG.sectionDelay;
 
   Array.from(elements).forEach((el, i) => {
-    el.style.setProperty('--anim-delay', `${baseDelay + i * staggerStep}ms`);
-    el.style.setProperty('--anim-offset-x', `${offsetX}px`);
-    el.style.setProperty('--anim-offset-y', `${offsetY}px`);
-    el.style.setProperty('--anim-duration', `${duration}ms`);
+    const htmlEl = el as HTMLElement;
+    htmlEl.style.setProperty('--anim-delay', `${baseDelay + i * staggerStep}ms`);
+    htmlEl.style.setProperty('--anim-offset-x', `${offsetX}px`);
+    htmlEl.style.setProperty('--anim-offset-y', `${offsetY}px`);
+    htmlEl.style.setProperty('--anim-duration', `${duration}ms`);
   });
 }
 
-function initAnimations() {
+function initAnimations(): void {
   // Use passive observer with improved threshold
   const animationObserver = new IntersectionObserver(
     (entries) => {
@@ -378,7 +407,7 @@ function initAnimations() {
 // PROGRESS BAR - IMPROVED
 // ============================================================
 
-function initProgressBar() {
+function initProgressBar(): void {
   const bar = document.createElement('div');
   bar.id = 'page-load-progress';
   bar.setAttribute('role', 'progressbar');
@@ -413,11 +442,11 @@ function initProgressBar() {
 // LAZY LOAD IMAGES - IMPROVED
 // ============================================================
 
-function initLazyImages() {
+function initLazyImages(): void {
   const imageObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        const img = entry.target;
+        const img = entry.target as HTMLImageElement;
         if (img.dataset.src) {
           // Add loading class for CSS transitions
           img.classList.add('loading');
@@ -449,11 +478,11 @@ function initLazyImages() {
 // LAZY LOAD IFRAMES - IMPROVED
 // ============================================================
 
-function initLazyIframes() {
+function initLazyIframes(): void {
   const iframeObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        const iframe = entry.target;
+        const iframe = entry.target as HTMLIFrameElement;
         if (iframe.dataset.src) {
           iframe.src = iframe.dataset.src;
           delete iframe.dataset.src;
@@ -473,12 +502,11 @@ function initLazyIframes() {
 // ENHANCE MOBILE EXPERIENCE
 // ============================================================
 
-function initMobileEnhancements() {
+function initMobileEnhancements(): void {
   // Detect if device supports touch
-  const isTouchDevice = () => {
+  const isTouchDevice = (): boolean => {
     return (('ontouchstart' in window) ||
-      (navigator.maxTouchPoints > 0) ||
-      (navigator.msMaxTouchPoints > 0));
+      (navigator.maxTouchPoints > 0));
   };
 
   // Add touch class to body for CSS targeting
@@ -487,13 +515,13 @@ function initMobileEnhancements() {
 
     // Event delegation: ใช้ 2 listeners แทน N listeners บน element แต่ละตัว
     // ลด memory footprint และรองรับ dynamic elements ด้วย
-    document.body.addEventListener('touchstart', (e) => {
-      const target = e.target.closest('button, a.btn, a.social-link');
+    document.body.addEventListener('touchstart', (e: TouchEvent) => {
+      const target = (e.target as HTMLElement)?.closest<HTMLElement>('button, a.btn, a.social-link');
       if (target) target.style.opacity = '0.8';
     }, { passive: true });
 
-    document.body.addEventListener('touchend', (e) => {
-      const target = e.target.closest('button, a.btn, a.social-link');
+    document.body.addEventListener('touchend', (e: TouchEvent) => {
+      const target = (e.target as HTMLElement)?.closest<HTMLElement>('button, a.btn, a.social-link');
       if (target) target.style.opacity = '';
     }, { passive: true });
   }
@@ -503,20 +531,20 @@ function initMobileEnhancements() {
 // POPUP MANAGEMENT - IMPROVED
 // ============================================================
 
-function openPopup() {
+function openPopup(): void {
   const overlay = document.getElementById('popup-overlay');
   if (!overlay) return;
 
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
-  document.body.style.paddingRight = getScrollbarWidth() + 'px';
+  document.body.style.paddingRight = (window.innerWidth - document.documentElement.clientWidth) + 'px';
 
   // Focus first interactive element in popup
-  const firstFocusable = overlay.querySelector('a, button, input');
+  const firstFocusable = overlay.querySelector<HTMLElement>('a, button, input');
   if (firstFocusable) firstFocusable.focus();
 }
 
-function closePopup() {
+function closePopup(): void {
   const overlay = document.getElementById('popup-overlay');
   if (!overlay) return;
 

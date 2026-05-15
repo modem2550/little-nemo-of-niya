@@ -1,5 +1,4 @@
 ---
-export const prerender = true;
 import MainLayout from "@/app/layouts/MainLayout.astro";
 import MemberRankingGame from "@/features/ranking/components/MemberGame";
 import SongRankingGame from "@/features/ranking/components/SongGame";
@@ -7,15 +6,13 @@ import { getRankingEvents } from "@/features/events/eventEngine";
 import "@/shared/styles/ranking.scss";
 import { getSupabase } from "@/services/supabase/server";
 
-export async function getStaticPaths() {
-    const events = await getRankingEvents();
-    return events.map((e) => ({
-        params: { event: e.slug },
-        props: { eventData: e },
-    }));
-}
+const currentSlug = Astro.params.event;
+const allEvents = await getRankingEvents();
+const eventData = allEvents.find((e) => e.slug === currentSlug);
 
-const { eventData } = Astro.props;
+if (!eventData) {
+    return Astro.redirect("/404");
+}
 const memberConfig = eventData.features.ranking;
 const songConfig = eventData.features.songRanking;
 const gameType = songConfig?.enabled ? "song" : "member";
@@ -62,7 +59,9 @@ if (supabase && gameType === "member" && memberConfig) {
         query = query.in("brand", ["BNK48", "CGM48"]);
     }
 
-    const { data } = await query;
+    const { data, error } = await query;
+    if (error) console.error("[Ranking] Supabase error:", error);
+    console.log(`[Ranking] Fetched ${data?.length ?? 0} members for brand: ${memberBrandTarget}`);
     membersData = data;
 }
 
@@ -139,7 +138,7 @@ const rankingVariants = (
                     client:idle
                     songs={songListForGame}
                     storageKey={config.storageKey}
-                    totalRounds={config.rounds}
+                    totalRounds={config.rounds ?? 100}
                     primaryColor={eventData.primaryColor}
                     primaryGradient={config.primaryGradient}
                 />
@@ -148,7 +147,7 @@ const rankingVariants = (
                     client:idle
                     members={members}
                     storageKey={config.storageKey}
-                    totalRounds={config.rounds}
+                    totalRounds={config.rounds ?? 100}
                     primaryColor={eventData.primaryColor}
                     primaryGradient={config.primaryGradient}
                     brand={memberConfig?.brandTarget ?? "48th"}

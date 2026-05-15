@@ -31,7 +31,7 @@ export const eventConfig: UnifiedEventConfig = {
                 officialLink: "https://www.facebook.com/share/p/1GR7kdRe8Q/",
                 storageKey: "sf2026_planner",
                 heroImage: "https://img2.pic.in.th/Untitled-1656a008758cf5461.png",
-                listingImage: "/img/SummerFest2026.png",
+                listingImage: "/img/SummerFest2026.webp",
                 primaryHover: "#535289",
                 prices: { ticket: 250, hub: 200 },
                 days: [

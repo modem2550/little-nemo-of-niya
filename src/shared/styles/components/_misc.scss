@@ -94,12 +94,22 @@
         --text: var(--c-dark);
         --bg-hover: var(--c-dark);
         --text-hover: var(--c-light);
+    }
+}
 
-        [data-theme="dark"] & {
-            --bg: rgba(255, 255, 255, 0.15);
-            --text: var(--c-light);
-            --bg-hover: var(--c-dark);
-            --text-hover: var(--c-light);
+// ── Dark theme overrides ──────────────────────────────────────────────────
+[data-theme="dark"] & {
+    background: var(--bg-hover);
+    color: var(--text-hover) !important;
+    fill: var(--text-hover);
+
+    &:hover {
+        opacity: 0.9;
+    }
+
+    &.-iam48 {
+        svg path {
+            fill: var(--text-hover);
         }
     }
 }

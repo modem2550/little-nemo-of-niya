@@ -1,5 +1,4 @@
 ---
-export const prerender = true;
 import MainLayout from "@/app/layouts/MainLayout.astro";
 import EventPlanner from "@/features/planner/ui/EventPlanner.astro";
 import { getPlannerEvents } from "@/features/events/eventEngine";
@@ -16,10 +15,13 @@ export async function getStaticPaths() {
     }));
 }
 
-const { eventData: staticEventData } = Astro.props;
 const currentSlug = Astro.params.event;
-const liveEventData = (await getPlannerEvents()).find((e) => e.slug === currentSlug);
-const eventData = liveEventData ?? staticEventData;
+const allEvents = await getPlannerEvents();
+const eventData = allEvents.find((e) => e.slug === currentSlug);
+
+if (!eventData) {
+    return Astro.redirect("/404");
+}
 const plannerData = eventData?.features?.planner;
 
 
@@ -41,11 +43,14 @@ if (!shouldShowFallbackEmbed) {
     let membersData: any[] | null = null;
 
     if (supabase) {
-        const { data } = await supabase
+        const { data, error } = await supabase
             .from("members")
             .select("id,name,brand,gen,team,profile_image_url")
             .is("graduated_at", null)
             .order("name");
+        
+        if (error) console.error("[Planner] Supabase error:", error);
+        console.log(`[Planner] Fetched ${data?.length ?? 0} members`);
         membersData = data;
     }
 
@@ -194,16 +199,16 @@ const heroUrl = optimizedHero.src;
                     eventSlug={eventData.slug}
                     eventName={eventData.name}
                     pageTitle={plannerData.pageTitle}
-                    officialLink={plannerData.officialLink}
-                    storageKey={plannerData.storageKey}
+                    officialLink={plannerData.officialLink ?? ""}
+                    storageKey={plannerData.storageKey ?? eventData.slug}
                     heroImage={heroUrl}
                     primaryColor={eventData.primaryColor}
                     primaryHover={eventData.primaryHover}
-                    prices={plannerData.prices}
+                    prices={plannerData.prices ?? { ticket: 250, hub: 200 }}
                     members={members}
-                    days={plannerData.days}
-                    activities={plannerData.activities}
-                    schedule={plannerData.schedule}
+                    days={plannerData.days ?? []}
+                    activities={plannerData.activities ?? []}
+                    schedule={plannerData.schedule ?? []}
                 />
             )
         }

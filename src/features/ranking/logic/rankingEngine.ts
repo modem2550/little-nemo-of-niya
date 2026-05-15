@@ -57,9 +57,13 @@ export function useRankingEngine<T extends { id: number; name: string }>(
 
   const saveResults = useCallback(
     (finalState: PairingState) => {
-      const topRanking = calculateFinalRanking(items, finalState)
+      console.log(`[RankingEngine] Calculating final ranking for ${items.length} items...`);
+      const ranked = calculateFinalRanking(items, finalState);
+      const topRanking = ranked
         .map((item) => ({ ...item, score: finalState.scores[item.id] || 0 }))
         .slice(0, 10) as (T & RankedItemBase)[];
+
+      console.log(`[RankingEngine] Top 10 calculated. Winner: ${topRanking[0]?.name}`);
 
       const data: TopRankingResult<T & RankedItemBase> = {
         version: STORAGE_VERSION,
@@ -70,6 +74,7 @@ export function useRankingEngine<T extends { id: number; name: string }>(
         allElo: finalState.elo,
       };
       localStorage.setItem(storageKey, JSON.stringify(data));
+      console.log(`[RankingEngine] Results saved to localStorage: ${storageKey}`);
       setOldResults(data);
     },
     [items, storageKey, totalRounds]
@@ -90,6 +95,7 @@ export function useRankingEngine<T extends { id: number; name: string }>(
 
   // useCallback: ป้องกัน children ที่รับ startGame เป็น prop re-render โดยไม่จำเป็น
   const startGame = useCallback(() => {
+    console.log(`[RankingEngine] Starting game with ${itemIds.length} items. Storage key: ${storageKey}`);
     const initialState = createPairState(itemIds);
     setGameProgress({
       ...initialState,
@@ -98,14 +104,19 @@ export function useRankingEngine<T extends { id: number; name: string }>(
     });
     setGameState('playing');
     setHistory([]);
-  }, [itemIds]);
+  }, [itemIds, storageKey]);
 
   const handleChoice = useCallback(
     (itemId: number) => {
       setGameProgress((prev) => {
         if (prev.currentPair.length !== 2) return prev;
         const [p1, p2] = prev.currentPair as [number, number];
+        const winner = itemMap.get(itemId);
         const loserId = itemId === p1 ? p2 : p1;
+        const loser = itemMap.get(loserId);
+        
+        console.log(`[RankingEngine] Choice: ${winner?.name} beat ${loser?.name} (Round ${prev.roundCount + 1}/${totalRounds})`);
+        
         const updatedState = submitResult(itemId, loserId, prev);
         const nextRound = prev.roundCount + 1;
 
@@ -113,11 +124,13 @@ export function useRankingEngine<T extends { id: number; name: string }>(
         setHistory((h) => [...h, prev]);
 
         if (nextRound >= totalRounds) {
+          console.log(`[RankingEngine] Reached total rounds (${totalRounds}). Ending game.`);
           return { ...updatedState, roundCount: nextRound, currentPair: [] };
         }
 
         const nextPair = getNextPair(itemIds, updatedState);
         if (nextPair.length !== 2) {
+          console.log(`[RankingEngine] No more pairs available. Ending game early.`);
           return { ...updatedState, roundCount: nextRound, currentPair: [] };
         }
 
@@ -128,7 +141,7 @@ export function useRankingEngine<T extends { id: number; name: string }>(
         };
       });
     },
-    [itemIds, totalRounds, saveResults]
+    [itemIds, totalRounds, itemMap]
   );
 
   const handleUndo = useCallback(() => {
@@ -164,7 +177,7 @@ export function useRankingEngine<T extends { id: number; name: string }>(
         currentPair: nextPair as [number, number],
       };
     });
-  }, [itemIds, totalRounds, saveResults]);
+  }, [itemIds, totalRounds]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -183,10 +196,11 @@ export function useRankingEngine<T extends { id: number; name: string }>(
   // BUG 3: Finish condition in useEffect to ensure batched updates and avoid null flash
   useEffect(() => {
     if (gameState === 'playing' && gameProgress.roundCount >= totalRounds) {
+      console.log(`[RankingEngine] Game finished! Saving results to ${storageKey}`);
       saveResults(gameProgress);
       setGameState('finished');
     }
-  }, [gameState, gameProgress, totalRounds, saveResults]);
+  }, [gameState, gameProgress, totalRounds, saveResults, storageKey]);
 
   // ดึงเฉพาะ scores ออกมาเป็น dependency เพื่อไม่ให้ recalculate ทุกครั้งที่ currentPair เปลี่ยน
   const scores = gameProgress.scores;

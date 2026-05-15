@@ -5,14 +5,16 @@
   "scripts": {
     "dev": "astro dev --host",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "lint": "eslint src --ext .ts,.tsx,.astro",
+    "format": "prettier --write src"
   },
   "dependencies": {
-    "@astrojs/react": "^5.0.3",
-    "@astrojs/vercel": "^10.0.4",
+    "@astrojs/react": "^5.0.5",
+    "@astrojs/vercel": "^10.0.7",
     "@supabase/supabase-js": "^2.90.1",
     "@vercel/speed-insights": "^2.0.0",
-    "astro": "^6.1.6",
+    "astro": "^6.3.3",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "clsx": "^2.1.1",
@@ -25,11 +27,17 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.8",
+    "@astrojs/check": "^0.9.9",
     "@fullhuman/postcss-purgecss": "^6.0.0",
     "@types/gtag.js": "^0.0.20",
+    "@typescript-eslint/eslint-plugin": "^8.59.2",
+    "@typescript-eslint/parser": "^8.59.2",
     "autoprefixer": "^10.4.20",
+    "eslint": "^10.3.0",
+    "eslint-plugin-astro": "^1.7.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "postcss": "^8.5.0",
+    "prettier": "^3.8.3",
     "purgecss": "^7.0.0",
     "sass": "^1.99.0"
   }

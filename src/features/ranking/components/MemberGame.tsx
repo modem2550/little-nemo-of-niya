@@ -53,8 +53,8 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
             const loadResources = async () => {
                 try {
                     const [bg, winnerImg] = await Promise.all([
-                        urlToBase64('/img/bg-ranking-member.png'),
-                        urlToBase64(winner.profile_image_url)
+                        urlToBase64('/img/bg-ranking-member.webp'),
+                        urlToBase64(winner.profile_image_url || '')
                     ]);
                     
                     if (cancelled) return;
@@ -63,7 +63,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     
                     const top10 = rankResults.slice(1, 10);
                     const top10Results = await Promise.all(
-                        top10.map(async (m) => ({ id: m.id, data: await urlToBase64(m.profile_image_url) }))
+                        top10.map(async (m) => ({ id: m.id, data: await urlToBase64(m.profile_image_url || '') }))
                     );
                     
                     if (cancelled) return;
@@ -119,6 +119,17 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                         transformOrigin: 'top left',
                         visibility: 'visible',
                     },
+                    filter: (node: any) => {
+                        // Skip scripts and non-essential external styles during inlining
+                        if (node.tagName === 'SCRIPT') return false;
+                        if (node.tagName === 'LINK' && node.rel === 'stylesheet') {
+                            const href = node.href || '';
+                            // Only allow essential styles if possible, but for now skip FontAwesome
+                            // which is known to cause 404s/CORS issues during inlining
+                            if (href.includes('fontawesome')) return false;
+                        }
+                        return true;
+                    }
                 });
 
                 return dataUrl;
@@ -155,7 +166,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
             >
                 {/* Background */}
                 <img
-                    src={bgBase64 || "/img/bg-ranking-member.png"}
+                    src={bgBase64 || "/img/bg-ranking-member.webp"}
                     style={{
                         position: 'absolute',
                         inset: 0,
@@ -185,7 +196,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                     }}
                 >
                     <img
-                        src={winnerBase64 || winner.profile_image_url}
+                        src={winnerBase64 || winner.profile_image_url || ''}
                         style={{
                             position: 'absolute',
                             top: 0,
@@ -284,7 +295,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
                             >
                                 <div style={{ position: 'relative' }}>
                                     <img
-                                        src={top10Base64[m.id] || m.profile_image_url}
+                                        src={top10Base64[m.id] || m.profile_image_url || ''}
                                         style={{
                                             width: 125,
                                             height: 125,
@@ -486,7 +497,7 @@ const RankingRow = memo(function RankingRow({ member, rank, primaryColor }: { me
                 {rank === 1 ? <i className="fa-solid fa-medal text-warning fs-3"></i> : `#${rank}`}
             </div>
             <div style={{ width: '50px', height: '50px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-                <img src={member.profile_image_url} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+                <img src={member.profile_image_url || ''} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
             </div>
             <div className="flex-grow-1 min-w-0">
                 <div className="fw-bolder text-truncate mb-1" style={{ fontSize: '1.1rem' }}>{member.name}</div>
@@ -512,6 +523,7 @@ const MemberGame = memo(function MemberGame({
     primaryGradient,
     brand = '48th',
 }: MemberRankingGameProps) {
+    console.log(`[MemberGame] Render. Members: ${members.length}, TotalRounds: ${totalRounds}`);
     const {
         gameState,
         setGameState,
@@ -559,14 +571,17 @@ const MemberGame = memo(function MemberGame({
             if (!mounted) return;
 
             const executeGeneration = async () => {
+                console.log('[MemberGame] Starting result card generation...');
                 if (shareCardRef.current) {
                     try {
                         const url = await shareCardRef.current.generateImage();
                         if (mounted) {
+                            console.log('[MemberGame] Result card generated successfully.');
                             setResultImageUrl(url);
                             setIsGeneratingImage(false);
                         }
-                    } catch {
+                    } catch (err) {
+                        console.error('[MemberGame] Failed to generate result card:', err);
                         if (mounted) {
                             setErrorMessage('เกิดข้อผิดพลาดในการสร้างรูปผลลัพธ์ โปรดลองอีกครั้ง');
                             setIsGeneratingImage(false);
@@ -574,16 +589,19 @@ const MemberGame = memo(function MemberGame({
                         }
                     }
                 } else {
+                    console.log('[MemberGame] shareCardRef.current is null, retrying in 800ms...');
                     setTimeout(async () => {
                         if (!mounted) return;
                         if (shareCardRef.current) {
                             try {
                                 const url = await shareCardRef.current.generateImage();
                                 if (mounted) {
+                                    console.log('[MemberGame] Result card generated successfully (retry).');
                                     setResultImageUrl(url);
                                     setIsGeneratingImage(false);
                                 }
-                            } catch {
+                            } catch (err) {
+                                console.error('[MemberGame] Failed to generate result card (retry):', err);
                                 if (mounted) {
                                     setErrorMessage('เกิดข้อผิดพลาดในการสร้างรูปผลลัพธ์ โปรดลองอีกครั้ง');
                                     setIsGeneratingImage(false);
@@ -591,6 +609,7 @@ const MemberGame = memo(function MemberGame({
                                 }
                             }
                         } else {
+                            console.error('[MemberGame] shareCardRef.current still null after retry.');
                             if (mounted) {
                                 setErrorMessage('ไม่สามารถสร้างรูปผลลัพธ์ได้ (Missing Ref)');
                                 setIsGeneratingImage(false);
@@ -776,7 +795,7 @@ const MemberChoice = memo(function MemberChoice({ member, onClick }: { member: M
     return (
         <button type="button" className="ranking-choice w-100 p-0 overflow-hidden text-start border-0" onClick={onClick}>
             <div className="ranking-choice__figure overflow-hidden">
-                <img src={member.profile_image_url} alt={member.name} className="ranking-choice__img" loading="lazy" />
+                <img src={member.profile_image_url || ''} alt={member.name} className="ranking-choice__img" loading="lazy" />
             </div>
             <div className="flex-grow-1 ranking-choice-info">
                 <div className='p-3 px-4'>

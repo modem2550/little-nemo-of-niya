@@ -27,7 +27,7 @@ export const eventConfig: UnifiedEventConfig = {
                 description: "จัดอันดับเมมเบอร์ BNK48 ที่คุณชอบที่สุด",
                 storageKey: "ranking_bnk48_results",
                 brandTarget: "BNK48",
-                listingImage: "/img/Ranking-member-bnk.png",
+                listingImage: "/img/Ranking-member-bnk.webp",
             }
         }
     }

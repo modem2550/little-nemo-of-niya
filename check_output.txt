@@ -1,0 +1,110 @@
+14:19:54 [vite] Re-optimizing dependencies because lockfile has changed
+14:19:54 [types] Generated 156ms
+14:19:54 [check] Getting diagnostics for Astro files in /Users/moo/Desktop/little-nemo-of-niya...
+[96msrc/features/ranking/components/MemberGame.tsx[0m:[93m42[0m:[93m60[0m - [93mwarning[0m[90m ts(6133): [0m'brandName' is declared but its value is never read.
+
+[7m42[0m     ({ winner, rankResults, primaryColor, primaryGradient, brandName = '48th Group', cardId }, ref) => {
+[7m  [0m [93m                                                           ~~~~~~~~~[0m
+[96msrc/features/ranking/components/MemberGame.tsx[0m:[93m2[0m:[93m85[0m - [93mwarning[0m[90m ts(6133): [0m'TopRankingResult' is declared but its value is never read.
+
+[7m2[0m import { useRankingEngine, STORAGE_VERSION, type GameState, type GameProgress, type TopRankingResult } from '../logic/rankingEngine';
+[7m [0m [93m                                                                                    ~~~~~~~~~~~~~~~~[0m
+[96msrc/features/ranking/components/MemberGame.tsx[0m:[93m2[0m:[93m66[0m - [93mwarning[0m[90m ts(6133): [0m'GameProgress' is declared but its value is never read.
+
+[7m2[0m import { useRankingEngine, STORAGE_VERSION, type GameState, type GameProgress, type TopRankingResult } from '../logic/rankingEngine';
+[7m [0m [93m                                                                 ~~~~~~~~~~~~[0m
+[96msrc/features/ranking/components/MemberGame.tsx[0m:[93m2[0m:[93m50[0m - [93mwarning[0m[90m ts(6133): [0m'GameState' is declared but its value is never read.
+
+[7m2[0m import { useRankingEngine, STORAGE_VERSION, type GameState, type GameProgress, type TopRankingResult } from '../logic/rankingEngine';
+[7m [0m [93m                                                 ~~~~~~~~~[0m
+[96msrc/features/ranking/components/MemberGame.tsx[0m:[93m2[0m:[93m28[0m - [93mwarning[0m[90m ts(6133): [0m'STORAGE_VERSION' is declared but its value is never read.
+
+[7m2[0m import { useRankingEngine, STORAGE_VERSION, type GameState, type GameProgress, type TopRankingResult } from '../logic/rankingEngine';
+[7m [0m [93m                           ~~~~~~~~~~~~~~~[0m
+
+[96msrc/features/ranking/components/SongGame.tsx[0m:[93m57[0m:[93m41[0m - [93mwarning[0m[90m ts(6133): [0m'primaryGradient' is declared but its value is never read.
+
+[7m57[0m   ({ winner, rankResults, primaryColor, primaryGradient, cardId }, ref) => {
+[7m  [0m [93m                                        ~~~~~~~~~~~~~~~[0m
+[96msrc/features/ranking/components/SongGame.tsx[0m:[93m57[0m:[93m27[0m - [93mwarning[0m[90m ts(6133): [0m'primaryColor' is declared but its value is never read.
+
+[7m57[0m   ({ winner, rankResults, primaryColor, primaryGradient, cardId }, ref) => {
+[7m  [0m [93m                          ~~~~~~~~~~~~[0m
+[96msrc/features/ranking/components/SongGame.tsx[0m:[93m6[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'LONG_PRESS_THRESHOLD' is declared but its value is never read.
+
+[7m6[0m const LONG_PRESS_THRESHOLD = 500; // ms
+[7m [0m [93m      ~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/features/ranking/components/SongGame.tsx[0m:[93m2[0m:[93m28[0m - [93mwarning[0m[90m ts(6133): [0m'STORAGE_VERSION' is declared but its value is never read.
+
+[7m2[0m import { useRankingEngine, STORAGE_VERSION } from '../logic/rankingEngine';
+[7m [0m [93m                           ~~~~~~~~~~~~~~~[0m
+
+[96msrc/features/ranking/logic/pairing.ts[0m:[93m6[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'ELO_RANK_PROXIMITY_DIVISOR' is declared but its value is never read.
+
+[7m6[0m const ELO_RANK_PROXIMITY_DIVISOR = 50;
+[7m [0m [93m      ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/features/ui/global.ts[0m:[93m43[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'THEME_COLORS' is declared but its value is never read.
+
+[7m43[0m const THEME_COLORS: Record<Theme, string> = {
+[7m  [0m [93m      ~~~~~~~~~~~~[0m
+
+[96msrc/pages/404.astro[0m:[93m5[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'ICON_SPEAKER_OFF' is declared but its value is never read.
+
+[7m5[0m const ICON_SPEAKER_OFF = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor" width="16" height="16" class="ms-2 speaker-svg"><path d="M301.1 34.8C312.6 40 320 51.4 320 64l0 384c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352 64 352c-35.3 0-64-28.7-64-64l0-64c0-35.3 28.7-64 64-64l67.8 0L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/></svg>`;
+[7m [0m [93m      ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/pages/index.astro[0m:[93m493[0m:[93m41[0m - [93mwarning[0m[90m ts(6385): [0m'frameborder' is deprecated.
+
+[7m493[0m                                         frameborder="0"
+[7m   [0m [93m                                        ~~~~~~~~~~~[0m
+[96msrc/pages/index.astro[0m:[93m443[0m:[93m25[0m - [93mwarning[0m[90m ts(6385): [0m'frameborder' is deprecated.
+
+[7m443[0m                         frameborder="0"
+[7m   [0m [93m                        ~~~~~~~~~~~[0m
+[96msrc/pages/index.astro[0m:[93m263[0m:[93m29[0m - [93mwarning[0m[90m ts(6385): [0m'scrolling' is deprecated.
+
+[7m263[0m                             scrolling="no"
+[7m   [0m [93m                            ~~~~~~~~~[0m
+[96msrc/pages/index.astro[0m:[93m262[0m:[93m29[0m - [93mwarning[0m[90m ts(6385): [0m'frameborder' is deprecated.
+
+[7m262[0m                             frameborder="0"
+[7m   [0m [93m                            ~~~~~~~~~~~[0m
+[96msrc/pages/index.astro[0m:[93m45[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'processedPast' is declared but its value is never read.
+
+[7m45[0m const processedPast = past.map(withSlug);
+[7m  [0m [93m      ~~~~~~~~~~~~~[0m
+
+[96msrc/pages/schedule.astro[0m:[93m31[0m:[93m47[0m - [91merror[0m[90m ts(7006): [0mParameter 'event' implicitly has an 'any' type.
+
+[7m31[0m const eventsWithSlug = (rawEvents ?? []).map((event) => ({
+[7m  [0m [91m                                              ~~~~~[0m
+
+[96msrc/pages/planner/[event].astro[0m:[93m123[0m:[93m37[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m123[0m                                     async
+[7m   [0m [93m                                    ~~~~~[0m
+
+[96msrc/pages/planner/index.astro[0m:[93m15[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'FAN_PROJECTS' is declared but its value is never read.
+
+[7m15[0m const FAN_PROJECTS = ALL_PLANNER_EVENTS.filter((e) => e.features.planner?.href);
+[7m  [0m [93m      ~~~~~~~~~~~~[0m
+[96msrc/pages/planner/index.astro[0m:[93m8[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'PlannerCard' is declared but its value is never read.
+
+[7m8[0m import PlannerCard from "@/features/planner/ui/PlannerCard.astro";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/shared/utils/imageCapture.ts[0m:[93m53[0m:[93m34[0m - [93mwarning[0m[90m ts(6133): [0m'reject' is declared but its value is never read.
+
+[7m53[0m     return new Promise((resolve, reject) => {
+[7m  [0m [93m                                 ~~~~~~[0m
+
+Result (45 files): 
+- 1 error
+- 0 warnings
+- 21 hints
+

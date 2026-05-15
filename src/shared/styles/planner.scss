@@ -216,7 +216,7 @@ main {
     --tc: #fff;
 
     &:hover {
-      filter: brightness(0.90);
+      opacity: 0.9;
     }
   }
 
@@ -419,7 +419,7 @@ main {
   transition: all 0.18s;
 
   &:hover {
-    filter: brightness(0.90);
+    opacity: 0.9;
     color: #fff;
   }
 }
@@ -1464,8 +1464,13 @@ tr {
 }
 
 .btn:hover {
-  background-color: var(--planner-accent);
-  color: var(--c-light);
+  background-color: var(--planner-accent) !important;
+  color: var(--c-light) !important;
+}
+
+.btn:active {
+  background-color: var(--planner-accent) !important;
+  color: var(--c-light) !important;
 }
 
 .planner-hub {

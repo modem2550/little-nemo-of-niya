@@ -569,26 +569,7 @@ const cfg = JSON.stringify({ activities, days, storageKey, schedule, prices });
         }
     }
 
-    // Populate debug statsc
-    setTimeout(() => {
-        const debugEl = document.getElementById("debugScheduleStats");
-        if (debugEl) {
-            const actSlugs = SCHEDULE.map((s) => s.activitySlug);
-            const groupedKeys = Object.keys(FULL_SCHEDULE);
-            debugEl.innerHTML = `
-                <b>Debug Info:</b><br/>
-                Selected (${state.selectedMembers.size}): ${[...state.selectedMembers].join(", ")}<br/>
-                Cache sizes: ${[...state.selectedMembers].map((m) => `${m}=${(state.memberCache.get(m) || []).length}`).join(", ")}<br/>
-                Map keys: ${MEMBER_SCHEDULE_MAP.size}<br/>
-                Grouped keys: ${groupedKeys.join(", ")}<br/>
-                Planner Act Names: ${[...state.plannerActNames].join(", ")}<br/>
-                Activities in SCHEDULE: ${SCHEDULE.length} (${actSlugs.join(", ")})<br/>
-                Total Slots: ${totalSlots}<br/>
-                Total Member-Slot Mappings: ${totalMappings}<br/>
-                Unique Members in Map: ${MEMBER_SCHEDULE_MAP.size}<br/>
-            `;
-        }
-    }, 100);
+
 
     // ── Full schedule index (day → time → activity → members) ─────────────────
     // Used by Happening Now

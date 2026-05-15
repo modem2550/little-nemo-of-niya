@@ -27,7 +27,7 @@ export const eventConfig: UnifiedEventConfig = {
                 description: "จัดอันดับเพลง CGM48 ที่คุณชอบที่สุด",
                 storageKey: "ranking_cgm48_songs_results",
                 brandTarget: "CGM48",
-                listingImage: "/img/Ranking-song-cgm.png",
+                listingImage: "/img/Ranking-song-cgm.webp",
             }
         }
     }

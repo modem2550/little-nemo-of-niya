@@ -27,7 +27,7 @@ export const eventConfig: UnifiedEventConfig = {
                 description: "จัดอันดับเพลง BNK48 ที่คุณชอบที่สุด",
                 storageKey: "ranking_bnk48_songs_results",
                 brandTarget: "BNK48",
-                listingImage: "/img/Ranking-song-bnk.png",
+                listingImage: "/img/Ranking-song-bnk.webp",
             }
         }
     }

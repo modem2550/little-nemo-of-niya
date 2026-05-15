@@ -64,7 +64,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
       let cancelled = false;
       const loadResources = async () => {
         try {
-          const bg = await urlToBase64('/img/bg-ranking-song.png');
+          const bg = await urlToBase64('/img/bg-ranking-song.webp');
           if (!cancelled) {
             setBgBase64(bg);
             resourcesReadyRef.current = true;
@@ -174,7 +174,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
 
         {/* Background */}
         <img
-          src={bgBase64 || '/img/bg-ranking-song.png'}
+          src={bgBase64 || '/img/bg-ranking-song.webp'}
           style={{
             position: 'absolute',
             inset: 0,
@@ -419,6 +419,7 @@ const SongGame = memo(function SongGame({
   primaryColor = '#cb96c2',
   primaryGradient,
 }: SongRankingGameProps) {
+  console.log(`[SongGame] Render. Songs: ${songs.length}, TotalRounds: ${totalRounds}`);
   const {
     gameState,
     setGameState,

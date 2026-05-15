@@ -29,7 +29,7 @@ export const eventConfig: UnifiedEventConfig = {
                 officialLink: "https://www.facebook.com/share/p/1EQ4Q2NyjM/",
                 storageKey: "oncloud9_planner", // changed to lowercase
                 heroImage: "https://img2.pic.in.th/679067820_1538138747670766_1349428160000992650_n.png",
-                listingImage: "/img/OnCloud9Fest.png",
+                listingImage: "/img/OnCloud9Fest.webp",
                 primaryHover: "#e4b2eb",
                 prices: { ticket: 250, hub: 200 },
                 days: [

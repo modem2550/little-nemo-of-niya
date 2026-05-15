@@ -15,7 +15,7 @@ const EXPLORATION_RANDOMNESS = 2;
 const ANCHOR_SELECTION_PERCENTILE = 0.35;
 const ANCHOR_SELECTION_MIN = 20;
 
-export const ROUND_CAP_MULTIPLIER = 2.5;
+export const ROUND_CAP_MULTIPLIER = 4.0;
 
 export type PairingStrategy = 'exploration' | 'balanced' | 'convergence' | 'adaptive';
 
@@ -129,14 +129,26 @@ function getRandomSubset<T>(arr: T[], count: number, rand: () => number): T[] {
     if (n === 0) return [];
     const k = Math.min(count, n);
     
-    if (k < n * 0.1) {
+    if (k < n * 0.1 && k < 5) {
         const result: T[] = [];
         const seen = new Set<number>();
-        while (result.length < k) {
+        let attempts = 0;
+        while (result.length < k && attempts < n * 3) {
+            attempts++;
             const idx = Math.floor(rand() * n);
             if (!seen.has(idx)) {
                 seen.add(idx);
                 result.push(arr[idx]);
+            }
+        }
+        if (result.length < k) {
+            const copy = [...arr];
+            for (let i = result.length; i < k; i++) {
+                const j = Math.floor(rand() * (n - i)) + i;
+                const temp = copy[i];
+                copy[i] = copy[j];
+                copy[j] = temp;
+                if (!seen.has(i)) result.push(copy[i]);
             }
         }
         return result;
@@ -244,9 +256,15 @@ export function shouldStop(state: PairingState): boolean {
 function phase(state: PairingState): PairingStrategy {
     if (state.options.strategy !== 'adaptive') return state.options.strategy;
     const p = getProgress(state);
-    if (p < 0.4) return 'exploration';
-    if (p < 0.75) return 'balanced';
-    return 'convergence';
+    let strategy: PairingStrategy = 'exploration';
+    if (p < 0.4) strategy = 'exploration';
+    else if (p < 0.75) strategy = 'balanced';
+    else strategy = 'convergence';
+    
+    if (state.currentPhase !== strategy) {
+        console.log(`[Pairing] Phase transition: ${state.currentPhase} -> ${strategy} (Progress: ${(p * 100).toFixed(1)}%)`);
+    }
+    return strategy;
 }
 
 /* ================= STATE ================= */
@@ -287,6 +305,8 @@ export function getNextPair(ids: number[], state: PairingState): [number, number
     const currentPhase = phase(state);
     const isConv = currentPhase === 'convergence';
     const isExp = currentPhase === 'exploration';
+
+    console.log(`[Pairing] Generating pair for round ${round + 1} (Phase: ${currentPhase})`);
 
     const anchorLimit = Math.max(ANCHOR_SELECTION_MIN, Math.floor(ids.length * ANCHOR_SELECTION_PERCENTILE));
     let anchor: number;
@@ -345,9 +365,13 @@ export function getNextPair(ids: number[], state: PairingState): [number, number
     }
 
     if (best === -1) {
-        for (const x of ids) if (x !== anchor) return [anchor, x];
+        for (const x of ids) if (x !== anchor) {
+            console.log(`[Pairing] Pair fallback: ${anchor} vs ${x}`);
+            return [anchor, x];
+        }
     }
 
+    console.log(`[Pairing] Pair selected: ${anchor} vs ${best} (Score: ${bestScore.toFixed(2)})`);
     return [anchor, best];
 }
 
@@ -397,6 +421,9 @@ export function submitResult(w: number, l: number, s: PairingState): PairingStat
     next.isStable = isStable(next);
     next.justBecameStable = next.isStable && !s.isStable;
     next.currentPhase = phase(next);
+
+    console.log(`[Pairing] Result submitted: ${w} beat ${l}. New ELO: ${w}(${we}), ${l}(${le})`);
+    if (next.justBecameStable) console.log(`[Pairing] Rankings became STABLE at round ${next.totalAppearances / 2}`);
 
     return next;
 }

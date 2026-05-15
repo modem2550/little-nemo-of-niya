@@ -27,7 +27,7 @@ export const eventConfig: UnifiedEventConfig = {
                 description: "จัดอันดับเมมเบอร์ CGM48 ที่คุณชอบที่สุด",
                 storageKey: "ranking_cgm48_results",
                 brandTarget: "CGM48",
-                listingImage: "/img/Ranking-member-cgm.png",
+                listingImage: "/img/Ranking-member-cgm.webp",
             }
         }
     }

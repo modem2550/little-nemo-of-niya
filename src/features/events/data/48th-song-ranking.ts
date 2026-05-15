@@ -29,7 +29,7 @@ export const eventConfig: UnifiedEventConfig = {
                 description: "จัดอันดับเพลง BNK48 และ CGM48 ที่คุณชอบที่สุด",
                 storageKey: "ranking_48th_songs_results",
                 primaryGradient: "linear-gradient(90deg, #cb96c2 0%, #3CC2B1 100%)",
-                listingImage: "/img/Ranking-song-48th.png",
+                listingImage: "/img/Ranking-song-48th.webp",
             },
         }
     }

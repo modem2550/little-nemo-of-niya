@@ -4,6 +4,7 @@ import EventCard from "@/shared/components/EventCard.astro";
 import { getSupabase } from "@/services/supabase/server";
 import { categorizeEvents } from "@/shared/utils/dateUtils";
 import "@/shared/styles/schedule.scss";
+import type { Event } from "@/types/event";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -28,7 +29,7 @@ function toSlug(text: string) {
         .replace(/[^a-z0-9-]/g, "");
 }
 
-const eventsWithSlug = (rawEvents ?? []).map((event) => ({
+const eventsWithSlug = (rawEvents ?? []).map((event: Event) => ({
     ...event,
     generated_slug: `${toSlug(event.title || "event")}-${String(event.id || "0000").substring(0, 8)}`,
 }));
