@@ -17,6 +17,12 @@ const IMAGE_SOURCES = [
   "p-u.popcdn.net",
   "encrypted-tbn0.gstatic.com",
   "static.wikia.nocookie.net",
+  "mpics.mgronline.com",
+  "img.bnk48cdn.net",
+  "nipponhaku.com",
+  "encrypted-tbn2.gstatic.com",
+  "static.naewna.com",
+  "img1.pic.in.th"
 ].map((d) => `https://${d}`).join(" ");
 
 function getAllowedOrigin(requestOrigin: string | null): string | null {
