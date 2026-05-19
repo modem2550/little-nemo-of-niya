@@ -21,7 +21,10 @@ const IMAGE_SOURCES = [
   "img.bnk48cdn.net",
   "nipponhaku.com",
   "encrypted-tbn2.gstatic.com",
+  "encrypted-tbn3.gstatic.com",
   "static.naewna.com",
+  "i1.wp.com",
+  "i.ytimg.com",
   "img1.pic.in.th"
 ].map((d) => `https://${d}`).join(" ");
 
