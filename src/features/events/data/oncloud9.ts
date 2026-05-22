@@ -375,12 +375,12 @@ export const eventConfig: UnifiedEventConfig = {
                             { day: "sat", time: "15:30–16:30", members: ["Hongyok", "Kwan", "Satangpound"] },
                             { day: "sat", time: "16:30–17:30", members: ["Nall", "Mayji", "Luksorn"] },
                             { day: "sat", time: "17:30–18:30", members: ["Blythe", "Cartoon", "Grape"] },
-                            { day: "sat", time: "18:30–19:30", members: ["Berry", "Saonoi", "Rose"] },
+                            { day: "sat", time: "18:30–19:30", members: ["Berry", "Inkcha", "Rose"], note: "กิจกรรมในรอบนี้เปลี่ยนแปลงเมมเบอร์จาก Inkcha ให้เข้าร่วมแทน Saonoi" },
                             { day: "sat", time: "19:30–20:30", members: ["Arlee", "Galeya", "Khaimook"] },
                             // 31 MAY 2026
                             { day: "sun", time: "10:30–11:30", members: ["Shenae", "Valentine", "Proud"] },
                             { day: "sun", time: "11:30–12:30", members: ["Nammonn", "Khaimook", "Cartoon"] },
-                            { day: "sun", time: "12:30–13:30", members: ["Khowjow", "Inkcha", "Nana"] },
+                            { day: "sun", time: "12:30–13:30", members: ["Khowjow", "Saonoi", "Nana"], note: "กิจกรรมในรอบนี้เปลี่ยนแปลงเมมเบอร์จาก Saonoi ให้เข้าร่วมแทน Inkcha" },
                             { day: "sun", time: "13:30–14:30", members: ["Niya", "Cartoon", "Saonoi"] },
                             { day: "sun", time: "14:30–15:30", members: ["Praew", "Mint", "Mirin"] },
                             { day: "sun", time: "15:30–16:30", members: ["Hoop", "Micha", "Palmmy"] },
@@ -405,14 +405,14 @@ export const eventConfig: UnifiedEventConfig = {
                         activitySlug: "ponytail", // PONYTAIL
                         slots: [
                             // 30 MAY 2026
-                            { day: "sat", time: "14:30–15:30", members: ["Pancake", "Khowjow", "Nana"] },
+                            { day: "sat", time: "14:30–15:30", members: ["Pancake", "Inkcha", "Nana"], note: "กิจกรรมในรอบนี้เปลี่ยนแปลงเมมเบอร์จาก Inkcha ให้เข้าร่วมแทน Khowjow" },
                             { day: "sat", time: "15:30–16:30", members: ["Yoghurt", "Galeya", "Jew"] },
                             { day: "sat", time: "16:30–17:30", members: ["Marine", "Blythe", "Praew"] },
                             { day: "sat", time: "17:30–18:30", members: ["Micha", "Patt", "Niya"] },
                             { day: "sat", time: "18:30–19:30", members: ["Janry", "Arlee", "Luksorn"] },
                             { day: "sat", time: "19:30–20:30", members: ["Hoop", "Nammonn", "Praifa"] },
                             // 31 MAY 2026
-                            { day: "sun", time: "10:30–11:30", members: ["Grape", "Mail", "Inkcha"] },
+                            { day: "sun", time: "10:30–11:30", members: ["Grape", "Mail", "Khowjow"], note: "กิจกรรมในรอบนี้เปลี่ยนแปลงเมมเบอร์จาก Khowjow ให้เข้าร่วมแทน Inkcha" },
                             { day: "sun", time: "11:30–12:30", members: ["Nall", "Mayji", "Proud"] },
                             { day: "sun", time: "12:30–13:30", members: ["Jingjing", "Lookked", "Shenae"] },
                             { day: "sun", time: "13:30–14:30", members: ["Lingling", "Hongyok", "Kwan"] },
@@ -430,7 +430,7 @@ export const eventConfig: UnifiedEventConfig = {
                             { day: "mon", time: "14:30–15:30", members: ["Namphet", "Wawa", "Ploen"] },
                             { day: "mon", time: "15:30–16:30", members: ["Chifa", "Lookked", "Arlee"] },
                             { day: "mon", time: "16:30–17:30", members: ["Rose", "Mint", "Mirin"] },
-                            { day: "mon", time: "17:30–18:30", members: ["Palmmy", "L", "Neen"] },
+                            { day: "mon", time: "17:30–18:30", members: ["Palmmy", "L", "Cartoon"] },
                             { day: "mon", time: "18:30–19:30", members: ["Neen", "Galeya", "Jew"] },
                             { day: "mon", time: "19:30–20:30", members: ["Nammonn", "Monet", "Jingjing"] },
                         ],
