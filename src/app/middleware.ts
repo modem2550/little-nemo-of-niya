@@ -27,7 +27,7 @@ const IMAGE_SOURCES = [
   "i.ytimg.com",
   "img1.pic.in.th",
   "cdn.jsdelivr.net",
-  "https://fonts.googleapis.com"
+  "fonts.googleapis.com"
 ].map((d) => `https://${d}`).join(" ");
 
 function getAllowedOrigin(requestOrigin: string | null): string | null {
@@ -81,7 +81,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "default-src 'self'",
 
     // scripts: self + Astro inline + cdnjs (dom-to-image), Vercel analytics
-    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://www.tiktok.com",
+    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://www.tiktok.com https://sf16-website-login.neutral.ttwstatic.com",
 
     // styles: self + inline (Astro/Bootstrap inject inline styles)
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
@@ -93,7 +93,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net",
 
     // media: self + blob (video player)
-    "media-src 'self' blob:",
+    "media-src 'self' blob: https://pub-f5a38bcc427b4a21b2e5b9667de7cfdc.r2.dev",
 
     // fetch/XHR: self + Supabase + image CDNs สำหรับ urlToBase64()
     `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://region1.google-analytics.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com ${IMAGE_SOURCES}`,
