@@ -28,7 +28,8 @@ export default defineConfig({
       'nipponhaku.com',
       'encrypted-tbn2.gstatic.com',
       'static.naewna.com',
-      'img1.pic.in.th'
+      'img1.pic.in.th',
+      'pub-f5a38bcc427b4a21b2e5b9667de7cfdc.r2.dev'
     ],
   },
 
