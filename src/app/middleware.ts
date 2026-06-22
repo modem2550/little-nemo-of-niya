@@ -27,7 +27,7 @@ const IMAGE_SOURCES = [
   "i.ytimg.com",
   "img1.pic.in.th",
   "cdn.jsdelivr.net",
-  "fonts.googleapis.com"
+  "fonts.googleapis.com",
 ].map((d) => `https://${d}`).join(" ");
 
 function getAllowedOrigin(requestOrigin: string | null): string | null {

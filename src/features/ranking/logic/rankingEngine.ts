@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   createPairState,
   getNextPair,
@@ -10,6 +10,7 @@ import {
 
 export const STORAGE_VERSION = 1;
 
+const MAX_UNDO_HISTORY = 20;
 
 export type GameState = 'menu' | 'playing' | 'finished' | 'old-results' | 'view-all-ranking';
 
@@ -51,6 +52,9 @@ export function useRankingEngine<T extends { id: number; name: string }>(
   const [oldResults, setOldResults] = useState<TopRankingResult<T & RankedItemBase> | null>(null);
   const [history, setHistory] = useState<GameProgress[]>([]);
   const [viewAllSource, setViewAllSource] = useState<'current' | 'old'>('current');
+
+  // Fix #8: Guard against double saveResults calls
+  const hasSavedRef = useRef(false);
 
   const itemMap = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
   const itemIds = useMemo(() => items.map((item) => item.id), [items]);
@@ -104,7 +108,11 @@ export function useRankingEngine<T extends { id: number; name: string }>(
     });
     setGameState('playing');
     setHistory([]);
+    hasSavedRef.current = false;
   }, [itemIds, storageKey]);
+
+  // Fix #4: แยก nested state setters — ใช้ ref เก็บ state ก่อนหน้า
+  const prevProgressRef = useRef<GameProgress | null>(null);
 
   const handleChoice = useCallback(
     (itemId: number) => {
@@ -120,8 +128,8 @@ export function useRankingEngine<T extends { id: number; name: string }>(
         const updatedState = submitResult(itemId, loserId, prev);
         const nextRound = prev.roundCount + 1;
 
-        // Use a shallow copy for history since we are already creating new objects in submitResult
-        setHistory((h) => [...h, prev]);
+        // Fix #4: Store prev in ref for history update (done outside this setter)
+        prevProgressRef.current = prev;
 
         if (nextRound >= totalRounds) {
           console.log(`[RankingEngine] Reached total rounds (${totalRounds}). Ending game.`);
@@ -140,16 +148,34 @@ export function useRankingEngine<T extends { id: number; name: string }>(
           currentPair: nextPair as [number, number],
         };
       });
+
+      // Fix #4 & #5: Update history outside of setGameProgress, with limit
+      setHistory((h) => {
+        const prev = prevProgressRef.current;
+        if (!prev) return h;
+        const newHistory = [...h, prev];
+        return newHistory.length > MAX_UNDO_HISTORY ? newHistory.slice(-MAX_UNDO_HISTORY) : newHistory;
+      });
     },
     [itemIds, totalRounds, itemMap]
   );
 
+  // Fix #4: handleUndo — ไม่ซ้อน state setters อีกต่อไป
   const handleUndo = useCallback(() => {
     setHistory((prevHistory) => {
       if (prevHistory.length === 0) return prevHistory;
       const previousState = prevHistory[prevHistory.length - 1];
-      setGameProgress(previousState);
+      // Fix #4: Use ref to pass data to separate setGameProgress call
+      prevProgressRef.current = previousState;
       return prevHistory.slice(0, -1);
+    });
+    // Read from ref set by the history updater above — React batches these
+    // so we need to use a separate mechanism
+    setGameProgress((current) => {
+      if (!prevProgressRef.current) return current;
+      const restored = prevProgressRef.current;
+      prevProgressRef.current = null;
+      return restored;
     });
   }, []);
 
@@ -157,14 +183,18 @@ export function useRankingEngine<T extends { id: number; name: string }>(
     setGameProgress((prev) => {
       if (prev.currentPair.length !== 2) return prev;
 
-      setHistory((h) => [...h, prev]);
+      // Fix #4: Store prev in ref for history update
+      prevProgressRef.current = prev;
+
       const nextRound = prev.roundCount + 1;
 
+      // Fix #2: Always apply submitSkip before checking finish condition
+      const skippedState = submitSkip(prev.currentPair[0], prev.currentPair[1], prev);
+
       if (nextRound >= totalRounds) {
-        return { ...prev, roundCount: nextRound, currentPair: [] };
+        return { ...skippedState, roundCount: nextRound, currentPair: [] };
       }
 
-      const skippedState = submitSkip(prev.currentPair[0], prev.currentPair[1], prev);
       const nextPair = getNextPair(itemIds, skippedState);
 
       if (nextPair.length !== 2) {
@@ -176,6 +206,14 @@ export function useRankingEngine<T extends { id: number; name: string }>(
         roundCount: nextRound,
         currentPair: nextPair as [number, number],
       };
+    });
+
+    // Fix #4 & #5: Update history outside, with limit
+    setHistory((h) => {
+      const prev = prevProgressRef.current;
+      if (!prev) return h;
+      const newHistory = [...h, prev];
+      return newHistory.length > MAX_UNDO_HISTORY ? newHistory.slice(-MAX_UNDO_HISTORY) : newHistory;
     });
   }, [itemIds, totalRounds]);
 
@@ -193,26 +231,26 @@ export function useRankingEngine<T extends { id: number; name: string }>(
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameState, gameProgress.currentPair, handleChoice, handleSkip, handleUndo]);
 
-  // BUG 3: Finish condition in useEffect to ensure batched updates and avoid null flash
+  // Fix #8: Finish condition with guard to prevent double save
   useEffect(() => {
-    if (gameState === 'playing' && gameProgress.roundCount >= totalRounds) {
+    if (gameState === 'playing' && gameProgress.roundCount >= totalRounds && !hasSavedRef.current) {
+      hasSavedRef.current = true;
       console.log(`[RankingEngine] Game finished! Saving results to ${storageKey}`);
       saveResults(gameProgress);
       setGameState('finished');
     }
   }, [gameState, gameProgress, totalRounds, saveResults, storageKey]);
 
-  // ดึงเฉพาะ scores ออกมาเป็น dependency เพื่อไม่ให้ recalculate ทุกครั้งที่ currentPair เปลี่ยน
-  const scores = gameProgress.scores;
+  // Fix #1: เพิ่ม gameProgress.elo เป็น dependency เพื่อให้ ranking อัพเดตตาม ELO ล่าสุด
   const rankedItems = useMemo(
     () => calculateFinalRanking(items, gameProgress)
-      .map((item) => ({ ...item, score: scores[item.id] || 0 }))
+      .map((item) => ({ ...item, score: gameProgress.scores[item.id] || 0 }))
       .sort((a, b) => {
         if (b.elo !== a.elo) return b.elo - a.elo;           // ELO first (Scientific Real Ranking)
         if (b.score !== a.score) return b.score - a.score;  // then Score
         return a.name.localeCompare(b.name);
       }) as (T & RankedItemBase & { elo: number })[],
-    [items, scores]
+    [items, gameProgress.scores, gameProgress.elo]
   );
 
   const oldRankedItems = useMemo(() => {

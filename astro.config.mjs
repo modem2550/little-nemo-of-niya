@@ -16,6 +16,7 @@ export default defineConfig({
 
   image: {
     domains: [
+      'www.bnk48.com',
       'pbs.twimg.com',
       'img2.pic.in.th',
       'img5.pic.in.th',

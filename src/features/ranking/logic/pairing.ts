@@ -48,10 +48,8 @@ export interface PairingState {
     appearances: Record<number, number>;
     totalAppearances: number;
     elo: Record<number, number>;
-    pairHistory: Set<string>;
     pairCounts: Record<string, number>;
     pairSeenCounts: Record<string, number>;
-    memberSeenCounts: Record<number, number>;
     recentPairs: Set<string>;
 
     lastRankings?: number[][];
@@ -60,11 +58,6 @@ export interface PairingState {
     options: Required<EngineOptions>;
     currentPhase: PairingStrategy;
     justBecameStable?: boolean;
-
-    // cache
-    topCache?: number[];
-    cachedProgress?: number;
-    cachedProgressRound?: number;
 }
 
 export interface RankedItem {
@@ -192,10 +185,6 @@ function getTopIds(ids: number[], state: PairingState, n: number): number[] {
 }
 
 export function getProgress(state: PairingState): number {
-    if (state.cachedProgress !== undefined && state.cachedProgressRound === state.totalAppearances) {
-        return state.cachedProgress;
-    }
-
     const ids = Object.keys(state.elo);
     if (ids.length < 2) return 0;
 
@@ -210,13 +199,7 @@ export function getProgress(state: PairingState): number {
     }
     const separation = top.length > 1 ? Math.min(1, (diff / top.length) / 20) : 0;
 
-    const res = Math.min(1, coverage * 0.6 + separation * 0.4);
-    
-    // We update the state object only when progress is calculated
-    state.cachedProgress = res;
-    state.cachedProgressRound = state.totalAppearances;
-    
-    return res;
+    return Math.min(1, coverage * 0.6 + separation * 0.4);
 }
 
 export function isStable(state: PairingState): boolean {
@@ -245,6 +228,11 @@ export function isRoundCapped(state: PairingState): boolean {
     const ids = Object.keys(state.elo);
     if (ids.length < 2) return false;
     return state.totalAppearances >= ids.length * ROUND_CAP_MULTIPLIER * 2;
+}
+
+/** Check if a pair has been seen before (replaces pairHistory Set) */
+export function hasPairBeenSeen(state: PairingState, key: string): boolean {
+    return (state.pairCounts[key] || 0) > 0;
 }
 
 export function shouldStop(state: PairingState): boolean {
@@ -279,8 +267,8 @@ export function createPairState(ids: number[], options?: EngineOptions): Pairing
     const s: PairingState = {
         scores: {}, wins: {}, losses: {}, appearances: {},
         totalAppearances: 0,
-        elo: {}, pairHistory: new Set(), pairCounts: {},
-        pairSeenCounts: {}, memberSeenCounts: {}, recentPairs: new Set(),
+        elo: {}, pairCounts: {},
+        pairSeenCounts: {}, recentPairs: new Set(),
         lastRankings: [], isStable: false,
         options: opt,
         currentPhase: 'exploration',
@@ -289,7 +277,6 @@ export function createPairState(ids: number[], options?: EngineOptions): Pairing
     for (const id of ids) {
         s.scores[id] = 0; s.wins[id] = 0; s.losses[id] = 0;
         s.appearances[id] = 0; s.elo[id] = ELO_INITIAL;
-        s.memberSeenCounts[id] = 0;
     }
 
     return s;
@@ -300,7 +287,8 @@ export function createPairState(ids: number[], options?: EngineOptions): Pairing
 export function getNextPair(ids: number[], state: PairingState): [number, number] | [] {
     if (ids.length < 2 || isRoundCapped(state)) return [];
 
-    const round = state.pairHistory.size;
+
+    const round = Object.keys(state.pairCounts).length;
     const rand = createRandom(getSeed(state, round));
     const currentPhase = phase(state);
     const isConv = currentPhase === 'convergence';
@@ -387,7 +375,6 @@ export function submitSkip(a: number, b: number, s: PairingState): PairingState 
         ...s,
         pairSeenCounts: { ...s.pairSeenCounts, [key]: (s.pairSeenCounts[key] || 0) + 1 },
         recentPairs: updatedRecentPairs,
-        cachedProgress: undefined
     };
 }
 
@@ -411,11 +398,10 @@ export function submitResult(w: number, l: number, s: PairingState): PairingStat
         appearances: { ...s.appearances, [w]: (s.appearances[w] || 0) + 1, [l]: (s.appearances[l] || 0) + 1 },
         totalAppearances: s.totalAppearances + 2,
         elo: nextElo,
-        pairHistory: new Set(s.pairHistory).add(key),
+        pairCounts: { ...s.pairCounts, [key]: (s.pairCounts[key] || 0) + 1 },
         pairSeenCounts: { ...s.pairSeenCounts, [key]: (s.pairSeenCounts[key] || 0) + 1 },
         recentPairs: updatedRecentPairs,
         lastRankings: hist,
-        cachedProgress: undefined
     };
 
     next.isStable = isStable(next);

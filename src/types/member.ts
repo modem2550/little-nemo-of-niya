@@ -1,6 +1,7 @@
 export interface Member {
     id: number;
     name: string;
+    real_name: string;
     brand: string;
     gen: string;
     team: string;

@@ -64,7 +64,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
       let cancelled = false;
       const loadResources = async () => {
         try {
-          const bg = await urlToBase64('/img/bg-ranking-song.webp');
+          const bg = await urlToBase64('/img/bg-ranking-song.png');
           if (!cancelled) {
             setBgBase64(bg);
             resourcesReadyRef.current = true;
@@ -174,7 +174,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
 
         {/* Background */}
         <img
-          src={bgBase64 || '/img/bg-ranking-song.webp'}
+          src={bgBase64 || '/img/bg-ranking-song.png'}
           style={{
             position: 'absolute',
             inset: 0,
@@ -533,7 +533,10 @@ const SongGame = memo(function SongGame({
     [setGameState, viewAllSource]
   );
 
-  const handleShowOldResults = useCallback(() => setGameState('old-results'), [setGameState]);
+  const handleShowOldResults = useCallback(() => {
+    setResultImageUrl(null);
+    setGameState('old-results');
+  }, [setGameState]);
   const handleShowViewAll = useCallback(() => {
     import('react').then(({ startTransition }) => {
       startTransition(() => {
@@ -542,6 +545,16 @@ const SongGame = memo(function SongGame({
       });
     });
   }, [gameState, setGameState, setViewAllSource]);
+
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+    const handler = (e: BeforeUnloadEvent) => { 
+      e.preventDefault(); 
+      e.returnValue = ''; 
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [gameState]);
 
   if (gameState === 'view-all-ranking') {
     return (
@@ -651,12 +664,15 @@ const SongGame = memo(function SongGame({
             <span className="ranking-progress-label">ความคืบหน้า</span>
             <span className="ranking-progress-percent" style={{ color: primaryColor }}>{progressPercent}%</span>
           </div>
+          <div className="ranking-progress-bar mt-2">
+            <div className="ranking-progress-fill" style={{ width: `${progressPercent}%`, backgroundColor: primaryColor }} />
+          </div>
         </div>
       </div>
       <header className="ranking-planner-skin__intro ranking-planner-skin__intro--tight px-1">
         <h2 className="ranking-planner-skin__title ranking-planner-skin__title--sm">เพลงไหนที่คุณชอบมากกว่ากัน?</h2>
       </header>
-      <div className="ranking-arena mx-auto w-100 gap-2">
+      <div className="ranking-arena mx-auto w-100 gap-2" key={`${id1}-${id2}`} style={{ animation: 'rankingChoiceScaleIn 0.3s ease-out' }}>
         <div className="flex-fill w-100">
           <SongChoice song={s1} onClick={() => handleChoice(s1.id)} />
         </div>

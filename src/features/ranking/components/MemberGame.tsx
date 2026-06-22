@@ -53,7 +53,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
             const loadResources = async () => {
                 try {
                     const [bg, winnerImg] = await Promise.all([
-                        urlToBase64('/img/bg-ranking-member.webp'),
+                        urlToBase64('/img/bg-ranking-member.png'),
                         urlToBase64(winner.profile_image_url || '')
                     ]);
                     
@@ -166,7 +166,7 @@ const ResultShareCard = memo(forwardRef<ShareCardRef, ResultShareCardProps>(
             >
                 {/* Background */}
                 <img
-                    src={bgBase64 || "/img/bg-ranking-member.webp"}
+                    src={bgBase64 || "/img/bg-ranking-member.png"}
                     style={{
                         position: 'absolute',
                         inset: 0,
@@ -370,30 +370,25 @@ interface DownloadButtonProps {
 }
 
 const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, primaryColor, primaryGradient }: DownloadButtonProps) {
-    const [isPressed, setIsPressed] = useState(false);
-    const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const linkRef = useRef<HTMLAnchorElement>(null);
+    const downloadName = `oshi-ranking-${Date.now()}.png`;
 
-    const handlePressStart = useCallback(() => {
-        setIsPressed(true);
-        pressTimerRef.current = setTimeout(() => {
-            if (linkRef.current) linkRef.current.click();
-        }, LONG_PRESS_THRESHOLD);
-    }, []);
-
-    const handlePressEnd = useCallback(() => {
-        setIsPressed(false);
-        if (pressTimerRef.current) {
-            clearTimeout(pressTimerRef.current);
-            pressTimerRef.current = null;
-        }
-    }, []);
-
-    useEffect(() => {
-        return () => {
-            if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
-        };
-    }, []);
+    const handleDownload = useCallback(() => {
+        // แปลง data URL → Blob → Object URL (รองรับ Safari)
+        fetch(imageUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = downloadName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                // รอสักครู่แล้วค่อย revoke เพื่อให้ browser download ทัน
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+            })
+            .catch(err => console.error('Download failed:', err));
+    }, [imageUrl, downloadName]);
 
     if (isLoading) {
         return (
@@ -409,32 +404,15 @@ const DownloadButton = memo(function DownloadButton({ imageUrl, isLoading, prima
         );
     }
 
-    const downloadName = `oshi-ranking-${Date.now()}.png`;
-
     return (
-        <>
-            <a
-                ref={linkRef}
-                href={imageUrl}
-                download={downloadName}
-                style={{ display: 'none' }}
-            >
-            </a>
-            <button
-                type="button"
-                className="ranking-planner-skin__ctaGhost"
-                onClick={() => linkRef.current?.click()}
-                onMouseDown={handlePressStart}
-                onMouseUp={handlePressEnd}
-                onMouseLeave={handlePressEnd}
-                onTouchStart={handlePressStart}
-                onTouchEnd={handlePressEnd}
-                aria-pressed={isPressed}
-            >
-                <i className="fa-solid fa-download" aria-hidden="true" />
-                บันทึกภาพ
-            </button>
-        </>
+        <button
+            type="button"
+            className="ranking-planner-skin__ctaGhost"
+            onClick={handleDownload}
+        >
+            <i className="fa-solid fa-download" aria-hidden="true" />
+            บันทึกภาพ
+        </button>
     );
 });
 
@@ -638,11 +616,28 @@ const MemberGame = memo(function MemberGame({
     } as RankingThemeStyle), [primaryColor, primaryGradient]);
 
     const handleBackFromViewAll = useCallback(() => setGameState(viewAllSource === 'old' ? 'old-results' : 'finished'), [setGameState, viewAllSource]);
-    const handleShowOldResults = useCallback(() => setGameState('old-results'), [setGameState]);
+    const handleShowOldResults = useCallback(() => {
+        setResultImageUrl(null);
+        setGameState('old-results');
+    }, [setGameState]);
     const handleShowViewAll = useCallback(() => {
-        setViewAllSource(gameState === 'old-results' ? 'old' : 'current');
-        setGameState('view-all-ranking');
+        import('react').then(({ startTransition }) => {
+            startTransition(() => {
+                setViewAllSource(gameState === 'old-results' ? 'old' : 'current');
+                setGameState('view-all-ranking');
+            });
+        });
     }, [gameState, setGameState, setViewAllSource]);
+
+    useEffect(() => {
+        if (gameState !== 'playing') return;
+        const handler = (e: BeforeUnloadEvent) => { 
+            e.preventDefault(); 
+            e.returnValue = ''; 
+        };
+        window.addEventListener('beforeunload', handler);
+        return () => window.removeEventListener('beforeunload', handler);
+    }, [gameState]);
 
     const viewAllSourceData = useMemo(
         () => viewAllSource === 'old' ? (oldRankedItems as (Member & { score: number; elo: number })[]) : (rankedItems as (Member & { score: number; elo: number })[]),
@@ -759,12 +754,15 @@ const MemberGame = memo(function MemberGame({
                         <span className="ranking-progress-label">ความคืบหน้า</span>
                         <span className="ranking-progress-percent" style={{ color: primaryColor }}>{progressPercent}%</span>
                     </div>
+                    <div className="ranking-progress-bar mt-2">
+                        <div className="ranking-progress-fill" style={{ width: `${progressPercent}%`, backgroundColor: primaryColor }} />
+                    </div>
                 </div>
             </div>
             <header className="ranking-planner-skin__intro ranking-planner-skin__intro--tight px-1">
                 <h2 className="ranking-planner-skin__title ranking-planner-skin__title--sm">เมมเบอร์คนไหนที่คุณโอชิมากกว่า?</h2>
             </header>
-            <div className="ranking-arena mx-auto w-100 gap-2">
+            <div className="ranking-arena mx-auto w-100 gap-2" key={`${id1}-${id2}`} style={{ animation: 'rankingChoiceScaleIn 0.3s ease-out' }}>
                 <div className="flex-fill w-100">
                     <MemberChoice member={m1} onClick={() => handleChoice(m1.id)} />
                 </div>
