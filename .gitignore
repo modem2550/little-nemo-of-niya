@@ -10,4 +10,4 @@ public/video/BG-video.mp4
 **/.DS_Store
 .src.zip
 .image-cache.json
-public/demmo/
+public/demmo/.DS_Store
