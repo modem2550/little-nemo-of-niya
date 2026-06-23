@@ -15,15 +15,23 @@ Astro.response.headers.set(
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const { data: rawEvents, error } = await getSupabase()
-    .from("event_data")
-    .select("*")
-    .order("date", { ascending: false });
+const supabase = getSupabase();
+let rawEvents: Event[] | null = null;
 
-// If there is an error fetching events, rawEvents will be null and the UI will show an empty state.
-if (error) {
-    /* Error fetching events */
+try {
+    if (supabase) {
+        const { data, error } = await supabase
+            .from("event_data")
+            .select("*")
+            .order("date", { ascending: false });
+
+        if (error) console.error("[Schedule] Supabase error:", error);
+        rawEvents = data;
+    }
+} catch (e) {
+    // Error fetching events — rawEvents will remain null and the UI will show an empty state.
 }
+
 
 // ── Process ───────────────────────────────────────────────────────────────────
 
