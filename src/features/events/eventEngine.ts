@@ -7,18 +7,27 @@ const eventModules = import.meta.glob<{ eventConfig: UnifiedEventConfig }>(
     { eager: false }
 );
 
+// Module-level cache: the Promise is stored after the first call so that
+// subsequent invocations on the same server instance (warm lambda) skip
+// the Promise.all / glob-loader work entirely.
+let cachedEventsPromise: Promise<UnifiedEventConfig[]> | null = null;
+
 /**
  * Loads all event configurations dynamically.
- * This prevents memory bloat and reduces bundle size for pages that don't need all events.
+ * Results are memoized for the lifetime of the server instance so that
+ * getPlannerEvents() and getRankingEvents() share a single load cycle.
  */
 export async function getAllUnifiedEvents(): Promise<UnifiedEventConfig[]> {
-    const modules = await Promise.all(
-        Object.values(eventModules).map(loader => loader())
-    );
-    
-    return modules
-        .map(mod => mod.eventConfig)
-        .filter((config): config is UnifiedEventConfig => Boolean(config));
+    if (!cachedEventsPromise) {
+        cachedEventsPromise = Promise.all(
+            Object.values(eventModules).map(loader => loader())
+        ).then(modules =>
+            modules
+                .map(mod => mod.eventConfig)
+                .filter((config): config is UnifiedEventConfig => Boolean(config))
+        );
+    }
+    return cachedEventsPromise;
 }
 
 export async function getPlannerEvents(): Promise<EventPlugin[]> {
