@@ -12,77 +12,69 @@ body {
 }
 
 .sf-hero {
-  position: relative;
-  padding: 120px 0 100px;
-  overflow: hidden;
-  color: var(--c-light);
-  min-height: 480px;
-
+  --sf-hero-padding: 120px 0 100px;
+  --sf-hero-min-height: 480px;
+  --sf-hero-color: var(--c-light);
+  --sf-hero-display: block;
+  --sf-hero-text-align: left;
+  
   &__overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.5) 100%);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    --sf-hero-overlay-bg: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.5) 100%);
+    --sf-hero-overlay-backdrop: blur(2px);
   }
-
+  
   &__container {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    --sf-hero-container-display: flex;
+    --sf-hero-container-justify: center;
+    --sf-hero-container-align: center;
+    --sf-hero-container-padding: 0;
   }
-
+  
   &__eyebrow {
-    font-size: 14px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    margin-bottom: 1.5rem;
-    color: color-mix(in srgb, var(--c-light) 80%, transparent);
+    --sf-hero-eyebrow-fs: 14px;
+    --sf-hero-eyebrow-ls: 0.25em;
+    --sf-hero-eyebrow-mb: 1.5rem;
+    --sf-hero-eyebrow-color: color-mix(in srgb, var(--c-light) 80%, transparent);
   }
-
+  
   &__title {
-    font-size: clamp(2.5rem, 8vw, 4.235rem);
-    font-weight: 900;
-    line-height: 0.95;
-    margin-bottom: 1.5rem;
-    letter-spacing: -0.04em;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    --sf-hero-title-fs: clamp(2.5rem, 8vw, 4.235rem);
+    --sf-hero-title-fw: 900;
+    --sf-hero-title-lh: 0.95;
+    --sf-hero-title-mb: 1.5rem;
+    --sf-hero-title-ls: -0.04em;
+    --sf-hero-title-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
-
+  
   &__meta {
-    font-size: 1.125rem;
-    opacity: 0.9;
-    max-width: 50ch;
-    margin: 0 auto;
-    font-weight: 500;
-    line-height: 1.6;
+    --sf-hero-meta-fs: 1.125rem;
+    --sf-hero-meta-opacity: 0.9;
+    --sf-hero-meta-mw: 50ch;
+    --sf-hero-meta-margin: 0 auto;
+    --sf-hero-meta-fw: 500;
+    --sf-hero-meta-lh: 1.6;
+    --sf-hero-meta-color: inherit;
   }
-
+  
   &__link {
-    color: inherit;
-    opacity: 0.85;
-    transition: opacity 0.2s;
-
-    &:hover {
-      opacity: 1;
-    }
+    --sf-hero-link-color: inherit;
+    --sf-hero-link-opacity: 0.85;
+    --sf-hero-link-transition: opacity 0.2s;
+    --sf-hero-link-hover-opacity: 1;
+    --sf-hero-link-border: none;
+    --sf-hero-link-decoration: inherit;
   }
 }
 
 .sf-hero-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: clamp(2rem, 5vw, 4rem);
-  border-radius: var(--r-large);
-  max-width: 600px;
-  text-align: center;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+  --sf-hero-card-padding: clamp(2rem, 5vw, 4rem);
+  --sf-hero-card-mw: 600px;
+  --sf-hero-card-bg: rgba(255, 255, 255, 0.15);
+  --sf-hero-card-backdrop: blur(24px);
+  --sf-hero-card-border: 1px solid rgba(255, 255, 255, 0.2);
+  --sf-hero-card-radius: var(--r-large);
+  --sf-hero-card-ta: center;
+  --sf-hero-card-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
 }
 
 // ── CSS Variables ─────────────────────────────────────────────────────────────
