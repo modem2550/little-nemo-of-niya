@@ -8,6 +8,13 @@ import socialData from "../data/social.json";
 import type { Event } from "@/types/event";
 import "@/shared/styles/schedule.scss";
 
+// ── Cache ──────────────────────────────────────────────────────────────────────
+const CACHE_TTL_SECONDS = 60;
+Astro.response.headers.set(
+    "Cache-Control",
+    `public, max-age=0, s-maxage=${CACHE_TTL_SECONDS}, stale-while-revalidate=${CACHE_TTL_SECONDS}`
+);
+
 // ── Data fetching ─────────────────────────────────────────────────────────────
 
 const supabase = getSupabase();

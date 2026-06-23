@@ -6,6 +6,13 @@ import { categorizeEvents } from "@/shared/utils/dateUtils";
 import "@/shared/styles/schedule.scss";
 import type { Event } from "@/types/event";
 
+// ── Cache ──────────────────────────────────────────────────────────────────────
+const CACHE_TTL_SECONDS = 60;
+Astro.response.headers.set(
+    "Cache-Control",
+    `public, max-age=0, s-maxage=${CACHE_TTL_SECONDS}, stale-while-revalidate=${CACHE_TTL_SECONDS}`
+);
+
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const { data: rawEvents, error } = await getSupabase()

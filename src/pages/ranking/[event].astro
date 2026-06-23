@@ -22,6 +22,13 @@ if (!config) {
     throw new Error(`Ranking data missing for event ${eventData.slug}`);
 }
 
+// ── Cache ──────────────────────────────────────────────────────────────────────
+const CACHE_TTL_SECONDS = 60;
+Astro.response.headers.set(
+    "Cache-Control",
+    `public, max-age=0, s-maxage=${CACHE_TTL_SECONDS}, stale-while-revalidate=${CACHE_TTL_SECONDS}`
+);
+
 // Optimized: Dynamic import for large songs dataset
 const { songs } = await import("@/features/ranking/data/songs");
 
@@ -49,7 +56,7 @@ const isSongByBrand = (artist: string, brand: "BNK48" | "CGM48" | "48th") => {
 if (supabase && gameType === "member" && memberConfig) {
     let query = supabase
         .from("members")
-        .select("id,name,brand,gen,team,profile_image_url")
+        .select("id,name,real_name,brand,gen,team,profile_image_url")
         .is("graduated_at", null)
         .order("name");
 
@@ -68,6 +75,7 @@ if (supabase && gameType === "member" && memberConfig) {
 const members = (membersData ?? []).map((m: any) => ({
     id: m.id,
     name: m.name,
+    real_name: m.real_name ?? "",
     brand: m.brand ?? "CGM48",
     gen: m.gen ?? "Unknown",
     team: m.team ?? "Trainee",
