@@ -6,15 +6,6 @@ import { getSupabase } from "@/services/supabase/server";
 import { getImage } from "astro:assets";
 import "@/shared/styles/planner.scss";
 
-export async function getStaticPaths() {
-    const events = await getPlannerEvents();
-    const plannerOnlyEvents = events.filter((e) => !e.features.planner?.href);
-    return plannerOnlyEvents.map((e) => ({
-        params: { event: e.slug },
-        props: { eventData: e },
-    }));
-}
-
 const currentSlug = Astro.params.event;
 const allEvents = await getPlannerEvents();
 const eventData = allEvents.find((e) => e.slug === currentSlug);
