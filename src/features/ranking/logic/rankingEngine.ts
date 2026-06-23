@@ -232,10 +232,20 @@ export function useRankingEngine<T extends { id: number; name: string }>(
   }, [gameState, gameProgress.currentPair, handleChoice, handleSkip, handleUndo]);
 
   // Fix #8: Finish condition with guard to prevent double save
+  // Also handles early termination when pairing engine runs out of pairs
+  // (e.g. isRoundCapped triggers before totalRounds is reached)
   useEffect(() => {
-    if (gameState === 'playing' && gameProgress.roundCount >= totalRounds && !hasSavedRef.current) {
+    if (gameState !== 'playing' || hasSavedRef.current) return;
+
+    const reachedTotalRounds = gameProgress.roundCount >= totalRounds;
+    const noPairsLeft =
+      gameProgress.roundCount > 0 && gameProgress.currentPair.length === 0;
+
+    if (reachedTotalRounds || noPairsLeft) {
       hasSavedRef.current = true;
-      console.log(`[RankingEngine] Game finished! Saving results to ${storageKey}`);
+      console.log(
+        `[RankingEngine] Game finished! (rounds: ${gameProgress.roundCount}/${totalRounds}, pairsLeft: ${gameProgress.currentPair.length}) Saving results to ${storageKey}`
+      );
       saveResults(gameProgress);
       setGameState('finished');
     }
