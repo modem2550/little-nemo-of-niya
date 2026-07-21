@@ -145,4 +145,10 @@ export const songs: Song[] = [
   { id: 142, name: 'โลกนี้ก็แค่ปากซอย', artist: 'BNK48 & CGM48' },
   { id: 143, name: '12-Gatsu no Kangaroo - จิงโจ้น้อยเดือนธันวาคม', artist: 'BNK48 & CGM48' },
   { id: 144, name: 'Sky Lantern Wish', artist: 'BNK48 & TSH48' },
+  { id: 145, name: 'Cry (From "Shock Me Girls รักช็อตใจ ยัยช็อตฟีล")', artist: 'BNK48'},
+  { id: 146, name: 'Cry (From "Shock Me Girls รักช็อตใจ ยัยช็อตฟีล")', artist: 'BNK48'},
+  { id: 147, name: 'แค่เพียงมีเธอ (2026 Thai-Japanese Version)', artist: 'BNK48 ,Tatsuya Ishii & Lumyai Hitongkam'},
+  { id: 148, name: 'Ponytail to Shushu', artist: 'BNK48'},
+  { id: 149, name: 'Koi Tsunjatta – Let me know!', artist: 'CGM48'},
+  { id: 150, name: 'BINGO!', artist: 'CGM48'}
 ];

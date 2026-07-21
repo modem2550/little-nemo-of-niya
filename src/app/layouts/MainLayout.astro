@@ -141,6 +141,12 @@ const schemaData = {
                 "position": 7,
                 "name": "planner",
                 "item": "https://little-nemo-of-niya.vercel.app/planner"
+            },
+            {
+                "@type": "ListItem",
+                "position": 8,
+                "name": "game",
+                "item": "https://little-nemo-of-niya.vercel.app/game"
             }
         ],
     },
@@ -198,6 +204,7 @@ const schemaData = {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        
 
         <script is:inline define:vars={{ isForcedLightMode, isForcedDarkMode }}>
 
@@ -405,8 +412,10 @@ const schemaData = {
                     <a href="/#fanclub" class="nav-link">Fanclub</a>
                     <a href="/schedule" class="nav-link nav-link--app"><i class="fa-solid fa-calendar nav-icon"
                             aria-hidden="true"></i>Schedule</a>
-                    <a href="/planner" class="nav-link nav-link--app"><i class="fa-solid fa-gamepad nav-icon"
+                    <a href="/planner" class="nav-link nav-link--app"><i class="fa-solid fa-calendar-week nav-icon"
                             aria-hidden="true"></i>Planner</a>
+                    <a href="/game" class="nav-link nav-link--app"><i class="fa-solid fa-gamepad nav-icon"
+                            aria-hidden="true"></i>Game</a>
                     {!forcedTheme && (
                         <label class="theme-toggle-v2">
                             <input type="checkbox" class="theme-toggle-input" data-theme-toggle aria-label="Switch theme" />
@@ -480,8 +489,12 @@ const schemaData = {
                     <span>Schedule</span>
                 </a>
                 <a href="/planner" class="nav-link-mobile d-flex align-items-center">
-                    <i class="fa-solid fa-gamepad nav-icon" aria-hidden="true"></i>
+                    <i class="fa-solid fa-wand-magic-sparkles nav-icon" aria-hidden="true"></i>
                     <span>Planner</span>
+                </a>
+                <a href="/game" class="nav-link-mobile d-flex align-items-center">
+                    <i class="fa-solid fa-gamepad nav-icon" aria-hidden="true"></i>
+                    <span>Game</span>
                 </a>
             </nav>
 

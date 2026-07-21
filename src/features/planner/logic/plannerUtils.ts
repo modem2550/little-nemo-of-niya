@@ -8,7 +8,7 @@ export interface ActivityConfig {
   color: string;
   desc?: string;
   tickets?: number;
-  type?: 'hub' | 'merch';
+  type?: 'hub' | 'merch' | 'stage';
   warning?: string;
   warningLevel?: 'warn' | 'danger';
 }

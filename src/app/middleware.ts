@@ -11,23 +11,25 @@ const ALLOWED_ORIGINS = new Set([
 // ─── Image sources (ใช้ใน img-src และ connect-src สำหรับ fetch base64) ────
 const IMAGE_SOURCES = [
   "pbs.twimg.com",
+  "img1.pic.in.th",
   "img2.pic.in.th",
   "img5.pic.in.th",
   "f.ptcdn.info",
   "p-u.popcdn.net",
   "encrypted-tbn0.gstatic.com",
+  "encrypted-tbn2.gstatic.com",
+  "encrypted-tbn3.gstatic.com",
   "static.wikia.nocookie.net",
   "mpics.mgronline.com",
   "img.bnk48cdn.net",
+  "www.bnk48.com",
   "nipponhaku.com",
-  "encrypted-tbn2.gstatic.com",
-  "encrypted-tbn3.gstatic.com",
   "static.naewna.com",
   "i1.wp.com",
   "i.ytimg.com",
-  "img1.pic.in.th",
   "cdn.jsdelivr.net",
   "fonts.googleapis.com",
+  "pub-f5a38bcc427b4a21b2e5b9667de7cfdc.r2.dev",
 ].map((d) => `https://${d}`).join(" ");
 
 function getAllowedOrigin(requestOrigin: string | null): string | null {
@@ -80,8 +82,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // default: block everything not listed
     "default-src 'self'",
 
-    // scripts: self + Astro inline + cdnjs (dom-to-image), Vercel analytics
-    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://www.tiktok.com https://sf16-website-login.neutral.ttwstatic.com",
+    // scripts: self + Astro inline + cdnjs (dom-to-image), Vercel analytics/insights
+    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://va.vercel-scripts.com https://cdn.vercel-insights.com https://www.googletagmanager.com https://www.google-analytics.com https://www.tiktok.com https://sf16-website-login.neutral.ttwstatic.com",
 
     // styles: self + inline (Astro/Bootstrap inject inline styles)
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
@@ -95,8 +97,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // media: self + blob (video player)
     "media-src 'self' blob: https://pub-f5a38bcc427b4a21b2e5b9667de7cfdc.r2.dev",
 
-    // fetch/XHR: self + Supabase + image CDNs สำหรับ urlToBase64()
-    `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://region1.google-analytics.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com ${IMAGE_SOURCES}`,
+    // fetch/XHR: self + Supabase + Vercel Insights + image CDNs สำหรับ urlToBase64()
+    `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com https://cdn.vercel-insights.com https://www.google-analytics.com https://region1.google-analytics.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com ${IMAGE_SOURCES}`,
 
     // manifests
     "manifest-src 'self'",

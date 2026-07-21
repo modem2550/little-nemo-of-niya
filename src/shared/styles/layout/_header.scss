@@ -361,7 +361,7 @@
    RESPONSIVE NAV (≤ 920px)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-@include bp-max(920px) {
+@include bp-max(1100px) {
   .nav-desktop {
     display: none;
   }

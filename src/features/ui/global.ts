@@ -268,6 +268,9 @@ function initActiveNav(): void {
       if (href === '/planner' && path.startsWith('/planner')) {
         link.classList.add('is-active');
       }
+      if (href === '/game' && (path.startsWith('/game') || path.startsWith('/ranking'))) {
+        link.classList.add('is-active');
+      }
     });
     return;
   }
