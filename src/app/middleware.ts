@@ -30,6 +30,7 @@ const IMAGE_SOURCES = [
   "cdn.jsdelivr.net",
   "fonts.googleapis.com",
   "pub-f5a38bcc427b4a21b2e5b9667de7cfdc.r2.dev",
+  "i.ibb.co"
 ].map((d) => `https://${d}`).join(" ");
 
 function getAllowedOrigin(requestOrigin: string | null): string | null {
